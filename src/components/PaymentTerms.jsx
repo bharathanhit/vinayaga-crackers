@@ -1,132 +1,118 @@
 import { motion } from 'framer-motion';
-import { CreditCard, ShieldCheck, Globe, Scale, Clock, Briefcase, CheckCircle2, DollarSign, ArrowLeft } from 'lucide-react';
+import { CreditCard, ShieldCheck, Truck, Clock, CheckCircle2, ArrowLeft, QrCode, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
 
 const PaymentTerms = () => {
     useEffect(() => {
-        document.title = "Payment Terms | Secure Global Trade Finance | Dhuruvan Exports";
+        document.title = "Payment & Delivery Terms | Vinayaga Crackers Sivakasi";
     }, []);
+
     const paymentMethods = [
         {
-            title: "100% Irrevocable & Confirmed L/C",
-            desc: "The most secure method for international trade, providing total protection for both buyer and seller.",
+            title: "UPI / Google Pay / PhonePe / QR Code",
+            desc: "Instant payment verification via UPI QR code or mobile number. Fast, safe, and standard for retail & family gift box bookings.",
+            icon: QrCode
+        },
+        {
+            title: "Direct Bank Transfer (NEFT / RTGS / IMPS)",
+            desc: "Official current account bank transfer with GST invoice. Best suited for wholesale orders, bulk retailers, and society bookings.",
+            icon: CreditCard
+        },
+        {
+            title: "Pre-Booking Advance (50% + 50%)",
+            desc: "Pay 50% advance to lock in early bird factory wholesale rates and stock reservation. Balance 50% paid upon LR transport dispatch copy.",
             icon: ShieldCheck
         },
         {
-            title: "50% Advance & 50% L/C",
-            desc: "A balanced structure often used for tailored high-volume orders.",
-            icon: Scale
-        },
-        {
-            title: "100% Advance Payment",
-            desc: "The fastest processing route, ideal for urgent shipments and establishing trust.",
-            icon: DollarSign
-        },
-
-        {
-            title: "50 % advance , 50% BL SCAN COPY BEFORE SHIPMENT",
-            desc: "A streamlined process for recurring global trade partners.",
-            icon: Globe
+            title: "Licensed Transport LR Delivery",
+            desc: "Parcels are transported via approved hazardous cargo lorries. Collect your consignment from the local town transport hub using LR bill.",
+            icon: Truck
         }
     ];
 
     return (
-        <div className="pt-52 pb-24 bg-slate-50 min-h-screen selection:bg-secondary selection:text-white">
-            <div className="container max-w-5xl px-6">
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }} // Updated animation
-                    animate={{ opacity: 1, y: 0 }} // Updated animation
-                    transition={{ duration: 0.5 }}
-                >
-                    <div className="flex justify-end mb-12">
-                        <Link
-                            to="/#"
-                            className="inline-flex items-center gap-2 text-slate-500 bg-white shadow-sm hover:bg-secondary hover:text-white px-4 py-2 rounded-xl text-[10px] font-black transition-all group tracking-[0.2em] uppercase border border-slate-100"
-                        >
-                            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-                            Back to Home
-                        </Link>
-                    </div>
+        <div className="pt-44 pb-24 bg-[#080C14] min-h-screen text-white">
+            <div className="container max-w-5xl px-6 mx-auto">
+                <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="flex justify-end mb-8">
+                    <Link
+                        to="/#"
+                        className="inline-flex items-center gap-2 text-slate-300 bg-white/10 hover:bg-amber-500 hover:text-black px-4 py-2 rounded-xl text-xs font-bold transition-all uppercase tracking-wider border border-white/10"
+                    >
+                        <ArrowLeft size={14} /> Back to Home
+                    </Link>
                 </motion.div>
 
                 {/* Hero Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-24"
-                >
-                    <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary/5 text-primary mb-10 border border-primary/10">
-                        <CreditCard size={16} className="text-secondary" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em]">Financial Protocols</span>
+                <div className="text-center mb-16">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 text-amber-300 mb-6 border border-amber-400/30 text-[10px] font-black uppercase tracking-widest">
+                        <CreditCard size={14} className="text-amber-400" />
+                        Safe & Transparent Transactions
                     </div>
-                    <h1 className="text-5xl md:text-7xl font-black text-primary mb-8 tracking-tighter leading-none uppercase">
-                        Payment <span className="text-secondary italic">Terms.</span>
+                    <h1 className="text-4xl sm:text-6xl font-black text-white font-cinzel mb-4 uppercase leading-none">
+                        Payment & <span className="text-amber-400">Delivery Terms</span>
                     </h1>
-                    <p className="text-slate-500 font-medium text-lg max-w-2xl mx-auto leading-relaxed">
-                        Secure, transparent, and internationally recognized payment structures to facilitate seamless global trade operations.
+                    <p className="text-slate-300 text-base max-w-xl mx-auto leading-relaxed">
+                        Clear, hassle-free ordering policies designed for smooth Diwali celebrations and reliable delivery from Sivakasi.
                     </p>
-                </motion.div>
+                </div>
 
-                <div className="grid grid-cols-1 gap-8 mb-24">
+                <div className="grid grid-cols-1 gap-6 mb-16">
                     {paymentMethods.map((method, idx) => (
                         <motion.div
                             key={idx}
-                            initial={{ opacity: 0, x: idx % 2 === 0 ? -20 : 20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.03)] border border-slate-100 flex flex-col md:flex-row items-center gap-10 hover:shadow-[0_40px_80px_rgba(0,43,88,0.08)] transition-all group"
+                            transition={{ delay: idx * 0.08 }}
+                            className="bg-[#111827] p-8 rounded-3xl border border-white/10 flex flex-col md:flex-row items-center gap-8 hover:border-amber-400/40 transition-all group shadow-xl"
                         >
-                            <div className="w-20 h-20 rounded-3xl bg-slate-50 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500 shrink-0">
-                                <method.icon size={32} />
+                            <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-400/30 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform shrink-0">
+                                <method.icon size={28} />
                             </div>
                             <div className="flex-1 text-center md:text-left">
-                                <h2 className="text-2xl font-black text-primary mb-3 tracking-tight uppercase">{method.title}</h2>
-                                <p className="text-slate-500 font-medium leading-relaxed">{method.desc}</p>
+                                <h2 className="text-xl font-bold text-white mb-2 font-cinzel uppercase">{method.title}</h2>
+                                <p className="text-slate-300 text-sm leading-relaxed">{method.desc}</p>
                             </div>
-                            <div className="flex items-center gap-2 text-secondary font-black text-[10px] uppercase tracking-widest shrink-0">
-                                <CheckCircle2 size={16} /> Approved Method
+                            <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider shrink-0">
+                                <CheckCircle2 size={16} /> Verified Safe
                             </div>
                         </motion.div>
                     ))}
                 </div>
 
                 {/* Important Notes */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    className="bg-primary p-12 md:p-16 rounded-[4rem] text-white overflow-hidden relative"
-                >
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                <div className="bg-[#131B2E] p-8 md:p-12 rounded-3xl border border-amber-500/20 text-white">
+                    <h3 className="text-2xl font-black mb-6 uppercase font-cinzel text-amber-400">
+                        Dispatch & Delivery Guidelines
+                    </h3>
 
-                    <div className="relative z-10 max-w-3xl">
-                        <h3 className="text-3xl font-black mb-10 tracking-tight uppercase">Operational Guidelines</h3>
-
-                        <div className="space-y-8">
-                            <div className="flex gap-6">
-                                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                                    <Clock size={20} className="text-secondary" />
-                                </div>
-                                <div>
-                                    <h4 className="text-xs font-black uppercase tracking-widest text-secondary mb-2">Processing Time</h4>
-                                    <p className="text-white/60 font-medium leading-relaxed">International bank transfers (T/T) typically reflect within 3-5 business days. Order processing begins immediately upon confirmation of the initial deposit.</p>
-                                </div>
+                    <div className="space-y-6">
+                        <div className="flex gap-4">
+                            <Clock size={22} className="text-amber-400 shrink-0 mt-1" />
+                            <div>
+                                <h4 className="text-xs font-black uppercase tracking-widest text-white mb-1">
+                                    Dispatch Timelines
+                                </h4>
+                                <p className="text-slate-300 text-sm leading-relaxed">
+                                    Orders placed during the pre-booking period are packed and dispatched in sequence. Consignments typically take 2-4 business days for South India and 4-7 business days for North/West India via road transport.
+                                </p>
                             </div>
+                        </div>
 
-                            <div className="flex gap-6">
-                                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                                    <ShieldCheck size={20} className="text-secondary" />
-                                </div>
-                                <div>
-                                    <h4 className="text-xs font-black uppercase tracking-widest text-secondary mb-2">Security Standard</h4>
-                                    <p className="text-white/60 font-medium leading-relaxed">All transactions are managed through Tier-1 banking channels in compliance with RBI (Reserve Bank of India) and international anti-money laundering regulations.</p>
-                                </div>
+                        <div className="flex gap-4">
+                            <Truck size={22} className="text-amber-400 shrink-0 mt-1" />
+                            <div>
+                                <h4 className="text-xs font-black uppercase tracking-widest text-white mb-1">
+                                    Parcel Office Pickup
+                                </h4>
+                                <p className="text-slate-300 text-sm leading-relaxed">
+                                    Due to fireworks safety rules, consignments are delivered to the designated licensed parcel office / booking godown in your nearest city/town. Customers collect the parcel upon presenting the LR receipt sent by us.
+                                </p>
                             </div>
                         </div>
                     </div>
-                </motion.div>
-
+                </div>
             </div>
         </div>
     );

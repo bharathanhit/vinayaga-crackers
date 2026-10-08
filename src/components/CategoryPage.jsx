@@ -1,107 +1,83 @@
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, ChevronRight, Sparkles, X, Send, Package, ShoppingBag, Info, Award, Phone, Mail, Layers, BoxSelect } from 'lucide-react';
-import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestore';
+import { ArrowLeft, ChevronRight, Sparkles, Flame, Percent, ShieldCheck, Tag } from 'lucide-react';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { products as staticProducts, categories as staticCategories } from '../data/products';
-import halalImg from '../assets/halal.png';
-import woodenBg from '../assets/wooden-background.jpg';
-import agriWallBg from '../assets/agri-wall.jpg';
-import waterBg from '../assets/children-water-bg.png';
-import pouringBg from '../assets/pouring-water.png';
+import heroFireworksImg from '../assets/crackers/hero-fireworks.jpg';
 
-import GlobalInquiryButtons from './GlobalInquiryButtons';
-
-const ProductCard = ({ product, index, themeColor, slug }) => {
+const ProductCard = ({ product, index, themeColor }) => {
     const navigate = useNavigate();
     const imgSrc = product.imageUrl || product.image;
-    const isBeverage = slug === 'beverages';
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.7, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-            whileHover={{ y: -12 }}
-            className="group relative bg-[#0a0a0a] border border-white/5 rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.4)] hover:shadow-[0_40px_100px_rgba(0,0,0,0.6)] transition-all duration-700 m-1 cursor-pointer"
+            transition={{ duration: 0.6, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            whileHover={{ y: -10 }}
+            className="group relative bg-[#111827] border border-amber-500/20 rounded-[2rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:shadow-[0_30px_70px_rgba(245,158,11,0.2)] transition-all duration-500 cursor-pointer flex flex-col justify-between"
             onClick={() => navigate(`/product/${product.id || product.docId}`)}
         >
-            {/* Dynamic Glow Effect on Hover */}
-            <div 
-                className="absolute inset-x-0 bottom-0 h-1/2 opacity-0 group-hover:opacity-20 transition-opacity duration-700 blur-[80px] pointer-events-none z-0"
-                style={{ backgroundColor: themeColor || '#1e9e54' }}
-            />
-
-            <div className={`relative h-64 overflow-hidden z-10 ${isBeverage ? 'bg-slate-50' : 'bg-[#0a0a0a]'}`}>
+            {/* Top Image Box */}
+            <div className="relative h-64 overflow-hidden bg-black/60">
                 <motion.img
                     src={imgSrc}
                     alt={product.title}
-                    className={`w-full h-full ${isBeverage ? 'object-contain p-4' : 'object-cover'} opacity-90 group-hover:opacity-100 transition-all duration-1000`}
-                    whileHover={{ scale: 1.08 }}
+                    className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-all duration-700"
+                    whileHover={{ scale: 1.06 }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-black/30" />
 
-                <div className="absolute top-5 left-5 z-20">
-                    <div className="px-4 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/10">
-                        <span className="text-[9px] font-black text-white uppercase tracking-widest">{product.status || 'Ready to Export'}</span>
-                    </div>
-                </div>
-
-                {product.isHalal && (
-                    <motion.img
-                        initial={{ scale: 0, rotate: -45 }}
-                        whileInView={{ scale: 1, rotate: 12 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.1 + 0.5, type: 'spring' }}
-                        src={halalImg}
-                        alt="Halal"
-                        className="absolute -top-4 -right-4 w-28 pointer-events-none z-20 drop-shadow-2xl"
-                    />
-                )}
-            </div>
-
-            <div className="p-8 relative z-10 bg-gradient-to-b from-transparent to-black/20">
-                <div className="flex justify-between items-start mb-5">
-                    <h3 className="text-xl md:text-2xl font-black text-white tracking-tighter leading-none group-hover:translate-x-1 transition-transform duration-500 uppercase">
-                        {product.title}
-                    </h3>
-                    <div 
-                        className="w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center text-white transition-all duration-500 border border-white/10 shrink-0 group-hover:scale-110 shadow-lg"
-                        style={{ '--hover-bg': themeColor || '#1e9e54' }}
-                    >
-                        <ChevronRight size={18} className="group-hover:text-white" />
-                    </div>
-                </div>
-                
-                <p className="text-slate-400 mb-8 line-clamp-2 text-sm leading-relaxed font-medium group-hover:text-slate-200 transition-colors">
-                    {product.description}
-                </p>
-
-                <div className="pt-6 border-t border-white/5 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div 
-                            className="w-9 h-9 rounded-xl flex items-center justify-center shadow-lg"
-                            style={{ backgroundColor: `${themeColor}20`, color: themeColor }}
-                        >
-                            <Package size={16} />
-                        </div>
-                        <span className="text-[10px] font-black text-white/90 uppercase tracking-widest leading-none">Export Details</span>
-                    </div>
-                    {product.specifications && (
-                        <div className="px-2.5 py-1 bg-white/5 rounded-lg border border-white/5">
-                            <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">
-                                {product.specifications.length} Attributes
-                            </span>
-                        </div>
+                {/* Badges on Image */}
+                <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
+                    <span className="px-3 py-1 bg-rose-600/90 backdrop-blur-md rounded-full text-[9px] font-black text-white uppercase tracking-wider shadow-md">
+                        {product.badgeNote || '100% Green Cracker'}
+                    </span>
+                    {product.discount && (
+                        <span className="px-2.5 py-0.5 bg-amber-500/90 backdrop-blur-md rounded-full text-[9px] font-black text-slate-950 uppercase tracking-wider flex items-center gap-1 shadow-md w-fit">
+                            <Percent size={10} /> {product.discount}
+                        </span>
                     )}
                 </div>
+
+                <div className="absolute bottom-3 right-4 z-20">
+                    <div className="px-3 py-1 bg-black/80 backdrop-blur-md rounded-xl border border-amber-400/40 text-right">
+                        {product.originalPrice && (
+                            <span className="text-[10px] text-slate-400 line-through mr-1.5">{product.originalPrice}</span>
+                        )}
+                        <span className="text-base font-black text-amber-400">{product.price || 'Wholesale Rate'}</span>
+                    </div>
+                </div>
             </div>
 
-            {/* Hover Accent Border */}
-            <div 
-                className="absolute inset-0 border-2 border-transparent group-hover:border-white/10 transition-colors duration-700 pointer-events-none rounded-[2.5rem]"
-            />
+            {/* Content Details */}
+            <div className="p-6 flex-1 flex flex-col justify-between">
+                <div>
+                    <h3 className="text-xl font-black text-white tracking-tight mb-2 group-hover:text-amber-400 transition-colors duration-300 font-cinzel line-clamp-1">
+                        {product.title}
+                    </h3>
+                    
+                    <p className="text-slate-400 mb-6 text-xs md:text-sm leading-relaxed line-clamp-2 group-hover:text-slate-300 transition-colors font-medium">
+                        {product.description}
+                    </p>
+                </div>
+
+                <div>
+                    <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <span className="px-2 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 text-[10px] font-bold flex items-center gap-1">
+                                <ShieldCheck size={12} /> Green Certified
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-1 text-[11px] font-bold text-amber-400 group-hover:translate-x-1 transition-transform">
+                            Details <ChevronRight size={14} />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </motion.div>
     );
 };
@@ -131,7 +107,7 @@ const CategoryPage = () => {
 
     useEffect(() => {
         if (category) {
-            document.title = `${category.title} | Premium Indian Exports | Dhuruvan Exports`;
+            document.title = `${category.title} | Vinayaga Crackers Sivakasi Wholesale`;
         }
     }, [category]);
 
@@ -149,25 +125,13 @@ const CategoryPage = () => {
                 firestoreProducts.forEach(fp => {
                     const idx = merged.findIndex(p => p.title === fp.title);
                     if (idx !== -1) {
-                        const staticProd = merged[idx];
-                        // Merge Firestore data with static as fallback, prioritizing Firestore data
-                        merged[idx] = {
-                            ...staticProd,
-                            ...fp
-                        };
+                        merged[idx] = { ...merged[idx], ...fp };
                     } else {
                         merged.push(fp);
                     }
                 });
             }
-            merged.sort((a, b) => {
-                const getOrder = (p) => {
-                    if (typeof p.order === 'number') return p.order;
-                    if (p.title?.toLowerCase().includes('rice')) return -1000; // Final safety for rice
-                    return 0;
-                };
-                return getOrder(a) - getOrder(b);
-            });
+            merged.sort((a, b) => (a.order || 0) - (b.order || 0));
             setCategoryProducts(merged);
             setLoading(false);
         }, () => {
@@ -179,159 +143,117 @@ const CategoryPage = () => {
 
     if (!loading && !category) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center text-primary pt-52">
-                <h2 className="text-3xl font-black mb-4">Category not found</h2>
-                <Link to="/" className="text-secondary underline">← Back to Home</Link>
+            <div className="min-h-screen flex flex-col items-center justify-center text-white bg-night pt-52">
+                <h2 className="text-3xl font-black mb-4 font-cinzel">Category Not Found</h2>
+                <Link to="/#products" className="text-amber-400 underline font-bold">← Back to All Crackers</Link>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[#050505]">
+        <div className="min-h-screen bg-night text-white">
 
             {/* Hero Banner */}
-            <div className={`relative min-h-[500px] md:min-h-[600px] overflow-hidden bg-gradient-to-br ${category?.gradient || 'from-slate-900 to-slate-800'}`}>
+            <div className="relative min-h-[420px] md:min-h-[500px] overflow-hidden bg-gradient-to-br from-rose-950 via-night to-black">
                 {category && (
                     <motion.img
                         initial={{ scale: 1.1, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 1.8, ease: 'easeOut' }}
+                        animate={{ scale: 1, opacity: 0.4 }}
+                        transition={{ duration: 1.5, ease: 'easeOut' }}
                         src={category.imageUrl || category.image}
                         alt={category.title}
-                        className="absolute inset-0 w-full h-full object-cover opacity-60"
+                        className="absolute inset-0 w-full h-full object-cover"
                     />
                 )}
                 
-                {/* Subtle texture overlay for premium feel */}
-                <div className="absolute inset-0 bg-black/20 mix-blend-multiply z-0" />
-                <div className="absolute bottom-0 left-0 w-full h-2/3 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-0" />
+                <div className="absolute inset-0 bg-gradient-to-t from-night via-night/70 to-transparent z-0" />
 
-                <div className="relative z-10 container mx-auto px-6 pt-52 pb-20">
+                <div className="relative z-10 container mx-auto px-6 pt-40 pb-16">
                     <motion.div
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="flex items-center justify-end gap-3 mb-12"
+                        className="flex items-center justify-end gap-3 mb-8"
                     >
                         <Link 
                             to="/#" 
-                            className="inline-flex items-center gap-2 text-white bg-white/10 hover:bg-secondary px-4 py-2 rounded-xl backdrop-blur-md border border-white/10 text-[10px] font-black transition-all group tracking-widest uppercase"
+                            className="inline-flex items-center gap-2 text-white bg-white/10 hover:bg-amber-500 hover:text-black px-4 py-2 rounded-xl backdrop-blur-md border border-white/10 text-[10px] font-black transition-all tracking-widest uppercase"
                         >
-                            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-                            Back to Home
+                            <ArrowLeft size={14} />
+                            Home
                         </Link>
                         <Link 
                             to="/#products" 
-                            className="inline-flex items-center gap-2 text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl backdrop-blur-md border border-white/10 text-[10px] font-black transition-all group tracking-widest uppercase"
+                            className="inline-flex items-center gap-2 text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl backdrop-blur-md border border-white/10 text-[10px] font-black transition-all tracking-widest uppercase"
                         >
-                            Return to Catalog
+                            All Categories
                         </Link>
                     </motion.div>
 
                     <motion.div 
                         initial={{ opacity: 0, y: 30 }} 
                         animate={{ opacity: 1, y: 0 }} 
-                        transition={{ duration: 0.8, type: 'spring', damping: 25, stiffness: 200 }}
-                        className="max-w-4xl relative z-10"
+                        transition={{ duration: 0.8 }}
+                        className="max-w-3xl relative z-10"
                     >
-
-                        <div className="block mb-5">
-                            <motion.span 
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 0.3 }}
-                                className="text-[10px] md:text-[11px] font-black text-white uppercase tracking-[0.4em] px-5 py-2 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl"
-                            >
-                                Premium Global Selection
-                            </motion.span>
+                        <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-300 text-[10px] font-black uppercase tracking-widest">
+                            <Sparkles size={12} /> Direct Sivakasi Wholesale
                         </div>
                         
-                        <h1 className="text-5xl md:text-[6rem] font-black tracking-tighter leading-none text-white mb-6 drop-shadow-2xl uppercase">
-                            {category?.title || '...'}
+                        <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-tight text-white mb-4 uppercase font-cinzel">
+                            {category?.title}
                         </h1>
                         
-                        <p className="text-white/80 text-xl md:text-2xl font-medium leading-relaxed max-w-2xl drop-shadow-lg tracking-tight">
+                        <p className="text-slate-300 text-base md:text-xl font-normal leading-relaxed max-w-2xl">
                             {category?.description}
                         </p>
                     </motion.div>
                 </div>
-
-                {/* Animated Background Element */}
-                <motion.div 
-                    animate={{ 
-                        scale: [1, 1.2, 1],
-                        opacity: [0.3, 0.5, 0.3],
-                    }}
-                    transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-                    className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none"
-                />
             </div>
 
             {/* Products Grid */}
-            <section 
-                className={`relative overflow-hidden bg-fixed bg-center bg-cover bg-[#050505] py-40 md:py-64 min-h-[100vh]`}
-                style={{ 
-                    backgroundImage: `url(${slug === 'agro-products' ? agriWallBg : slug === 'beverages' ? waterBg : woodenBg})`,
-                    backgroundPosition: 'center 30%'
-                }}
-            >
-                {/* Fixed Overlays for Image Clarity */}
-                {slug === 'woodcrafts' ? (
-                    <div className="absolute inset-0 bg-[#3a2012]/60 z-0" />
-                ) : (
-                    <div className="absolute inset-0 bg-black/40 z-0" />
-                )}
-
-                {/* Refined Mesh Glows (more subtle now cards have glows) */}
-                <div className="absolute inset-0 opacity-40 z-0 pointer-events-none">
-                    <div className="absolute top-0 right-0 w-[80%] h-[80%] rounded-full blur-[140px] -translate-y-1/2 translate-x-1/3" style={{ backgroundColor: `${category?.color}30` }} />
-                    <div className="absolute bottom-0 left-0 w-[60%] h-[60%] rounded-full blur-[120px] translate-y-1/3 -translate-x-1/4" style={{ backgroundColor: `${category?.color}20` }} />
-                </div>
-
-                <div className="container relative z-10 px-6">
-                    <div className="flex flex-col md:flex-row items-end justify-between mb-20 gap-8">
-                        <div className="max-w-2xl">
-                            <motion.p 
-                                initial={{ opacity: 0, x: -20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
-                                className="inline-block px-4 py-1.5 mb-6 rounded-full bg-white/5 border border-white/10 text-[10px] font-black text-white/60 uppercase tracking-[0.4em]"
-                            >
-                                {categoryProducts.length} Premium Collection{categoryProducts.length !== 1 ? 's' : ''}
-                            </motion.p>
-                            <motion.h2 
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: 0.1 }}
-                                className="text-4xl md:text-6xl font-black text-white tracking-tighter uppercase leading-[1.1]"
-                            >
-                                Explore Our <span style={{ color: category?.color || '#1e9e54' }}>{category?.title}</span>
-                            </motion.h2>
+            <section className="py-16 md:py-24 bg-[#0B0F19] relative">
+                <div className="container mx-auto px-6">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-12 gap-4 pb-6 border-b border-white/10">
+                        <div>
+                            <span className="text-amber-400 text-xs font-black uppercase tracking-widest">
+                                {categoryProducts.length} Variety{categoryProducts.length !== 1 ? 'ies' : ''} Available
+                            </span>
+                            <h2 className="text-2xl sm:text-3xl font-black text-white font-cinzel">
+                                Choose Your Cracker Packs
+                            </h2>
                         </div>
 
+                        <a
+                            href="https://wa.me/919655889426?text=Hi%20Vinayaga%20Crackers%20Sivakasi,%20I%20want%20to%20order%20crackers%20from%20this%20category."
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider shadow-lg transition-all"
+                        >
+                            <Sparkles size={14} /> Quick WhatsApp Order
+                        </a>
                     </div>
 
                     {loading ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {[1, 2, 3].map(i => (
-                                <div key={i} className="rounded-[2.5rem] bg-white/5 border border-white/5 animate-pulse h-[500px]" />
+                                <div key={i} className="rounded-[2rem] bg-slate-800/50 animate-pulse h-96" />
                             ))}
                         </div>
                     ) : categoryProducts.length === 0 ? (
-                        <div className="text-center py-32 rounded-[3rem] border border-white/5 bg-white/5 backdrop-blur-sm">
-                            <div className="inline-flex p-5 rounded-3xl bg-white/5 text-white/20 mb-6 font-black uppercase text-xs">Empty Collection</div>
-                            <p className="text-white/40 text-lg font-medium">No products found in this category yet.</p>
+                        <div className="text-center py-24 rounded-3xl border border-white/10 bg-white/5">
+                            <Flame size={36} className="mx-auto text-amber-500 mb-4" />
+                            <p className="text-slate-300 text-lg font-bold">New Diwali stock being updated for this category.</p>
+                            <p className="text-slate-500 text-sm mt-1">Contact us on WhatsApp for custom bulk orders.</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {categoryProducts.map((product, idx) => (
                                 <ProductCard 
                                     key={product.id || product.docId} 
                                     index={idx} 
                                     product={product} 
                                     themeColor={category?.color}
-                                    slug={slug}
                                 />
                             ))}
                         </div>

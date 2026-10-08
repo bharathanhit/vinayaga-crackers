@@ -2,19 +2,25 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand Identity Colors */
-  --color-primary: #002D58;
-  --color-secondary: #1E9E54;
-  --color-accent: #3498DB;
+  /* Festive Diwali Brand Identity Colors */
+  --color-primary: #991B1B;
+  --color-primary-dark: #7F1D1D;
+  --color-secondary: #F59E0B;
+  --color-secondary-hover: #D97706;
+  --color-accent: #EA580C;
+  --color-festive-gold: #FCD34D;
+  --color-night: #0B0F19;
+  --color-night-card: #131B2E;
   --color-text-dark: #0F172A;
   --color-text-light: #F8FAFC;
 
   /* Background Colors */
   --color-bg-white: #FFFFFF;
-  --color-bg-offset: #F1F5F9;
+  --color-bg-offset: #FFFBEB;
 
   /* Font Family */
-  --font-inter: 'Inter', sans-serif;
+  --font-inter: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  --font-cinzel: 'Cinzel', serif;
 
   /* Custom Transitions */
   --transition-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -61,33 +67,43 @@
   }
 
   .btn-primary {
-    @apply bg-primary text-white hover:bg-[#002244] hover:-translate-y-1 hover:shadow-xl;
+    @apply bg-primary text-white hover:bg-primary-dark hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/30;
   }
 
   .btn-secondary {
-    @apply bg-secondary text-white hover:bg-[#1e8449] hover:-translate-y-1 hover:shadow-xl;
+    @apply bg-gradient-to-r from-amber-500 to-amber-600 text-white font-black hover:from-amber-600 hover:to-amber-700 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/30;
   }
 
   .glass {
-    @apply bg-white/85 backdrop-blur-md border-b border-primary/10;
+    @apply bg-white/90 backdrop-blur-md border-b border-primary/10;
+  }
+
+  .glass-dark {
+    @apply bg-night/80 backdrop-blur-xl border border-white/10;
   }
 
   .section-padding {
-    @apply py-24 md:py-32;
+    @apply py-20 md:py-28;
   }
 
   .card {
-    @apply bg-white rounded-3xl overflow-hidden shadow-lg transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl;
+    @apply bg-white rounded-3xl overflow-hidden shadow-lg transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border border-amber-500/10;
   }
 }
 
 /* Custom Interaction Utilities */
 ::selection {
-  @apply bg-secondary text-white;
+  @apply bg-primary text-white;
 }
 
 @layer utilities {
   .text-shadow-lg {
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  }
+  .text-glow {
+    text-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+  }
+  .bg-festive-radial {
+    background: radial-gradient(circle at center, rgba(153, 27, 27, 0.3) 0%, rgba(11, 15, 25, 0.95) 70%, #0B0F19 100%);
   }
 }

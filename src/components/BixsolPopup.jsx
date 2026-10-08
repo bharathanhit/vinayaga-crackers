@@ -16,7 +16,7 @@ const BixsolPopup = ({ isOpen, onClose }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const text = `*New Website Inquiry from Dhuruvan Exports*%0A%0A*Name:* ${formData.name}%0A*Phone:* ${formData.phone}%0A*Website Type:* ${formData.websiteType}%0A*Message:* ${formData.message}`;
+        const text = `*New Website Inquiry from Vinayaga Crackers*%0A%0A*Name:* ${formData.name}%0A*Phone:* ${formData.phone}%0A*Website Type:* ${formData.websiteType}%0A*Message:* ${formData.message}`;
         const whatsappUrl = `https://wa.me/917339310823?text=${text}`;
         window.open(whatsappUrl, "_blank");
         onClose();

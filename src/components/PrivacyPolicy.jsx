@@ -1,149 +1,67 @@
 import { motion } from 'framer-motion';
-import { ArrowLeft, Shield, Eye, Lock, Database, Search, UserCheck } from 'lucide-react';
+import { ArrowLeft, Shield, Lock, Database } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
 
 const PrivacyPolicy = () => {
     useEffect(() => {
-        document.title = "Privacy Policy | Data Protection | Dhuruvan Exports";
-    }, []);                     
-    return (                  
-        <div className="pt-52 pb-24 bg-slate-50 min-h-screen selection:bg-secondary selection:text-white">
-            <div className="container max-w-4xl px-6">
-                <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5 }}
-                >             
-                    <div className="flex justify-end mb-12">
-                        <Link
-                            to="/#"
-                            className="inline-flex items-center gap-2 text-slate-500 bg-white shadow-sm hover:bg-secondary hover:text-white px-4 py-2 rounded-xl text-[10px] font-black transition-all group tracking-[0.2em] uppercase border border-slate-100"
-                        >
-                            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-                            Back to Home
-                        </Link>
-                    </div>
+        document.title = "Privacy Policy | Vinayaga Crackers Sivakasi";
+    }, []);
+
+    return (
+        <div className="pt-44 pb-24 bg-[#080C14] min-h-screen text-white">
+            <div className="container max-w-4xl px-6 mx-auto">
+                <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="flex justify-end mb-8">
+                    <Link
+                        to="/#"
+                        className="inline-flex items-center gap-2 text-slate-300 bg-white/10 hover:bg-amber-500 hover:text-black px-4 py-2 rounded-xl text-xs font-bold transition-all uppercase tracking-wider border border-white/10"
+                    >
+                        <ArrowLeft size={14} /> Back to Home
+                    </Link>
                 </motion.div>
 
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-24"
-                >
-                    <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-secondary/10 text-secondary mb-10 border border-secondary/20">
-                        <Lock size={16} />
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em]">Data Safeguard</span>
+                <div className="text-center mb-16">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 text-amber-300 mb-6 border border-amber-400/30 text-[10px] font-black uppercase tracking-widest">
+                        <Lock size={14} className="text-amber-400" />
+                        Customer Data Protection
                     </div>
-                    <h1 className="text-5xl md:text-7xl font-black text-primary mb-8 tracking-tighter leading-none">
-                        Privacy <span className="text-secondary italic">Control.</span>
+                    <h1 className="text-4xl sm:text-6xl font-black text-white font-cinzel mb-4 uppercase">
+                        Privacy <span className="text-amber-400">Policy</span>
                     </h1>
-                    <p className="text-slate-500 font-medium text-lg max-w-2xl mx-auto leading-relaxed">
-                        Your business intelligence is paramount. At Dhuruvan Exports, we implement enterprise-grade security protocols to protect our global trade partners.
+                    <p className="text-slate-300 text-base max-w-2xl mx-auto leading-relaxed">
+                        At Vinayaga Crackers Sivakasi, we respect your privacy and safeguard all contact, order, and dispatch information provided by our customers.
                     </p>
-                </motion.div>
-
-                <div className="space-y-16">
-                    {/* Section 1 */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="bg-white p-12 rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.03)] border border-slate-100 transition-all hover:shadow-[0_40px_80px_rgba(0,43,88,0.08)]"
-                    >
-                        <div className="flex items-center gap-5 mb-8 text-secondary">
-                            <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center">
-                                <Database size={28} />
-                            </div>
-                            <h2 className="text-3xl font-black text-primary tracking-tight">1. Information Architecture</h2>
-                        </div>
-                        <div className="space-y-6 text-slate-500 font-medium leading-relaxed text-lg">
-                            <p>To facilitate worldwide distribution, we manage business-critical data including:</p>
-                            <ul className="space-y-4">
-                                {[
-                                    'Regulatory business identifiers and Export-Import licenses.',
-                                    'Certified corporate representatives and secure communications.',
-                                    'International port logistics and maritime preferences.',
-                                    'Sourcing history for agro-commodities and specialized crafts.'
-                                ].map((item, i) => (
-                                    <li key={i} className="flex gap-4">
-                                        <div className="mt-2.5 w-1.5 h-1.5 rounded-full bg-secondary shrink-0" />
-                                        <span>{item}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </motion.div>
-
-                    {/* Section 2 */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="bg-white p-12 rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.03)] border border-slate-100 transition-all hover:shadow-[0_40px_80px_rgba(0,43,88,0.08)]"
-                    >
-                        <div className="flex items-center gap-5 mb-8 text-secondary">
-                            <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center">
-                                <Search size={28} />
-                            </div>
-                            <h2 className="text-3xl font-black text-primary tracking-tight">2. Strategic Utilization</h2>
-                        </div>
-                        <div className="space-y-6 text-slate-500 font-medium leading-relaxed text-lg">
-                            <p>All data points are utilized exclusively for operational excellence:</p>
-                            <ul className="space-y-4">
-                                {[
-                                    'Generating high-precision export quotes and proforma invoices.',
-                                    'Orchestrating maritime and air freight logistics pipelines.',
-                                    'Compliance with international banking and T/T regulations.',
-                                    'Digital filing for government-mandated export certifications.'
-                                ].map((item, i) => (
-                                    <li key={i} className="flex gap-4">
-                                        <div className="mt-2.5 w-1.5 h-1.5 rounded-full bg-secondary shrink-0" />
-                                        <span>{item}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </motion.div>
-
-                    {/* Section 3 */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="bg-white p-12 rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.03)] border border-slate-100 transition-all hover:shadow-[0_40px_80px_rgba(0,43,88,0.08)]"
-                    >
-                        <div className="flex items-center gap-5 mb-8 text-secondary">
-                            <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center">
-                                <Eye size={28} />
-                            </div>
-                            <h2 className="text-3xl font-black text-primary tracking-tight">3. Global Integrity</h2>
-                        </div>
-                        <p className="text-slate-500 font-medium text-lg leading-relaxed">
-                            We do not monetize business data. We only facilitate the transfer of necessary details to authorized entities in the export lifecycle, including Tier-1 shipping lines, global inspection agencies (SGS), and banking institutions.
-                        </p>
-                    </motion.div>
-
-                    {/* Section 4 */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="bg-white p-12 rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.03)] border border-slate-100 transition-all hover:shadow-[0_40px_80px_rgba(0,43,88,0.08)]"
-                    >
-                        <div className="flex items-center gap-5 mb-8 text-secondary">
-                            <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center">
-                                <Shield size={28} />
-                            </div>
-                            <h2 className="text-3xl font-black text-primary tracking-tight">4. Fortified Security</h2>
-                        </div>
-                        <p className="text-slate-500 font-medium text-lg leading-relaxed">
-                            Our secure trade pathways ensure that sensitive pricing structures and proprietary wood-craft designs remain confidential. We utilize high-grade encryption for all digital documentation.
-                        </p>
-                    </motion.div>
                 </div>
 
+                <div className="space-y-8 bg-[#111827] p-8 md:p-12 rounded-3xl border border-white/10">
+                    <section>
+                        <h2 className="text-xl font-bold font-cinzel text-amber-400 mb-3 uppercase">1. Information We Collect</h2>
+                        <p className="text-slate-300 text-sm leading-relaxed">
+                            We collect basic order details including your Name, Phone / WhatsApp number, Delivery Town/City, and cracker order requirements strictly to process, pack, and ship your consignment.
+                        </p>
+                    </section>
 
+                    <section>
+                        <h2 className="text-xl font-bold font-cinzel text-amber-400 mb-3 uppercase">2. Use of Information</h2>
+                        <p className="text-slate-300 text-sm leading-relaxed">
+                            Your contact details are exclusively utilized to send price lists, quotation estimates, dispatch Lorry Receipts (LR copy), and communicate regarding parcel status. We never sell, rent, or trade your data to third parties.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2 className="text-xl font-bold font-cinzel text-amber-400 mb-3 uppercase">3. Safe Storage & Security</h2>
+                        <p className="text-slate-300 text-sm leading-relaxed">
+                            Customer orders and inquiry submissions are encrypted and secured via Firebase cloud databases. Access is limited strictly to authorized Vinayaga Crackers dispatch coordinators in Sivakasi.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2 className="text-xl font-bold font-cinzel text-amber-400 mb-3 uppercase">4. Contacting Us</h2>
+                        <p className="text-slate-300 text-sm leading-relaxed">
+                            If you have questions regarding our privacy practices or wish to update your details, please reach out directly at <strong>vinayagacrackerssivakasi@gmail.com</strong> or via WhatsApp at <strong>+91 96558 89426</strong>.
+                        </p>
+                    </section>
+                </div>
             </div>
         </div>
     );

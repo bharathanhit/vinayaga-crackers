@@ -1,32 +1,32 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, Phone, User, Globe, MessageCircle, Mail, MapPin, Building2, AlignLeft } from 'lucide-react';
+import { X, Send, Sparkles, MessageCircle, Phone, MapPin, Flame, CheckCircle2 } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
+import heroFireworksImg from '../assets/crackers/hero-fireworks.jpg';
 
 const WelcomePopup = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
-        email: '',
-        company: '',
-        port: '',
-        interest: 'Agro Products',
-        message: ''
+        city: '',
+        interest: 'Diwali Family Gift Boxes'
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
 
     useEffect(() => {
-        // Show immediately on every load as requested by user
         const timer = setTimeout(() => {
-            setIsOpen(true);
-        }, 800);
+            // Only open if not dismissed in this session
+            const dismissed = sessionStorage.getItem('diwali_popup_dismissed');
+            if (!dismissed) {
+                setIsOpen(true);
+            }
+        }, 1200);
 
-        // Listen for manual triggers from Navbar
         const handleManualOpen = () => {
-            setIsSubmitted(false); // Reset to form view if previously submitted
+            setIsSubmitted(false);
             setIsOpen(true);
         };
 
@@ -38,47 +38,46 @@ const WelcomePopup = () => {
     }, []);
 
     const handleClose = () => {
+        sessionStorage.setItem('diwali_popup_dismissed', 'true');
         setIsOpen(false);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!formData.name || !formData.phone || !formData.port) {
-            alert("Please fill in Name, Phone, and Destination Port.");
+        if (!formData.name || !formData.phone || !formData.city) {
+            alert("Please fill in your Name, Phone Number, and City.");
             return;
         }
 
         setIsSubmitting(true);
         try {
-            // Save to Firestore 'inquiries' collection
             await addDoc(collection(db, 'inquiries'), {
                 name: formData.name,
                 phone: formData.phone,
-                email: formData.email || 'N/A',
-                company: formData.company || 'N/A',
+                destination: formData.city,
                 product: formData.interest,
-                industry: `First Visit Popup (Co: ${formData.company || 'N/A'})`,
-                destination: formData.port,
-                message: formData.message || "N/A",
+                industry: "Welcome Pre-Booking Popup",
                 contactMethod: 'whatsapp',
                 createdAt: serverTimestamp(),
                 status: 'new'
             });
 
             setIsSubmitted(true);
-
-            // Auto close after success message
             setTimeout(() => {
                 setIsOpen(false);
-            }, 3000);
+            }, 2500);
 
-            // Redirect to WhatsApp with full details
-            const waBody = `🤝 *New Global Inquiry - Dhuruvan Exports* 🤝\n\n👤 *Name:* ${formData.name}\n🏢 *Company:* ${formData.company || 'N/A'}\n📱 *Phone:* ${formData.phone}\n✉️ *Email:* ${formData.email || 'N/A'}\n🎯 *Interested In:* ${formData.interest}\n⚓ *Target Port:* ${formData.port}\n📝 *Note:* ${formData.message || "Looking for export catalogs."}\n\n🏢 *Source:* Welcome Popup`;
-            window.open(`https://wa.me/919952777973?text=${encodeURIComponent(waBody)}`, '_blank');
-
+            const waBody = `🎆 *Diwali 2026 Price List Request - Vinayaga Crackers Sivakasi* 🎆\n\n` +
+                `👤 *Name:* ${formData.name}\n` +
+                `📱 *Phone:* ${formData.phone}\n` +
+                `📍 *Delivery City:* ${formData.city}\n` +
+                `🛍️ *Category Interest:* ${formData.interest}\n\n` +
+                `Please send me your Diwali wholesale price list PDF.`;
+            
+            window.open(`https://wa.me/919655889426?text=${encodeURIComponent(waBody)}`, '_blank');
         } catch (error) {
-            console.error("Popup Submission Error:", error);
-            alert("Something went wrong. Please check your connection.");
+            console.error("Popup Error:", error);
+            window.open(`https://wa.me/919655889426?text=Hi%20Vinayaga%20Crackers%20Sivakasi`, '_blank');
         } finally {
             setIsSubmitting(false);
         }
@@ -91,173 +90,111 @@ const WelcomePopup = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-[9999] flex items-center justify-center p-4 backdrop-blur-md bg-primary/40 overflow-y-auto"
+                    className="fixed inset-0 z-[9999] flex items-center justify-center p-4 backdrop-blur-md bg-black/75 overflow-y-auto"
                 >
                     <motion.div
                         initial={{ scale: 0.9, opacity: 0, y: 20 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                        className="relative bg-white rounded-[2.5rem] w-full max-w-2xl overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] my-auto"
-                        onClick={(e) => e.stopPropagation()}
+                        className="bg-[#111827] border border-amber-500/30 rounded-3xl overflow-hidden shadow-2xl max-w-lg w-full text-white relative"
                     >
-                        {/* Top Accent Bar */}
-                        <div className="h-2 bg-secondary w-full" />
+                        {/* Top banner visual */}
+                        <div className="relative h-36 overflow-hidden bg-black">
+                            <img
+                                src={heroFireworksImg}
+                                alt="Diwali Fireworks"
+                                className="w-full h-full object-cover opacity-60"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-black/40" />
+                            
+                            <button
+                                onClick={handleClose}
+                                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-rose-600 transition-colors z-20"
+                                aria-label="Close"
+                            >
+                                <X size={16} />
+                            </button>
 
-                        <button
-                            onClick={handleClose}
-                            className="absolute top-6 right-8 text-[10px] font-black text-slate-400 hover:text-red-500 uppercase tracking-[0.3em] transition-all flex items-center gap-2 group z-50 py-2 px-4 bg-slate-50 hover:bg-red-50 rounded-full border border-slate-100 hover:border-red-100"
-                        >
-                            <X size={14} className="group-hover:rotate-90 transition-transform" />
-                            CLOSE
-                        </button>
+                            <div className="absolute bottom-3 left-6 z-10">
+                                <span className="px-3 py-1 bg-amber-500 text-slate-950 font-black text-[9px] uppercase tracking-widest rounded-full shadow-md">
+                                    Diwali 2026 Pre-Booking Offer
+                                </span>
+                            </div>
+                        </div>
 
-                        {!isSubmitted ? (
-                            <div className="p-8 md:p-12">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 bg-secondary/10 border border-secondary/20 rounded-full mb-6">
-                                    <Globe size={12} className="text-secondary animate-pulse" />
-                                    <span className="text-[9px] font-black text-secondary uppercase tracking-[0.2em]">Global Export Gateway</span>
+                        {/* Content & Form */}
+                        <div className="p-6 sm:p-8">
+                            <h3 className="text-2xl font-black font-cinzel text-white uppercase mb-2">
+                                Get Up To 70% Off Factory Rates!
+                            </h3>
+                            <p className="text-xs sm:text-sm text-slate-300 mb-6">
+                                Download our official <strong>Vinayaga Crackers Sivakasi</strong> wholesale price list PDF directly on your WhatsApp.
+                            </p>
+
+                            {isSubmitted ? (
+                                <div className="py-8 text-center text-emerald-400 space-y-2">
+                                    <CheckCircle2 size={42} className="mx-auto" />
+                                    <h4 className="text-lg font-bold text-white">Opening WhatsApp...</h4>
+                                    <p className="text-xs text-slate-300">Your price list request is being dispatched.</p>
                                 </div>
-
-                                <h2 className="text-4xl md:text-5xl font-black text-primary tracking-tighter uppercase leading-[0.9] mb-4">
-                                    Request Your <br />
-                                    <span className="text-secondary italic">Export Quote.</span>
-                                </h2>
-                                <p className="text-slate-500 font-medium text-sm mb-8">
-                                    Complete your business profile to receive specialized catalogs and landing costs for your region.
-                                </p>
-
-                                <form onSubmit={handleSubmit} className="space-y-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {/* Full Name */}
-                                        <div className="space-y-1.5">
-                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
-                                            <div className="relative group">
-                                                <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-secondary transition-colors" />
-                                                <input
-                                                    type="text" required
-                                                    value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                                    placeholder="Full Name"
-                                                    className="w-full bg-slate-50 border border-slate-100 py-3 pl-12 pr-4 rounded-xl text-xs font-bold text-primary outline-none focus:bg-white focus:border-secondary transition-all"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* Company Name */}
-                                        <div className="space-y-1.5">
-                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Company Name</label>
-                                            <div className="relative group">
-                                                <Building2 size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-secondary transition-colors" />
-                                                <input
-                                                    type="text"
-                                                    value={formData.company} onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                                                    placeholder="Company Name (Optional)"
-                                                    className="w-full bg-slate-50 border border-slate-100 py-3 pl-12 pr-4 rounded-xl text-xs font-bold text-primary outline-none focus:bg-white focus:border-secondary transition-all"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* Phone / WhatsApp */}
-                                        <div className="space-y-1.5">
-                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Phone / WhatsApp</label>
-                                            <div className="relative group">
-                                                <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-secondary transition-colors" />
-                                                <input
-                                                    type="tel" required
-                                                    value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                                    placeholder="WhatsApp with Country Code"
-                                                    className="w-full bg-slate-50 border border-slate-100 py-3 pl-12 pr-4 rounded-xl text-xs font-bold text-primary outline-none focus:bg-white focus:border-secondary transition-all"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* Email Address */}
-                                        <div className="space-y-1.5">
-                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
-                                            <div className="relative group">
-                                                <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-secondary transition-colors" />
-                                                <input
-                                                    type="email"
-                                                    value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                                    placeholder="work@company.com"
-                                                    className="w-full bg-slate-50 border border-slate-100 py-3 pl-12 pr-4 rounded-xl text-xs font-bold text-primary outline-none focus:bg-white focus:border-secondary transition-all"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* Primary Interest */}
-                                        <div className="space-y-1.5">
-                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Primary Interest</label>
-                                            <select
-                                                value={formData.interest} onChange={(e) => setFormData({ ...formData, interest: e.target.value })}
-                                                className="w-full bg-slate-50 border border-slate-100 py-3 px-4 rounded-xl text-xs font-bold text-primary outline-none focus:bg-white focus:border-secondary transition-all appearance-none cursor-pointer"
-                                            >
-                                                <option>Agro Products</option>
-                                                <option>Woodcrafts</option>
-                                                <option>Livestock</option>
-                                                <option>Beverages</option>
-                                                <option>Other Services</option>
-                                            </select>
-                                        </div>
-
-                                        {/* Destination Port */}
-                                        <div className="space-y-1.5">
-                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Destination Port</label>
-                                            <div className="relative group">
-                                                <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-secondary transition-colors" />
-                                                <input
-                                                    type="text" required
-                                                    value={formData.port} onChange={(e) => setFormData({ ...formData, port: e.target.value })}
-                                                    placeholder="Target Discharge Port"
-                                                    className="w-full bg-slate-50 border border-slate-100 py-3 pl-12 pr-4 rounded-xl text-xs font-bold text-primary outline-none focus:bg-white focus:border-secondary transition-all"
-                                                />
-                                            </div>
-                                        </div>
+                            ) : (
+                                <form onSubmit={handleSubmit} className="space-y-3.5">
+                                    <div>
+                                        <input
+                                            type="text"
+                                            required
+                                            placeholder="Your Full Name"
+                                            value={formData.name}
+                                            onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                            className="w-full bg-[#1A2333] border border-white/10 px-4 py-3 rounded-xl text-xs sm:text-sm text-white outline-none focus:border-amber-400"
+                                        />
                                     </div>
 
-                                    {/* Specific Inquiry */}
-                                    <div className="space-y-1.5">
-                                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Specific Inquiry / Message</label>
-                                        <div className="relative group">
-                                            <AlignLeft size={16} className="absolute left-4 top-4 text-slate-300 group-focus-within:text-secondary transition-colors" />
-                                            <textarea
-                                                rows={2}
-                                                value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                                placeholder="Quantities, special certifications, specific requirements..."
-                                                className="w-full bg-slate-50 border border-slate-100 py-3 pl-12 pr-4 rounded-xl text-xs font-bold text-primary outline-none focus:bg-white focus:border-secondary transition-all resize-none"
-                                            />
-                                        </div>
+                                    <div>
+                                        <input
+                                            type="tel"
+                                            required
+                                            placeholder="WhatsApp Number"
+                                            value={formData.phone}
+                                            onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                            className="w-full bg-[#1A2333] border border-white/10 px-4 py-3 rounded-xl text-xs sm:text-sm text-white outline-none focus:border-amber-400"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <input
+                                            type="text"
+                                            required
+                                            placeholder="Delivery City / Town"
+                                            value={formData.city}
+                                            onChange={e => setFormData({ ...formData, city: e.target.value })}
+                                            className="w-full bg-[#1A2333] border border-white/10 px-4 py-3 rounded-xl text-xs sm:text-sm text-white outline-none focus:border-amber-400"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <select
+                                            value={formData.interest}
+                                            onChange={e => setFormData({ ...formData, interest: e.target.value })}
+                                            className="w-full bg-[#1A2333] border border-white/10 px-4 py-3 rounded-xl text-xs sm:text-sm text-white outline-none focus:border-amber-400"
+                                        >
+                                            <option>Diwali Family Gift Boxes</option>
+                                            <option>Wholesale Cracker Store Supply</option>
+                                            <option>Sparklers & Flower Pots Pack</option>
+                                            <option>Aerial Sky Shot Cakes</option>
+                                        </select>
                                     </div>
 
                                     <button
-                                        type="submit" disabled={isSubmitting}
-                                        className="w-full py-4 bg-primary text-white rounded-xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 hover:bg-secondary transition-all flex items-center justify-center gap-3 mt-4"
+                                        type="submit"
+                                        disabled={isSubmitting}
+                                        className="w-full py-3.5 bg-gradient-to-r from-rose-600 via-amber-500 to-amber-600 hover:from-rose-700 hover:to-amber-700 text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 mt-2"
                                     >
-                                        {isSubmitting ? (
-                                            <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                                        ) : (
-                                            <>
-                                                <Send size={16} /> Get Catalog & Quote
-                                            </>
-                                        )}
+                                        <MessageCircle size={16} /> Get WhatsApp Price List
                                     </button>
                                 </form>
-                            </div>
-                        ) : (
-                            <div className="p-16 text-center">
-                                <motion.div
-                                    initial={{ scale: 0 }} animate={{ scale: 1 }}
-                                    className="w-24 h-24 bg-secondary/10 text-secondary rounded-full flex items-center justify-center mx-auto mb-8"
-                                >
-                                    <MessageCircle size={48} />
-                                </motion.div>
-                                <h2 className="text-4xl font-black text-primary tracking-tighter uppercase mb-4">Inquiry Received</h2>
-                                <p className="text-slate-400 font-medium text-lg leading-relaxed">
-                                    Our trade specialists are generating your <br />
-                                    <span className="text-primary font-bold">Priority Export Quote</span> now.
-                                </p>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </motion.div>
                 </motion.div>
             )}

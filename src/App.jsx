@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { doc, getDoc, setDoc, updateDoc, increment } from 'firebase/firestore';
+import { db, analytics } from './firebase';
+import { logEvent } from 'firebase/analytics';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 import TermsAndConditions from './components/TermsAndConditions';
 import PrivacyPolicy from './components/PrivacyPolicy';
-import WoodCrafts from './components/WoodCrafts';
 import Certificates from './components/Certificates';
 import ProductDetail from './components/ProductDetail';
 import AdminPanel from './components/AdminPanel';
@@ -19,6 +21,22 @@ import Footer from './components/Footer';
 import FloatingEnquiry from './components/FloatingEnquiry';
 import WelcomePopup from './components/WelcomePopup';
 
+// Analytics Page View Tracker
+const AnalyticsTracker = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (analytics) {
+      logEvent(analytics, 'page_view', {
+        page_path: location.pathname,
+        page_search: location.search
+      });
+    }
+  }, [location]);
+
+  return null;
+};
+
 // Scroll to top on route change
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -31,16 +49,37 @@ const ScrollToTop = () => {
 };
 
 function App() {
+  useEffect(() => {
+    const trackVisitor = async () => {
+      if (!sessionStorage.getItem('hasVisited')) {
+        sessionStorage.setItem('hasVisited', 'true');
+        try {
+          const docRef = doc(db, 'analytics', 'visitors');
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            await updateDoc(docRef, { count: increment(1) });
+          } else {
+            await setDoc(docRef, { count: 1 });
+          }
+        } catch (error) {
+          console.error("Error tracking visitor:", error);
+        }
+      }
+    };
+    trackVisitor();
+  }, []);
+
   return (
     <div className="min-h-screen bg-white selection:bg-secondary selection:text-white font-inter">
       <ScrollToTop />
+      <AnalyticsTracker />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/terms" element={<TermsAndConditions />} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/wood-crafts" element={<WoodCrafts />} />
+        {/* Legacy /wood-crafts route removed — replaced by Vinayaga Crackers category routes */}
         <Route path="/certificates" element={<Certificates />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/services" element={<ServicesPage />} />

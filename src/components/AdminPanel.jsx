@@ -1210,6 +1210,7 @@ const DashboardOverview = () => {
     const [inquiryCount, setInquiryCount] = useState(0);
     const [newInquiryCount, setNewInquiryCount] = useState(0);
     const [appointmentCount, setAppointmentCount] = useState(0);
+    const [visitorCount, setVisitorCount] = useState(0);
 
     const [certCount, setCertCount] = useState(0);
     const [allProducts, setAllProducts] = useState([]);
@@ -1245,16 +1246,21 @@ const DashboardOverview = () => {
         });
         const u4 = onSnapshot(collection(db, 'appointments'), s => setAppointmentCount(s.size));
         const u5 = onSnapshot(collection(db, 'certificates'), s => setCertCount(s.size));
-        return () => { u1(); u2(); u3(); u4(); u5(); };
+        const u6 = onSnapshot(doc(db, 'analytics', 'visitors'), docSnap => {
+            if (docSnap.exists()) {
+                setVisitorCount(docSnap.data().count || 0);
+            }
+        });
+        return () => { u1(); u2(); u3(); u4(); u5(); u6(); };
     }, []);
 
     const stats = [
+        { icon: Users, label: 'Site Visitors', value: visitorCount, color: 'blue' },
         { icon: FolderOpen, label: 'Categories', value: catCount, color: 'purple' },
         { icon: Package, label: 'Products', value: prodCount, color: 'green' },
         { icon: Mail, label: 'Inquiries', value: inquiryCount, color: 'orange', sub: `${newInquiryCount} New` },
         { icon: Calendar, label: 'Scheduled', value: appointmentCount, color: 'emerald' },
         { icon: Award, label: 'Certificates', value: certCount, color: 'amber' },
-
     ];
     const colorMap = {
         blue: 'bg-blue-50 text-blue-600',

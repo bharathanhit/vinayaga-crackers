@@ -2,18 +2,20 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-    TrendingUp,
     ArrowLeft,
     CheckCircle2,
-    Package,
+    ShieldCheck,
     ArrowRight,
     Layers,
+    Sparkles,
+    Flame,
+    AlertTriangle,
+    PhoneCall,
     BoxSelect
 } from 'lucide-react';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 import { products as staticProducts } from '../data/products';
-import halalImg from '../assets/halal.png';
 import GlobalInquiryButtons from './GlobalInquiryButtons';
 
 const ProductDetail = () => {
@@ -30,7 +32,6 @@ const ProductDetail = () => {
                 const q = query(collection(db, 'products'), where('id', '==', id));
                 const snap = await getDocs(q);
                 
-                // Fallback query by title if ID query is empty
                 let actualSnap = snap;
                 if (actualSnap.empty && staticProd) {
                     const qTitle = query(collection(db, 'products'), where('title', '==', staticProd.title));
@@ -39,11 +40,7 @@ const ProductDetail = () => {
 
                 if (!actualSnap.empty) {
                     const firestoreProd = { ...actualSnap.docs[0].data(), docId: actualSnap.docs[0].id };
-                    // Prioritize Firestore data over static data
                     let finalProd = { ...staticProd, ...firestoreProd };
-                    
-                    // No longer forcing static fields to allow updates from admin panel
-                    
                     setProduct(finalProd);
                 } else if (staticProd) {
                     setProduct(staticProd);
@@ -64,161 +61,175 @@ const ProductDetail = () => {
 
     useEffect(() => {
         if (product) {
-            document.title = `${product.title} | Dhuruvan Exports - India`;
+            document.title = `${product.title} | Vinayaga Crackers Sivakasi`;
         }
     }, [product]);
 
     if (loading) return (
-        <div className="min-h-screen flex items-center justify-center bg-white">
-            <div className="w-12 h-12 border-4 border-secondary/20 border-t-secondary rounded-full animate-spin" />
+        <div className="min-h-screen flex items-center justify-center bg-night text-amber-400">
+            <div className="w-12 h-12 border-4 border-amber-400/20 border-t-amber-400 rounded-full animate-spin" />
         </div>
     );
     if (!product) return null;
 
-    const getEmojiForVariety = (index) => {
-        const emojis = ['🏆', '✨', '🌍', '📦', '🤝'];
-        return emojis[index % emojis.length];
-    };
+    const whatsappMessage = encodeURIComponent(
+        `Hi Vinayaga Crackers Sivakasi, I want to order "${product.title}" (${product.price || ''}). Please confirm stock availability and dispatch process.`
+    );
 
     return (
-        <div id="product-detail" className="min-h-screen bg-[#fafbfc] selection:bg-secondary/30">
-            <div className="container px-6 pt-52 pb-24">
+        <div id="product-detail" className="min-h-screen bg-[#080C14] text-white">
+            <div className="container px-6 pt-40 pb-24 max-w-7xl mx-auto">
+                {/* Back Navigation */}
                 <motion.div
                     initial={{ opacity: 0, x: 10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5 }}
+                    className="flex items-center justify-between gap-3 mb-10 pb-4 border-b border-white/10"
                 >
-                    <div className="flex items-center justify-end gap-3 mb-12">
-                        <Link
-                            to="/#"
-                            className="inline-flex items-center gap-2 text-slate-500 bg-slate-100 hover:bg-secondary hover:text-white px-4 py-2 rounded-xl text-[10px] font-black transition-all group tracking-[0.2em] uppercase"
-                        >
-                            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-                            Back to Home
-                        </Link>
-                        <Link
-                            to={product?.categorySlug ? `/category/${product.categorySlug}` : "/#products"}
-                            className="inline-flex items-center gap-2 text-slate-500 bg-slate-100 hover:bg-secondary hover:text-white px-4 py-2 rounded-xl text-[10px] font-black transition-all group tracking-[0.2em] uppercase"
-                        >
-                            Back to {product?.categorySlug ? product.category : 'Catalog'}
-                        </Link>
-                    </div>
+                    <Link
+                        to="/#"
+                        className="inline-flex items-center gap-2 text-slate-400 hover:text-amber-400 text-xs font-bold transition-all uppercase tracking-wider"
+                    >
+                        <ArrowLeft size={16} /> Home
+                    </Link>
+                    <Link
+                        to={product?.categorySlug ? `/category/${product.categorySlug}` : "/#products"}
+                        className="inline-flex items-center gap-2 text-amber-400 hover:text-amber-300 text-xs font-bold transition-all uppercase tracking-wider"
+                    >
+                        {product?.category || 'Crackers Catalog'} <ArrowRight size={14} />
+                    </Link>
                 </motion.div>
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mb-24">
-                    {/* Left Column: Product Image & Highlights */}
-                    <div className="lg:col-span-6 space-y-12">
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-20">
+                    {/* Left Column: Product Image */}
+                    <div className="lg:col-span-6 space-y-6">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.8 }}
-                            className="relative group rounded-[3rem] overflow-hidden shadow-2xl bg-white border border-slate-100 aspect-square"
+                            className="relative rounded-[2.5rem] overflow-hidden shadow-2xl bg-black border border-amber-500/20 aspect-square"
                         >
                             <img
                                 src={product.imageUrl || product.image}
                                 alt={product.title}
-                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                                className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
                             
-                            <div className="absolute top-8 left-8 z-20">
-                                <div className="px-5 py-2 bg-white/90 backdrop-blur-md rounded-full shadow-xl border border-white/20">
-                                    <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Premium Export Entry</span>
-                                </div>
+                            <div className="absolute top-6 left-6 z-20 flex flex-col gap-2">
+                                <span className="px-4 py-1.5 bg-rose-600/95 backdrop-blur-md rounded-full text-[10px] font-black text-white uppercase tracking-wider shadow-lg">
+                                    {product.badgeNote || '100% Green Cracker'}
+                                </span>
+                                {product.discount && (
+                                    <span className="px-3 py-1 bg-amber-500 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider shadow-lg">
+                                        {product.discount}
+                                    </span>
+                                )}
                             </div>
 
-                            {product.isHalal && (
-                                <motion.img
-                                    initial={{ scale: 0, rotate: -45 }}
-                                    animate={{ scale: 1, rotate: 12 }}
-                                    src={halalImg}
-                                    alt="Halal"
-                                    className="absolute -top-4 -right-4 w-32 pointer-events-none z-20 drop-shadow-2xl opacity-90"
-                                />
-                            )}
+                            <div className="absolute bottom-6 left-6 right-6 z-20 flex items-center justify-between bg-black/60 backdrop-blur-md p-4 rounded-2xl border border-white/10">
+                                <div>
+                                    <p className="text-[10px] text-slate-400 uppercase font-black">Wholesale Price</p>
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="text-3xl font-black text-amber-400 font-cinzel">{product.price || 'Direct Rate'}</span>
+                                        {product.originalPrice && (
+                                            <span className="text-sm text-slate-400 line-through">{product.originalPrice}</span>
+                                        )}
+                                    </div>
+                                </div>
+                                <span className="px-3 py-1 bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 text-[10px] font-bold rounded-lg uppercase">
+                                    In Stock
+                                </span>
+                            </div>
                         </motion.div>
 
+                        {/* Safety Guidelines Card */}
+                        <div className="bg-[#111827] border border-amber-500/20 rounded-3xl p-6">
+                            <h3 className="text-sm font-black text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <AlertTriangle size={18} className="text-amber-400" />
+                                Cracker Safety Instructions
+                            </h3>
+                            <ul className="space-y-2 text-xs text-slate-300">
+                                <li className="flex items-start gap-2">
+                                    <span className="text-amber-400 font-bold">•</span>
+                                    <span>Always light crackers outdoors in an open space, away from flammable materials.</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-amber-400 font-bold">•</span>
+                                    <span>Use an incense stick (agarbatti) or sparkler to ignite from arm's length.</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-amber-400 font-bold">•</span>
+                                    <span>Keep a bucket of water and sand nearby for emergency disposal.</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-amber-400 font-bold">•</span>
+                                    <span>Children should always burst crackers under strict adult supervision.</span>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
+                    {/* Right Column: Title, Specs & Order */}
+                    <div className="lg:col-span-6 space-y-8">
+                        <div>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-rose-950/60 border border-rose-500/40 rounded-full text-rose-300 text-[10px] font-black uppercase tracking-widest mb-4">
+                                <Sparkles size={12} className="text-amber-400" />
+                                <span>Direct From Sivakasi • {product.category}</span>
+                            </div>
 
-                    {/* Right Column: Title, Description & Specifications Card */}
-                    <div className="lg:col-span-6 space-y-10">
-                        <section>
-                            <motion.div
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="inline-flex items-center gap-3 px-4 py-1.5 bg-secondary/10 border border-secondary/20 rounded-full text-secondary text-[9px] font-black uppercase tracking-[0.3em] mb-8"
-                            >
-                                <TrendingUp size={12} />
-                                <span>Export Grade {product.category}</span>
-                            </motion.div>
+                            <h1 className="text-3xl sm:text-5xl font-black text-white mb-4 tracking-tight leading-tight uppercase font-cinzel">
+                                {product.title}
+                            </h1>
 
-                            <motion.h1
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 0.95, x: 0 }}
-                                className="text-4xl md:text-6xl font-black text-primary mb-2 tracking-tighter leading-[0.95] uppercase"
-                            >
-                                {product.title.split(' ').map((word, i) => (
-                                    <span key={i} className={i === product.title.split(' ').length - 1 ? "text-secondary italic block lg:inline" : ""}>
-                                        {word}{' '}
-                                    </span>
-                                ))}
-                            </motion.h1>
-
-                            {product.price && (
-                                <motion.div
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.3 }}
-                                    className="inline-flex flex-col gap-1 px-8 py-4 bg-white border-l-4 border-secondary shadow-sm rounded-r-3xl mb-12"
-                                >
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Estimated Quote Value</span>
-                                    <div className="text-3xl font-black text-primary italic tracking-tight">
-                                        {product.price}
-                                    </div>
-                                </motion.div>
-                            )}
-
-                            <motion.p
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.2 }}
-                                className="text-lg md:text-xl text-slate-500 leading-relaxed font-medium mb-12"
-                            >
+                            <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-normal mb-6">
                                 {product.longDescription || product.description}
-                            </motion.p>
-                        </section>
+                            </p>
 
-                        {/* Detailed Specs Card */}
+                            {/* Quick Order Buttons */}
+                            <div className="flex flex-wrap gap-4 mb-8">
+                                <a
+                                    href={`https://wa.me/919655889426?text=${whatsappMessage}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="btn bg-emerald-600 hover:bg-emerald-700 text-white shadow-xl px-8 py-4 text-xs font-black tracking-widest uppercase flex items-center gap-2 flex-1 justify-center rounded-2xl"
+                                >
+                                    <PhoneCall size={16} /> Order on WhatsApp
+                                </a>
+                                <button
+                                    onClick={() => window.dispatchEvent(new CustomEvent('openInquiryPopup'))}
+                                    className="btn bg-gradient-to-r from-rose-600 to-amber-600 text-white px-8 py-4 text-xs font-black tracking-widest uppercase flex-1 justify-center rounded-2xl shadow-xl hover:from-rose-700 hover:to-amber-700"
+                                >
+                                    Enquire / Add to List
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Specifications Table */}
                         {product.specifications && product.specifications.length > 0 && (
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="bg-white border border-slate-100 rounded-[2.5rem] p-8 md:p-10 shadow-sm relative overflow-hidden group"
-                            >
-                                <h3 className="text-xl font-black mb-8 tracking-tighter flex items-center gap-3 text-primary uppercase">
-                                    <ArrowRight size={18} className="text-secondary" />
-                                    Specifications
+                            <div className="bg-[#111827] border border-white/10 rounded-3xl p-6 sm:p-8">
+                                <h3 className="text-base font-black mb-6 tracking-wide flex items-center gap-2 text-amber-400 uppercase font-cinzel">
+                                    <Flame size={18} />
+                                    Cracker Specifications
                                 </h3>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4 relative z-10">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {product.specifications.map((spec, i) => (
-                                        <div key={i} className="flex flex-col gap-1 border-b border-slate-50 pb-3 last:border-0 md:[&:nth-last-child(2)]:border-0 transition-colors group/spec overflow-hidden">
-                                            <span className="text-[9px] font-black text-secondary tracking-widest uppercase">{spec.label}</span>
-                                            <span className="text-[14px] font-black text-primary leading-tight break-words whitespace-pre-line">{spec.value}</span>
+                                        <div key={i} className="bg-black/40 border border-white/5 rounded-xl p-3.5 flex flex-col justify-between">
+                                            <span className="text-[10px] font-black text-amber-400/80 uppercase tracking-wider">{spec.label}</span>
+                                            <span className="text-sm font-bold text-white mt-1">{spec.value}</span>
                                         </div>
                                     ))}
                                 </div>
 
-                                {/* Available Types - Positioned closely after specs */}
                                 {product.types && product.types.length > 0 && (
-                                    <div className="mt-6 pt-4 relative z-10">
-                                        <div className="flex items-center gap-2 mb-3">
-                                            <Layers size={14} className="text-secondary" />
-                                            <p className="text-[9px] font-black text-secondary tracking-widest uppercase">Available Types</p>
-                                        </div>
+                                    <div className="mt-6 pt-5 border-t border-white/10">
+                                        <p className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                                            <Layers size={13} /> Available Pack Variants
+                                        </p>
                                         <div className="flex flex-wrap gap-2">
                                             {product.types.map((type, i) => (
-                                                <span key={i} className="px-3 py-1.5 bg-slate-50 border border-slate-100 text-primary text-[9px] font-black uppercase tracking-widest rounded-full hover:bg-secondary hover:text-white hover:border-secondary transition-all">
+                                                <span key={i} className="px-3 py-1.5 bg-black/60 border border-amber-400/30 text-slate-200 text-xs font-bold uppercase rounded-lg">
                                                     {type}
                                                 </span>
                                             ))}
@@ -227,178 +238,64 @@ const ProductDetail = () => {
                                 )}
 
                                 {product.minimumOrder && (
-                                    <div className="mt-8 relative z-10">
-                                        <div className="bg-slate-50/50 border border-slate-100 rounded-2xl p-5 flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center shrink-0">
-                                                <BoxSelect size={18} className="text-secondary" />
-                                            </div>
-                                            <div>
-                                                <p className="text-[9px] font-black text-secondary uppercase tracking-widest mb-0.5">Min Order</p>
-                                                <p className="text-base font-black text-primary leading-tight">{product.minimumOrder}</p>
-                                            </div>
+                                    <div className="mt-6 p-4 bg-amber-500/10 border border-amber-400/30 rounded-2xl flex items-center gap-3">
+                                        <BoxSelect size={20} className="text-amber-400 shrink-0" />
+                                        <div>
+                                            <span className="text-[9px] font-black text-amber-300 uppercase tracking-widest block">Minimum Order Requirement</span>
+                                            <span className="text-sm font-black text-white">{product.minimumOrder}</span>
                                         </div>
                                     </div>
                                 )}
-                            </motion.div>
+                            </div>
                         )}
 
-                        {/* Varieties Section (Moved Here) */}
+                        {/* Varieties Section */}
                         {product.varieties && product.varieties.length > 0 && (
-                            <motion.section 
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.3 }}
-                                className="space-y-6 pt-4"
-                            >
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-[9px] font-black text-secondary uppercase tracking-[0.3em]">Selection</span>
-                                    <h2 className="text-xl font-black text-primary uppercase tracking-tighter">Varieties</h2>
-                                </div>
-
-                                <div className="space-y-4">
-                                    {product.varieties.map((variety, index) => (
-                                        <div
-                                            key={index}
-                                            className="group relative bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-all duration-500 overflow-hidden"
-                                        >
-                                            <div className="absolute top-0 right-0 p-4 text-slate-50 font-black text-6xl pointer-events-none group-hover:text-secondary/5 transition-colors leading-none">
-                                                {index + 1}
-                                            </div>
-                                            <div className="flex items-center gap-4 relative z-10">
-                                                <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-xl border border-slate-100 shrink-0">
-                                                    {getEmojiForVariety(index)}
-                                                </div>
-                                                <div className="flex-1">
-                                                    <h3 className="text-lg font-black text-primary tracking-tighter uppercase group-hover:text-secondary transition-colors leading-none mb-2">
-                                                        {variety.title}
-                                                    </h3>
-                                                    <p className="text-sm text-slate-500 font-medium line-clamp-2 leading-snug">
-                                                        {variety.desc}
-                                                    </p>
-                                                </div>
-                                            </div>
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-black text-white uppercase font-cinzel">Featured Varieties</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {product.varieties.map((v, idx) => (
+                                        <div key={idx} className="bg-[#111827] border border-white/10 rounded-2xl p-5 hover:border-amber-400/40 transition-colors">
+                                            <h4 className="text-base font-bold text-amber-400 mb-1">{v.title}</h4>
+                                            <p className="text-xs text-slate-300">{v.desc}</p>
                                         </div>
                                     ))}
                                 </div>
-                            </motion.section>
+                            </div>
                         )}
                     </div>
                 </div>
 
-                {/* Custom Paragraph Sections (Admin Entered) */}
-                {product.paragraphs && product.paragraphs.filter(p => p.heading || p.body).length > 0 && (
-                    <motion.section
-                        initial={{ opacity: 0, y: 24 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6 }}
-                        className="mt-20"
-                    >
-                        {/* Section Header */}
-                        <div className="flex items-center gap-4 mb-10">
-                            <div className="w-1 h-10 bg-gradient-to-b from-secondary to-secondary/30 rounded-full" />
-                            <div>
-                                <span className="text-[9px] font-black text-secondary uppercase tracking-[0.35em]">In-Depth</span>
-                                <h2 className="text-3xl font-black text-primary uppercase tracking-tighter leading-none">Product Insights</h2>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {product.paragraphs.filter(p => p.heading || p.body).map((para, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: i * 0.12, duration: 0.5 }}
-                                    className="relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-[2.5rem] p-8 md:p-10 overflow-hidden group hover:shadow-2xl hover:shadow-secondary/10 transition-all duration-500 border border-white/5 hover:border-secondary/20"
-                                >
-                                    {/* Decorative number */}
-                                    <div className="absolute top-6 right-8 text-[5rem] font-black text-white/[0.04] leading-none pointer-events-none select-none">
-                                        {String(i + 1).padStart(2, '0')}
-                                    </div>
-
-                                    {/* Decorative quote mark */}
-                                    <div className="absolute top-8 left-8 text-4xl text-secondary/20 font-black leading-none pointer-events-none">"</div>
-
-                                    {/* Glowing blob */}
-                                    <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-secondary/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-
-                                    <div className="relative z-10 pt-4">
-                                        {para.heading && (
-                                            <div className="flex items-start gap-3 mb-4">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-secondary mt-2.5 shrink-0" />
-                                                <h3 className="text-xl font-black text-white uppercase tracking-tight group-hover:text-secondary transition-colors duration-300 leading-tight">
-                                                    {para.heading}
-                                                </h3>
-                                            </div>
-                                        )}
-                                        {para.body && (
-                                            <p className="text-base text-slate-300 font-medium leading-[1.8] whitespace-pre-line pl-4">
-                                                {para.body}
-                                            </p>
-                                        )}
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </motion.section>
-                )}
-
-
-                <div className="mt-12 pt-12 border-t border-slate-100">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-                        <div className="lg:col-span-12">
-                            {/* Benefits List (Full Width or Side-by-Side) */}
-                            {product.benefits && product.benefits.length > 0 && (
-                                <div className="bg-white border border-slate-100 rounded-[3rem] p-12 shadow-sm">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                                        <div>
-                                            <h3 className="text-3xl font-black text-primary mb-8 tracking-tighter uppercase">Key Benefits</h3>
-                                            <div className="space-y-4">
-                                                {product.benefits.map((benefit, i) => (
-                                                    <div key={i} className="flex items-start gap-4 text-slate-600 group">
-                                                        <div className="w-6 h-6 rounded-full bg-secondary/10 flex items-center justify-center shrink-0 group-hover:bg-secondary transition-colors mt-0.5">
-                                                            <CheckCircle2 size={12} className="text-secondary group-hover:text-white" />
-                                                        </div>
-                                                        <span className="text-[15px] font-bold tracking-tight leading-tight group-hover:text-primary transition-colors">{benefit}</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                        <div className="bg-slate-50 rounded-[2rem] p-8 flex flex-col justify-center items-center text-center space-y-6">
-                                            <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Direct Inquiry</p>
-                                            <h4 className="text-2xl font-black text-primary tracking-tighter">Ready to Source?</h4>
-                                            <GlobalInquiryButtons productTitle={product.title} context="Product Detail Consolidated" className="w-full" />
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Bottom CTA Section */}
+                {/* Bottom Order CTA */}
                 <motion.section
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="mt-24 bg-slate-900 rounded-[3rem] p-12 md:p-20 relative overflow-hidden text-center"
+                    className="bg-gradient-to-r from-rose-950 via-[#111827] to-amber-950 rounded-3xl p-10 md:p-14 border border-amber-400/30 text-center relative overflow-hidden"
                 >
-                    <div className="absolute inset-0 opacity-20">
-                        <div className="absolute top-0 left-0 w-96 h-96 bg-secondary rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2" />
-                    </div>
-
-                    <div className="relative z-10 max-w-3xl mx-auto">
-                        <h2 className="text-3xl md:text-5xl font-black text-white mb-8 tracking-tighter uppercase leading-[0.95]">
-                            Ready to Source <br /> <span className="text-secondary italic">Premium {product.title}?</span>
+                    <div className="relative z-10 max-w-2xl mx-auto">
+                        <Sparkles size={32} className="mx-auto text-amber-400 mb-3" />
+                        <h2 className="text-2xl sm:text-4xl font-black text-white mb-4 tracking-tight uppercase font-cinzel">
+                            Order Your Diwali Crackers Today
                         </h2>
-                        <p className="text-white/50 text-lg mb-12 font-medium">
-                            Dhuruvan Exports handles everything from quality inspection to global logistics. Partner with us for reliable, high-volume supply.
+                        <p className="text-slate-300 text-sm sm:text-base mb-8">
+                            Vinayaga Crackers Sivakasi offers direct factory wholesale discounts, authentic green crackers, and safe insured parcel dispatch to all towns and cities across India.
                         </p>
-                        <div className="flex flex-col gap-6 justify-center">
-                            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em] mb-4">Partner with Dhuruvan Exports Today</p>
-                            <GlobalInquiryButtons productTitle={product.title} className="max-w-2xl mx-auto w-full" />
+                        <div className="flex flex-wrap justify-center gap-4">
+                            <a
+                                href={`https://wa.me/919655889426?text=${whatsappMessage}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3.5 text-xs font-black uppercase tracking-wider rounded-xl inline-flex items-center gap-2"
+                            >
+                                <PhoneCall size={16} /> WhatsApp: +91 96558 89426
+                            </a>
+                            <button
+                                onClick={() => window.dispatchEvent(new CustomEvent('openInquiryPopup'))}
+                                className="btn bg-amber-500 hover:bg-amber-600 text-slate-950 px-8 py-3.5 text-xs font-black uppercase tracking-wider rounded-xl"
+                            >
+                                Get Complete Price List
+                            </button>
                         </div>
                     </div>
                 </motion.section>
@@ -408,15 +305,3 @@ const ProductDetail = () => {
 };
 
 export default ProductDetail;
-
-
-
-
-
-
-
-
-
-
-
-
