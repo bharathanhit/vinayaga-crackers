@@ -1,6 +1,7 @@
 import groundChakkarsImg from '../assets/crackers/ground-chakkars.jpg';
 import flowerPotsImg from '../assets/crackers/flower-pots.jpg';
 import sparklersImg from '../assets/crackers/sparklers.jpg';
+import { childrenFountainProducts } from './childrenFountainProducts';
 
 import skyShotsImg from '../assets/crackers/sky-shots.jpg';
 
@@ -43,6 +44,15 @@ export const priceListCategories = [
         badge: 'Sparkling Whips',
         itemCount: 2,
         color: '#8B5CF6'
+    },
+    {
+        id: 'childrens-special-fountains',
+        titleEn: "CHILDREN'S SPECIAL FOUNTAINS",
+        titleTa: 'குழந்தைகள் சிறப்பு பவுண்டைன்ஸ்',
+        slug: 'childrens-special-fountains',
+        badge: 'Special Fountains',
+        itemCount: 20,
+        color: '#0891B2'
     }
 ];
 
@@ -488,5 +498,20 @@ export const priceListProducts = [
         image: sparklersImg,
         badge: 'Long Whip Star',
         tagTa: 'நீண்ட சாட்டை'
-    }
+    },
+    ...childrenFountainProducts.map(({ sno, nameEn, nameTa, price, discountPrice, image }) => ({
+        sno,
+        id: `p-${sno}`,
+        nameEn,
+        nameTa,
+        categoryKey: 'childrens-special-fountains',
+        categoryEn: "CHILDREN'S SPECIAL FOUNTAINS",
+        categoryTa: 'குழந்தைகள் சிறப்பு பவுண்டைன்ஸ்',
+        price,
+        discountPrice,
+        per: '1 Box',
+        image,
+        badge: 'Special Fountain',
+        tagTa: 'சிறப்பு பவுண்டைன்'
+    }))
 ];

@@ -1,7 +1,6 @@
 import sparklersImg from '../assets/crackers/sparklers.jpg';
 import flowerPotsImg from '../assets/crackers/flower-pots.jpg';
 import groundChakkarsImg from '../assets/crackers/ground-chakkars.jpg';
-import skyShotsImg from '../assets/crackers/sky-shots.jpg';
 import kuruviImg from '../assets/crackers/kuruvi.jpg';
 import lakshmiImg from '../assets/crackers/lakshmi.jpg';
 import deluxeSoundImg from '../assets/crackers/deluxe-sound.jpg';
@@ -10,6 +9,7 @@ import anarSpecialImg from '../assets/crackers/anar-special.jpg';
 import twinklingStarImg from '../assets/crackers/twinkling-star.jpg';
 import pencilCrackersImg from '../assets/crackers/pencil-crackers.jpg';
 import pencilSticksImg from '../assets/crackers/pencil-sticks.jpg';
+import { childrenFountainProducts } from './childrenFountainProducts';
 
 export const categories = [
     {
@@ -66,6 +66,17 @@ export const categories = [
         image: pencilCrackersImg,
         color: '#2563eb',
         gradient: 'from-blue-600 to-blue-950',
+    },
+    {
+        id: 'childrens-special-fountains',
+        title: "Children's Special Fountains",
+        titleTa: 'குழந்தைகள் சிறப்பு பவுண்டைன்ஸ்',
+        descTa: 'வண்ண ஒளி பொழியும் சிறப்பு பவுண்டைன்கள் • 20 வகைகள்',
+        slug: 'childrens-special-fountains',
+        description: "A colourful collection of Sivakasi special fountains. Adult supervision required.",
+        image: flowerPotsImg,
+        color: '#0891b2',
+        gradient: 'from-cyan-600 to-cyan-950',
     },
 ];
 
@@ -948,5 +959,28 @@ export const products = [
             { label: 'Certification', value: '100% Green Cracker (PESO Approved)' },
             { label: 'Origin', value: 'Sivakasi Factory Direct' }
         ]
-    }
+    },
+    ...childrenFountainProducts.map(({ sno, nameEn, nameTa, price, discountPrice, image }) => ({
+        id: `p-${sno}`,
+        sno,
+        title: `${nameEn} / ${nameTa}`,
+        nameEn,
+        nameTa,
+        order: sno,
+        category: "Children's Special Fountains",
+        categorySlug: 'childrens-special-fountains',
+        image,
+        price: `₹${discountPrice}`,
+        originalPrice: `₹${price}`,
+        discount: `${Math.round(((price - discountPrice) / price) * 100)}% OFF`,
+        per: '1 Box',
+        description: `${nameEn} — Sivakasi special fountain firework. Use only as directed and with adult supervision.`,
+        badgeNote: 'Special Fountain',
+        safetyRating: 'Adult supervision required',
+        specifications: [
+            { label: 'Pack Quantity', value: '1 Box' },
+            { label: 'Type', value: 'Special Fountain' },
+            { label: 'Origin', value: 'Sivakasi, Tamil Nadu' }
+        ]
+    }))
 ];

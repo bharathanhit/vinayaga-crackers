@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
-import { Mail, Phone, ShieldCheck, ShoppingBag, MessageSquare, Compass, HelpCircle, Sparkles, Flame, MapPin, Facebook, Instagram, Youtube } from 'lucide-react';
+import { Mail, Phone, ShieldCheck, ShoppingBag, MessageSquare, Compass, HelpCircle, Sparkles, Flame, MapPin, Truck, Facebook, Instagram, Youtube } from 'lucide-react';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
 import { categories as staticCategories } from '../data/products';
