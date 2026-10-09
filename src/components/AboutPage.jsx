@@ -118,7 +118,7 @@ const AboutPage = () => {
                             {[
                                 "100% Certified Green Crackers",
                                 "PESO Approved Manufacturing License",
-                                "Factory Direct Wholesale Savings (Up to 70%)",
+                                "Factory Direct Wholesale Savings (Flat 90% OFF)",
                                 "Zero Child Labor Guarantee",
                                 "Safe Pan-India Transport Dispatches",
                                 "Custom Family & Corporate Gift Hampers"
@@ -189,12 +189,12 @@ const AboutPage = () => {
                     </p>
                     <div className="flex flex-wrap justify-center gap-4">
                         <a
-                            href="https://wa.me/919655889426?text=Hi%20Vinayaga%20Crackers%20Sivakasi,%20I%20would%20like%20to%20get%20more%20details%20about%20ordering%20crackers."
+                            href="https://wa.me/918940921075?text=Hi%20Vinayaga%20Crackers%20Sivakasi,%20I%20would%20like%20to%20get%20more%20details%20about%20ordering%20crackers."
                             target="_blank"
                             rel="noopener noreferrer"
                             className="btn bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3.5 text-xs font-black uppercase tracking-wider rounded-xl inline-flex items-center gap-2"
                         >
-                            <PhoneCall size={16} /> WhatsApp: +91 96558 89426
+                            <PhoneCall size={16} /> WhatsApp: +91 89409 21075
                         </a>
                         <Link
                             to="/#products"

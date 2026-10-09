@@ -9,7 +9,7 @@ const faqData = [
         answer: "Yes, absolutely. All crackers manufactured by Vinayaga Crackers Sivakasi follow CSIR-NEERI (SWAS, STAR, SAFAL) formulations approved by the Supreme Court of India. They produce 30-35% lower emissions, emit no toxic barium nitrate, and carry authentic green cracker logos and QR codes on the packaging."
     },
     {
-        question: "Why are your prices up to 70% cheaper than local city stalls?",
+        question: "Why are your prices up to 90% cheaper than local city stalls?",
         answer: "Local city stalls pay high seasonal shop rents, trader commissions, and multiple distributor margins. By buying directly from Vinayaga Crackers in Sivakasi, you purchase straight from the factory source at wholesale rates, saving you substantial money."
     },
     {
@@ -22,7 +22,7 @@ const faqData = [
     },
     {
         question: "When is the ideal time to place a pre-booking order for Diwali?",
-        answer: "We strongly recommend placing your pre-booking order between August and early October. Early birds enjoy the maximum factory discounts (up to 70-75% off), complete stock availability, and guaranteed delivery before Diwali without last-minute transport delays."
+        answer: "We strongly recommend placing your pre-booking order between August and early October. Early birds enjoy the maximum factory discounts (Flat 90% off), complete stock availability, and guaranteed delivery before Diwali without last-minute transport delays."
     },
     {
         question: "How do I track my order once dispatched from Sivakasi?",
@@ -128,12 +128,12 @@ const FAQ = () => {
                     <h3 className="text-xl font-bold font-cinzel text-white mb-2">Have a question that is not listed here?</h3>
                     <p className="text-slate-400 text-sm mb-6">Our Sivakasi customer team is available on WhatsApp to assist you directly.</p>
                     <a
-                        href="https://wa.me/919655889426?text=Hi%20Vinayaga%20Crackers%20Sivakasi,%20I%20have%20a%20question%20regarding%20crackers."
+                        href="https://wa.me/918940921075?text=Hi%20Vinayaga%20Crackers%20Sivakasi,%20I%20have%20a%20question%20regarding%20crackers."
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3.5 text-xs font-black uppercase tracking-wider rounded-xl inline-flex items-center gap-2"
                     >
-                        <MessageCircle size={16} /> Chat on WhatsApp (+91 96558 89426)
+                        <MessageCircle size={16} /> Chat on WhatsApp (+91 89409 21075)
                     </a>
                 </div>
             </section>

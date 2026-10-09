@@ -42,15 +42,15 @@ const GlobalInquiryButtons = ({ productTitle = "Diwali Crackers Order", classNam
             const subject = `Diwali Cracker Inquiry for ${productTitle}`;
 
             if (type === 'whatsapp') {
-                window.open(`https://wa.me/919655889426?text=${encodeURIComponent(waBody)}`, '_blank');
+                window.open(`https://wa.me/918940921075?text=${encodeURIComponent(waBody)}`, '_blank');
             } else if (type === 'email') {
                 window.location.href = `mailto:vinayagacrackerssivakasi@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(waBody)}`;
             } else if (type === 'call') {
-                window.location.href = `tel:+919655889426`;
+                window.location.href = `tel:+918940921075`;
             }
         } catch (error) {
             console.error("Quick Inquiry Error:", error);
-            window.open(`https://wa.me/919655889426?text=Hi%20Vinayaga%20Crackers%20Sivakasi`, '_blank');
+            window.open(`https://wa.me/918940921075?text=Hi%20Vinayaga%20Crackers%20Sivakasi`, '_blank');
         } finally {
             setIsSubmitting(false);
             setActiveAction(null);

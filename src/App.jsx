@@ -20,6 +20,7 @@ import FAQ from './components/FAQ';
 import Footer from './components/Footer';
 import FloatingEnquiry from './components/FloatingEnquiry';
 import WelcomePopup from './components/WelcomePopup';
+import BuyingSection from './components/BuyingSection';
 
 // Analytics Page View Tracker
 const AnalyticsTracker = () => {
@@ -84,6 +85,10 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/buy" element={<BuyingSection />} />
+        <Route path="/price-list" element={<BuyingSection />} />
+        <Route path="/order" element={<BuyingSection />} />
+        <Route path="/quick-order" element={<BuyingSection />} />
         <Route path="/category/:slug" element={<CategoryPage />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/payment-terms" element={<PaymentTerms />} />

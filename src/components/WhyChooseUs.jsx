@@ -32,7 +32,7 @@ const WhyChooseUs = () => {
         {
             icon: Percent,
             title: "Direct Sivakasi Factory Rates",
-            description: "Eliminate middleman margins and enjoy up to 70% discount compared to local market stalls."
+            description: "Eliminate middleman margins and enjoy flat 90% discount compared to local market stalls."
         },
         {
             icon: ShieldCheck,
@@ -74,7 +74,7 @@ const WhyChooseUs = () => {
                     className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-950/60 border border-rose-500/40 text-amber-300 text-[10px] font-black uppercase tracking-[0.3em] mb-4"
                 >
                     <Sparkles size={12} className="text-amber-400" />
-                    The Vinayaga Promise
+                    <span className="font-tamil">வினாயகா உறுதிமொழி • The Vinayaga Promise</span>
                 </motion.div>
 
                 <motion.h2
@@ -83,6 +83,7 @@ const WhyChooseUs = () => {
                     viewport={{ once: true }}
                     className="text-3xl sm:text-5xl font-black text-white mb-6 uppercase font-cinzel leading-tight"
                 >
+                    <span className="font-tamil text-2xl sm:text-3xl block text-slate-400 mb-2 normal-case">எஙகளை ஏன் தேர்ந்தெடுக்க வேண்டும்?</span>
                     Why Choose <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-300 to-rose-400">Vinayaga Crackers</span>?
                 </motion.h2>
 

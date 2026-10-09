@@ -58,7 +58,7 @@ const PrivacyPolicy = () => {
                     <section>
                         <h2 className="text-xl font-bold font-cinzel text-amber-400 mb-3 uppercase">4. Contacting Us</h2>
                         <p className="text-slate-300 text-sm leading-relaxed">
-                            If you have questions regarding our privacy practices or wish to update your details, please reach out directly at <strong>vinayagacrackerssivakasi@gmail.com</strong> or via WhatsApp at <strong>+91 96558 89426</strong>.
+                            If you have questions regarding our privacy practices or wish to update your details, please reach out directly at <strong>vinayagacrackerssivakasi@gmail.com</strong> or via WhatsApp at <strong>+91 89409 21075</strong>.
                         </p>
                     </section>
                 </div>

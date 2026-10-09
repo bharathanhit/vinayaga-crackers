@@ -74,10 +74,10 @@ const WelcomePopup = () => {
                 `🛍️ *Category Interest:* ${formData.interest}\n\n` +
                 `Please send me your Diwali wholesale price list PDF.`;
             
-            window.open(`https://wa.me/919655889426?text=${encodeURIComponent(waBody)}`, '_blank');
+            window.open(`https://wa.me/918940921075?text=${encodeURIComponent(waBody)}`, '_blank');
         } catch (error) {
             console.error("Popup Error:", error);
-            window.open(`https://wa.me/919655889426?text=Hi%20Vinayaga%20Crackers%20Sivakasi`, '_blank');
+            window.open(`https://wa.me/918940921075?text=Hi%20Vinayaga%20Crackers%20Sivakasi`, '_blank');
         } finally {
             setIsSubmitting(false);
         }
@@ -125,7 +125,7 @@ const WelcomePopup = () => {
                         {/* Content & Form */}
                         <div className="p-6 sm:p-8">
                             <h3 className="text-2xl font-black font-cinzel text-white uppercase mb-2">
-                                Get Up To 70% Off Factory Rates!
+                                Get Up To 90% Off Factory Rates!
                             </h3>
                             <p className="text-xs sm:text-sm text-slate-300 mb-6">
                                 Download our official <strong>Vinayaga Crackers Sivakasi</strong> wholesale price list PDF directly on your WhatsApp.

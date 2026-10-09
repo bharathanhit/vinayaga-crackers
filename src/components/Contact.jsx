@@ -73,15 +73,15 @@ const Contact = () => {
                 `_Sent via Vinayaga Crackers Website_`;
 
             if (type === 'whatsapp') {
-                window.open(`https://wa.me/919655889426?text=${encodeURIComponent(body)}`, '_blank');
+                window.open(`https://wa.me/918940921075?text=${encodeURIComponent(body)}`, '_blank');
             } else if (type === 'email') {
                 window.location.href = `mailto:vinayagacrackerssivakasi@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
             } else if (type === 'call') {
-                window.location.href = `tel:+919655889426`;
+                window.location.href = `tel:+918940921075`;
             }
         } catch (error) {
             console.error("Order Inquiry Error:", error);
-            alert("Please contact us directly on WhatsApp or Call at +91 96558 89426.");
+            alert("Please contact us directly on WhatsApp or Call at +91 89409 21075.");
         } finally {
             setIsSubmitting(false);
             setActionType(null);
@@ -114,7 +114,7 @@ const Contact = () => {
 
                         <div className="relative z-10 space-y-3 bg-black/60 backdrop-blur-md p-5 rounded-2xl border border-amber-500/20">
                             <p className="text-xs text-amber-300 font-bold flex items-center gap-2">
-                                <Flame size={14} className="text-rose-500" /> Up to 70% Off Factory Rates
+                                <Flame size={14} className="text-rose-500" /> Flat 90% Off Factory Rates
                             </p>
                             <p className="text-xs text-slate-300 flex items-center gap-2">
                                 <ShieldCheck size={14} className="text-emerald-400" /> 100% Certified Green Crackers

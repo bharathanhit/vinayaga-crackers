@@ -13,7 +13,7 @@ const crackerServices = [
         icon: Percent,
         title: "Wholesale Supplies for Retailers",
         desc: "Direct Sivakasi factory supply for seasonal cracker stall owners, shops, and wholesale distributors. Huge profit margins and guaranteed original brand packaging.",
-        features: ["Up to 75% Factory Discount", "Official PESO Invoices & Billing", "Early Pre-Booking Allocation", "Direct Lorry Parcel Transport"],
+        features: ["Flat 90% Factory Discount", "Official PESO Invoices & Billing", "Early Pre-Booking Allocation", "Direct Lorry Parcel Transport"],
         badge: "Highest Savings"
     },
     {
@@ -61,7 +61,7 @@ const ServicesPage = () => {
             `City: ${inquiryForm.city}\n` +
             `Notes: ${inquiryForm.notes || 'None'}`
         );
-        window.open(`https://wa.me/919655889426?text=${msg}`, '_blank');
+        window.open(`https://wa.me/918940921075?text=${msg}`, '_blank');
     };
 
     return (
@@ -139,7 +139,7 @@ const ServicesPage = () => {
                             </div>
 
                             <a
-                                href={`https://wa.me/919655889426?text=${encodeURIComponent(`Hi Vinayaga Crackers Sivakasi, I want details regarding: ${svc.title}`)}`}
+                                href={`https://wa.me/918940921075?text=${encodeURIComponent(`Hi Vinayaga Crackers Sivakasi, I want details regarding: ${svc.title}`)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs uppercase tracking-wider transition-all"

@@ -189,7 +189,7 @@ const ProductDetail = () => {
                             {/* Quick Order Buttons */}
                             <div className="flex flex-wrap gap-4 mb-8">
                                 <a
-                                    href={`https://wa.me/919655889426?text=${whatsappMessage}`}
+                                    href={`https://wa.me/918940921075?text=${whatsappMessage}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="btn bg-emerald-600 hover:bg-emerald-700 text-white shadow-xl px-8 py-4 text-xs font-black tracking-widest uppercase flex items-center gap-2 flex-1 justify-center rounded-2xl"
@@ -283,12 +283,12 @@ const ProductDetail = () => {
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <a
-                                href={`https://wa.me/919655889426?text=${whatsappMessage}`}
+                                href={`https://wa.me/918940921075?text=${whatsappMessage}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="btn bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3.5 text-xs font-black uppercase tracking-wider rounded-xl inline-flex items-center gap-2"
                             >
-                                <PhoneCall size={16} /> WhatsApp: +91 96558 89426
+                                <PhoneCall size={16} /> WhatsApp: +91 89409 21075
                             </a>
                             <button
                                 onClick={() => window.dispatchEvent(new CustomEvent('openInquiryPopup'))}

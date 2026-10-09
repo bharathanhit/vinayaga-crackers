@@ -277,7 +277,7 @@ const AdminCategoryFormPage = () => {
                                 <TextInput
                                     value={form.title}
                                     onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-                                    placeholder="e.g. Agro Products"
+                                    placeholder="e.g. Sparklers, Sky Shots, Flower Pots"
                                 />
                                 {form.title && (
                                     <p className="text-[10px] text-slate-400 mt-1 font-mono">slug: /{slugify(form.title)}</p>

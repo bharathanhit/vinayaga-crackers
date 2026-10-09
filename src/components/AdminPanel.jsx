@@ -146,7 +146,7 @@ const LoginScreen = ({ onLogin }) => {
                     </button>
                 </form>
                 <div className="flex items-center justify-center gap-2 mt-8 text-white/20 text-[10px] font-black uppercase tracking-widest">
-                    <ShieldCheck size={12} />Protected by Dhuruvan Exports Security
+                    <ShieldCheck size={12} />Protected by Vinayaga Crackers Security
                 </div>
             </motion.div>
         </div>
@@ -737,8 +737,8 @@ const ProductItem = ({ prod, openEdit, handleDelete }) => {
                     <h4 className="font-black text-slate-900">{prod.title}</h4>
                     {prod.isStatic && <span className="text-[8px] font-black bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded-full uppercase tracking-widest border border-slate-200">Static</span>}
                     {prod.isFirestore && <span className="text-[8px] font-black bg-secondary/10 text-secondary px-1.5 py-0.5 rounded-full uppercase tracking-widest border border-secondary/20">Live</span>}
-                    {prod.isHalal && (
-                        <span className="text-[9px] font-black bg-green-50 text-green-700 px-2 py-0.5 rounded-full uppercase tracking-widest">Halal</span>
+                    {(prod.isGreenCracker || prod.safetyRating?.includes('Green Cracker')) && (
+                        <span className="text-[9px] font-black bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full uppercase tracking-widest">Green Cracker</span>
                     )}
                 </div>
                 <p className="text-xs text-slate-400 truncate font-medium">{prod.description}</p>
@@ -1293,8 +1293,8 @@ const DashboardOverview = () => {
             <div className="bg-white border border-slate-100 rounded-[2rem] p-8 shadow-sm">
                 <div className="flex items-center justify-between mb-8">
                     <div>
-                        <h3 className="font-black text-slate-900 text-xl tracking-tight uppercase">Global Product Inventory</h3>
-                        <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Live tracking of all export items</p>
+                        <h3 className="font-black text-slate-900 text-xl tracking-tight uppercase">Cracker Product Inventory</h3>
+                        <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Live tracking of all fireworks & cracker items</p>
                     </div>
                     <div className="px-5 py-2 bg-slate-50 border border-slate-100 rounded-full">
                         <span className="text-xs font-black text-primary uppercase tracking-widest">{allProducts.length} Items Total</span>

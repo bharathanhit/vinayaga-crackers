@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin
 
-Sitemap: https://dhuruvanexports.com/sitemap.xml
+Sitemap: https://vinayagacrackers.com/sitemap.xml

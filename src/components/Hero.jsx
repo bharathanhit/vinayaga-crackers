@@ -1,193 +1,185 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Sparkles, ShieldCheck, Flame, Download, PhoneCall, Award } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, PhoneCall } from 'lucide-react';
 import heroFireworksImg from '../assets/crackers/hero-fireworks.jpg';
 import skyShotsImg from '../assets/crackers/sky-shots.jpg';
 import flowerPotsImg from '../assets/crackers/flower-pots.jpg';
 
+const heroImages = [heroFireworksImg, skyShotsImg, flowerPotsImg];
+
 const Hero = () => {
-    const images = [
-        heroFireworksImg,
-        skyShotsImg,
-        flowerPotsImg,
-        "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&q=80&w=2000", // Fireworks burst
-    ];
 
     const [currentImage, setCurrentImage] = useState(0);
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrentImage((prev) => (prev + 1) % images.length);
-        }, 5500);
+            setCurrentImage((prev) => (prev + 1) % heroImages.length);
+        }, 6000);
         return () => clearInterval(timer);
-    }, [images.length]);
+    }, []);
 
     return (
-        <section className="relative min-h-[92vh] lg:min-h-screen flex items-center pt-32 pb-16 overflow-hidden bg-night">
-            {/* Background Slideshow */}
-            <div className="absolute inset-0 z-0 bg-black">
+        <section className="relative w-full overflow-hidden min-h-[460px] sm:min-h-[540px] lg:min-h-[600px] flex items-center">
+            {/* ── Vivid fireworks background ── */}
+            <div className="absolute inset-0 z-0">
                 <AnimatePresence initial={false}>
-                    <motion.div
+                    <motion.img
                         key={currentImage}
-                        initial={{ opacity: 0, scale: 1.15 }}
-                        animate={{ opacity: 0.65, scale: 1 }}
-                        exit={{ opacity: 0, scale: 1.08 }}
-                        transition={{
-                            opacity: { duration: 2, ease: "easeInOut" },
-                            scale: { duration: 6, ease: [0.33, 1, 0.68, 1] }
-                        }}
-                        className="absolute inset-0"
-                    >
-                        <img
-                            src={images[currentImage]}
-                            alt="Diwali Fireworks Celebration"
-                            className="w-full h-full object-cover"
-                            style={{ objectPosition: 'center center' }}
-                        />
-                    </motion.div>
+                        src={heroImages[currentImage]}
+                        alt="Diwali Fireworks"
+                        className="absolute inset-0 w-full h-full object-cover"
+                        style={{ objectPosition: 'center 40%' }}
+                        initial={{ opacity: 0, scale: 1.05 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 1.4, ease: 'easeInOut' }}
+                    />
                 </AnimatePresence>
-
-                {/* Dark Gradient Overlay for Maximum Readability */}
-                <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/75 to-black/40 z-10" />
-                <div className="absolute inset-0 bg-gradient-to-t from-night via-transparent to-black/60 z-10" />
+                {/* Lighter overlay — text readable but fireworks clearly visible */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#030C1C]/75 via-[#030C1C]/35 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/35" />
             </div>
 
-            <div className="container relative z-20">
-                <div className="max-w-4xl">
-                    {/* Top Festive Badge */}
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-rose-900/80 to-amber-900/80 border border-amber-400/40 backdrop-blur-md mb-6 shadow-lg shadow-rose-950/50"
-                    >
-                        <Sparkles size={14} className="text-amber-400 animate-pulse" />
-                        <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-amber-300">
-                            Diwali 2026 Pre-Booking Open • Direct Sivakasi Factory Rates
-                        </span>
-                    </motion.div>
+            {/* ── Two-column layout ── */}
+            <div className="relative z-10 w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 flex flex-col sm:flex-row sm:items-center justify-between gap-6 py-12 pt-24 sm:pt-36 pb-12 sm:pb-20">
 
-                    {/* Headline */}
+                {/* LEFT: text */}
+                <div className="flex-1 min-w-0 max-w-2xl">
+                    <div className="flex items-center gap-2 mb-2">
+                        <motion.p
+                            initial={{ opacity: 0, y: -8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.45 }}
+                            className="text-xs sm:text-base font-semibold font-tamil text-slate-300 tracking-wide"
+                        >
+                            இந்த தீபாவளியில்
+                        </motion.p>
+                        
+                        {/* Mobile-only 90% OFF badge */}
+                        <span className="sm:hidden inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-600 text-white shadow-md animate-pulse">
+                            90% வரை தள்ளுபடி
+                        </span>
+                    </div>
+
                     <motion.h1
-                        initial={{ opacity: 0, y: 30 }}
+                        initial={{ opacity: 0, y: 18 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                        className="text-4xl sm:text-6xl lg:text-7xl mb-6 leading-[1.05] text-white font-black tracking-tight font-cinzel text-shadow-lg"
+                        transition={{ delay: 0.1, duration: 0.65 }}
+                        className="font-black font-tamil leading-[1.1] tracking-tight mb-3"
+                        style={{ fontSize: 'clamp(1.85rem, 5.5vw, 4rem)', color: '#FDE047', textShadow: '0 2px 28px rgba(250,204,21,0.5)' }}
                     >
-                        Celebrate Diwali with <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-rose-400">
-                            Vinayaga Crackers
-                        </span> <br />
-                        <span className="text-2xl sm:text-4xl lg:text-5xl font-light text-white/90">
-                            Directly from Sivakasi!
+                        வானத்தை நிறைக்கும்<br />
+                        <span style={{ background: 'linear-gradient(90deg,#FEF08A,#FBBF24,#FB923C)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                            வண்ணங்கள்!
                         </span>
                     </motion.h1>
 
-                    {/* Description */}
                     <motion.p
-                        initial={{ opacity: 0, y: 30 }}
+                        initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.4, duration: 0.9, ease: "easeOut" }}
-                        className="text-lg md:text-2xl text-slate-200/90 mb-8 max-w-2xl leading-relaxed font-normal"
+                        transition={{ delay: 0.22, duration: 0.6 }}
+                        className="text-xs sm:text-sm text-slate-300 font-tamil leading-relaxed max-w-sm mb-5 sm:mb-6"
                     >
-                        100% Certified <strong className="text-amber-400 font-bold">Green Crackers</strong> manufactured with superior pyrotechnic brilliance. Enjoy up to <strong className="text-amber-300 font-black">70% discount</strong> off MRP with safe, insured doorstep transport across India.
+                        பாதுகாப்பானதும் தரமானதுமான பட்டாசுகள் உங்கள் கொண்டாட்டத்தை சிறப்பாக்கும். 100% அரசு அங்கீகாரம் பெற்ற பசுமை பட்டாசுகள் நேரடி சிவகாசி மொத்த விலையில்!
                     </motion.p>
 
-                    {/* Action Buttons */}
                     <motion.div
-                        initial={{ opacity: 0, y: 30 }}
+                        initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5, duration: 0.9, ease: "easeOut" }}
-                        className="flex flex-wrap items-center gap-4 mb-10"
+                        transition={{ delay: 0.36, duration: 0.55 }}
+                        className="flex flex-wrap items-center gap-2.5 sm:gap-3"
                     >
-                        <motion.a
-                            whileHover={{ scale: 1.04, y: -2 }}
-                            whileTap={{ scale: 0.96 }}
-                            href="#products"
-                            className="btn btn-secondary px-8 py-4 text-xs sm:text-sm shadow-2xl font-black tracking-widest uppercase group inline-flex items-center gap-2"
+                        <Link
+                            to="/buy"
+                            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 rounded-full font-black font-tamil text-slate-950 text-xs sm:text-sm uppercase tracking-wide shadow-xl hover:scale-105 active:scale-95 transition-transform text-center"
+                            style={{ background: 'linear-gradient(135deg,#FBBF24,#F59E0B)' }}
                         >
-                            Explore Crackers Catalog <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
-                        </motion.a>
-
-                        <motion.a
-                            whileHover={{ scale: 1.04, y: -2 }}
-                            whileTap={{ scale: 0.96 }}
-                            href="https://wa.me/919655889426?text=Hi%20Vinayaga%20Crackers%20Sivakasi,%20please%20send%20me%20the%20Diwali%202026%20wholesale%20price%20list%20and%20order%20form."
+                            இப்போதே வாங்க <ArrowRight size={16} />
+                        </Link>
+                        <a
+                            href="https://wa.me/918940921075?text=வணக்கம்%20Vinayaga%20Crackers%20Sivakasi,%20விலைப்பட்டியல்%20அனுப்பவும்."
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="btn bg-emerald-600 hover:bg-emerald-700 text-white shadow-xl px-7 py-4 text-xs sm:text-sm font-black tracking-widest uppercase inline-flex items-center gap-2"
+                            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-3 rounded-full font-extrabold text-white text-xs uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 shadow-lg hover:scale-105 transition-transform text-center"
                         >
-                            <PhoneCall size={16} /> WhatsApp Order
-                        </motion.a>
-
-                        <motion.button
-                            whileHover={{ scale: 1.04, y: -2 }}
-                            whileTap={{ scale: 0.96 }}
-                            onClick={() => window.dispatchEvent(new CustomEvent('openInquiryPopup'))}
-                            className="btn bg-white/10 hover:bg-white hover:text-rose-950 text-white border border-amber-400/30 backdrop-blur-md px-7 py-4 text-xs sm:text-sm font-black tracking-widest uppercase transition-all inline-flex items-center gap-2"
-                        >
-                            <Download size={16} /> Instant Price List
-                        </motion.button>
+                            <PhoneCall size={14} /> WhatsApp
+                        </a>
                     </motion.div>
 
-                    {/* Trust Badges Strip */}
+                    {/* Quick trust badges */}
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.7, duration: 1 }}
-                        className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-white/15"
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5, duration: 0.5 }}
+                        className="flex flex-wrap items-center gap-2 mt-3"
                     >
-                        <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-                                <Award size={16} />
-                            </div>
-                            <div>
-                                <p className="text-xs font-bold text-white leading-tight">100% Green</p>
-                                <p className="text-[10px] text-slate-400">CSIR-NEERI Certified</p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
-                                <Flame size={16} />
-                            </div>
-                            <div>
-                                <p className="text-xs font-bold text-white leading-tight">70% Off MRP</p>
-                                <p className="text-[10px] text-slate-400">Direct Sivakasi Rates</p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
-                                <ShieldCheck size={16} />
-                            </div>
-                            <div>
-                                <p className="text-xs font-bold text-white leading-tight">PESO Licensed</p>
-                                <p className="text-[10px] text-slate-400">Govt Approved Safety</p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center shrink-0">
-                                <Sparkles size={16} />
-                            </div>
-                            <div>
-                                <p className="text-xs font-bold text-white leading-tight">Pan-India Delivery</p>
-                                <p className="text-[10px] text-slate-400">Safe Parcel Packing</p>
-                            </div>
-                        </div>
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-600/80 text-white text-[10px] sm:text-xs font-black uppercase tracking-wide shadow-md">
+                            🚚 All India Delivery
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm text-amber-300 text-[10px] sm:text-xs font-bold border border-amber-400/30">
+                            இந்தியா முழுவதும் பார்சல் டெலிவரி
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600/70 text-white text-[10px] sm:text-xs font-bold">
+                            ✓ 100% Safe Transport
+                        </span>
                     </motion.div>
                 </div>
+
+                {/* RIGHT: Circular discount badge */}
+                <motion.div
+                    initial={{ scale: 0.6, opacity: 0, rotate: -12 }}
+                    animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                    transition={{ delay: 0.28, duration: 0.85, type: 'spring', stiffness: 110 }}
+                    className="hidden sm:flex flex-col items-center gap-3 shrink-0"
+                >
+                    <div
+                        className="relative flex flex-col items-center justify-center text-center rounded-full border-4 border-white/80 cursor-pointer hover:scale-105 transition-transform"
+                        style={{
+                            width: 176, height: 176,
+                            background: 'linear-gradient(145deg,#FEF08A,#FBBF24,#F59E0B)',
+                            boxShadow: '0 0 55px rgba(251,191,36,0.7), 0 0 110px rgba(251,191,36,0.25)'
+                        }}
+                        onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
+                    >
+                        {/* Spinning dashed outer ring */}
+                        <div
+                            className="absolute rounded-full border-2 border-dashed border-amber-900/50 animate-spin"
+                            style={{ inset: -8, animationDuration: '14s' }}
+                        />
+                        <span className="text-[10px] font-black font-tamil text-slate-900 leading-snug px-4">
+                            தீபாவளி அதிரடி தள்ளுபடி
+                        </span>
+                        <span className="text-5xl font-black text-slate-950 leading-none" style={{ fontFamily: 'serif' }}>90%</span>
+                        <span className="text-base font-black font-tamil text-slate-900 leading-none">வரை OFF</span>
+                        <span
+                            className="mt-2 px-3 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest text-white"
+                            style={{ background: '#DC2626' }}
+                        >
+                            சிவகாசி நேரடி
+                        </span>
+                    </div>
+                    <p className="text-amber-200 text-xs font-bold italic font-serif text-center leading-snug">
+                        Flat 90% Off<br />Direct Sivakasi Rates
+                    </p>
+                </motion.div>
             </div>
 
-            {/* Slide Indicators */}
-            <div className="absolute bottom-8 right-8 z-30 flex items-center gap-2">
-                {images.map((_, idx) => (
+            {/* Disclaimer bar */}
+            <div className="absolute bottom-1 left-0 right-0 z-20 text-center pointer-events-none">
+                <span className="text-[10px] sm:text-[11px] text-amber-200/70 font-tamil tracking-wide bg-black/50 px-3 py-0.5 rounded-full backdrop-blur-sm border border-white/5">
+                    * புகைப்படங்கள் விளம்பர நோக்கத்திற்காக மட்டுமே • Images are for advertising purpose only
+                </span>
+            </div>
+
+            {/* Slide dots */}
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex gap-1.5">
+                {heroImages.map((_, i) => (
                     <button
-                        key={idx}
-                        onClick={() => setCurrentImage(idx)}
-                        aria-label={`Slide ${idx + 1}`}
-                        className={`h-2 rounded-full transition-all duration-500 ${currentImage === idx ? 'bg-amber-400 w-8' : 'bg-white/30 w-2 hover:bg-white/60'}`}
+                        key={i}
+                        onClick={() => setCurrentImage(i)}
+                        aria-label={`Slide ${i + 1}`}
+                        className={`h-1.5 rounded-full transition-all duration-500 ${currentImage === i ? 'bg-amber-400 w-6' : 'bg-white/30 w-1.5'}`}
                     />
                 ))}
             </div>

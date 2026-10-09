@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { CheckCircle2, ShieldCheck, Award, ArrowRight, Sparkles, Flame } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import heroFireworksImg from '../assets/crackers/hero-fireworks.jpg';
 import flowerPotsImg from '../assets/crackers/flower-pots.jpg';
 import sparklersImg from '../assets/crackers/sparklers.jpg';
 import groundChakkarsImg from '../assets/crackers/ground-chakkars.jpg';
@@ -35,9 +36,9 @@ const About = () => {
                             >
                                 <motion.img
                                     whileHover={{ scale: 1.04 }}
-                                    src="https://images.unsplash.com/photo-1605647540924-852290f6b0d5?auto=format&fit=crop&q=80&w=400"
+                                    src={heroFireworksImg}
                                     className="rounded-3xl shadow-xl border-4 border-amber-100 object-cover aspect-square w-full"
-                                    alt="Diwali Celebration Diyas"
+                                    alt="Diwali Celebration Fireworks"
                                 />
                             </motion.div>
                         </div>
@@ -83,22 +84,23 @@ const About = () => {
                 >
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-rose-50 border border-rose-200 rounded-full text-rose-700 text-[10px] font-black uppercase tracking-[0.3em] mb-6">
                         <Sparkles size={12} className="text-amber-500" />
-                        Our Sivakasi Heritage
+                        <span className="font-tamil">எங்கள் சிவகாசி பாரம்பரியம் • Our Sivakasi Heritage</span>
                     </div>
 
                     <h2 className="text-3xl sm:text-5xl lg:text-6xl text-slate-900 font-black mb-6 leading-[1.08] tracking-tight font-cinzel">
+                        <span className="font-tamil text-2xl sm:text-3xl block text-slate-600 mb-2">இந்திய கொண்டாட்டங்களை வளம் படுத்துகிறோம்!</span>
                         Illuminating Indian Celebrations <br />
-                        <span className="text-rose-700 italic">With Trust & Joy.</span>
+                        <span className="text-rose-700 italic">With Trust &amp; Joy.</span>
                     </h2>
 
-                    <p className="text-base sm:text-lg text-slate-600 mb-6 leading-relaxed font-normal">
-                        Based in the heart of Sivakasi, Tamil Nadu — the pyrotechnic capital of India — <strong>Vinayaga Crackers</strong> is committed to delivering authentic, safe, and breathtaking fireworks straight from our manufacturing units to your homes and businesses.
+                    <p className="text-base sm:text-lg text-slate-600 mb-6 leading-relaxed font-normal font-tamil">
+                        தமிழ்நாடுவின் குண்டுமணி தொழில் நகரமான சிவகாசியிலிருந்து, <strong>Vinayaga Crackers</strong> 100% பாதுகாப்பானதும் தரமானதுமான பட்டாசுகள் நேரடியாக உங்கள் இல்லம் மற்றும் தொழில் நிறுவனங்களுக்கு வழங்கி வருகிறோம்.
                     </p>
 
                     <div className="space-y-3.5 mb-8">
                         {[
                             "100% CSIR-NEERI Certified Green Crackers (Low Smoke & Safe)",
-                            "Direct Sivakasi Factory Rates — Save Up to 70% off Retail",
+                            "Direct Sivakasi Factory Rates — Save Flat 90% off Retail",
                             "Strict PESO Compliance & Zero Child Labor Guarantee",
                             "Moisture-Proof Packaging & Pan-India Safe Transport Delivery"
                         ].map((item, idx) => (

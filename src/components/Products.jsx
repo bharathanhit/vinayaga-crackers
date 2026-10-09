@@ -6,7 +6,7 @@ import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { db } from '../firebase';
 import { categories as staticCategories } from '../data/products';
 
-const CategoryCard = ({ title, description, image, imageUrl, slug, color, index }) => {
+const CategoryCard = ({ title, titleTa, descTa, description, image, imageUrl, slug, color, index }) => {
     const imgSrc = imageUrl || image;
     return (
         <motion.div
@@ -22,7 +22,7 @@ const CategoryCard = ({ title, description, image, imageUrl, slug, color, index 
                     <div className="relative h-52 md:h-60 overflow-hidden">
                         <motion.img
                             src={imgSrc}
-                            alt={title}
+                            alt={titleTa || title}
                             className="w-full h-full object-cover opacity-80 group-hover:opacity-95 transition-opacity duration-700"
                             whileHover={{ scale: 1.08 }}
                             transition={{ duration: 1.2, ease: [0.33, 1, 0.68, 1] }}
@@ -30,27 +30,30 @@ const CategoryCard = ({ title, description, image, imageUrl, slug, color, index 
                         <div className="absolute inset-0 bg-gradient-to-t from-[#0d121d] via-black/40 to-transparent" />
                         
                         {/* Discount / Category Badge */}
-                        <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider text-amber-200 border border-amber-400/30 backdrop-blur-md bg-black/60 flex items-center gap-1 shadow-md">
+                        <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider text-amber-200 border border-amber-400/30 backdrop-blur-md bg-black/60 flex items-center gap-1 shadow-md font-tamil">
                             <Percent size={11} className="text-amber-400" />
-                            Up to 70% Off
+                            <span>90% வரை தள்ளுபடி • Up to 90% Off</span>
                         </div>
 
                         <motion.div
                             whileHover={{ scale: 1.05 }}
-                            className="absolute top-3 right-3 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider text-white border border-white/20 backdrop-blur-md bg-rose-600/80 shadow-md"
+                            className="absolute top-3 right-3 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider text-white border border-white/20 backdrop-blur-md bg-rose-600/80 shadow-md font-tamil"
                         >
-                            Explore
+                            பார்வையிட • Explore
                         </motion.div>
                     </div>
 
                     <div className="p-6">
                         <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
-                                <h3 className="text-xl font-black text-white tracking-tight mb-2 group-hover:text-amber-400 transition-colors duration-300 truncate font-cinzel">
-                                    {title}
+                                <h3 className="text-xl font-black text-white tracking-tight group-hover:text-amber-400 transition-colors duration-300 font-tamil leading-snug">
+                                    {titleTa || title}
                                 </h3>
-                                <p className="text-slate-400 text-xs md:text-sm leading-relaxed font-medium line-clamp-2 group-hover:text-slate-300 transition-colors">
-                                    {description}
+                                <p className="text-amber-300/90 text-[11px] font-bold uppercase tracking-wider mb-2 font-cinzel">
+                                    {title}
+                                </p>
+                                <p className="text-slate-300 text-xs leading-relaxed font-medium line-clamp-2 group-hover:text-slate-200 transition-colors font-tamil">
+                                    {descTa || description}
                                 </p>
                             </div>
                             <motion.div
@@ -61,12 +64,12 @@ const CategoryCard = ({ title, description, image, imageUrl, slug, color, index 
                             </motion.div>
                         </div>
 
-                        <div className="flex items-center justify-between mt-5 pt-4 border-t border-white/10">
-                            <span className="text-[10px] font-bold text-amber-400/90 uppercase tracking-widest flex items-center gap-1">
-                                <Flame size={12} className="text-rose-500" /> 100% Green Cracker
+                        <div className="flex items-center justify-between mt-5 pt-4 border-t border-white/10 font-tamil">
+                            <span className="text-[10px] font-bold text-amber-400/90 tracking-wide flex items-center gap-1">
+                                <Flame size={12} className="text-rose-500" /> 100% பசுமை பட்டாசு
                             </span>
                             <span className="text-[10px] font-black text-white/70 group-hover:text-amber-300 transition-colors">
-                                Sivakasi Direct →
+                                சிவகாசி நேரடி விற்பனை →
                             </span>
                         </div>
                     </div>
@@ -117,8 +120,8 @@ const Products = () => {
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-950/60 border border-rose-500/30 mb-5 shadow-sm"
                         >
                             <Sparkles size={14} className="text-amber-400" />
-                            <span className="text-[10px] font-black text-amber-300 uppercase tracking-[0.3em]">
-                                Diwali 2026 Collection
+                            <span className="text-[10px] font-black text-amber-300 uppercase tracking-[0.3em] font-tamil">
+                                தீபாவளி 2026 சிறப்பு வகைகள் • Diwali 2026 Collection
                             </span>
                         </motion.div>
                         <motion.h2
@@ -127,25 +130,28 @@ const Products = () => {
                             viewport={{ once: true }}
                             className="text-3xl sm:text-5xl md:text-6xl text-white font-black leading-[1.08] tracking-tight font-cinzel"
                         >
+                            <span className="font-tamil text-2xl sm:text-3xl block text-amber-400 mb-2 font-black">
+                                எங்கள் பட்டாசு வகைகள்
+                            </span>
                             Celebrate with <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-300 to-rose-400">
                                 Sivakasi's Finest Fireworks.
                             </span>
                         </motion.h2>
                     </div>
+                </div>
 
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.2 }}
-                        className="max-w-md lg:pb-2"
-                    >
-                        <p className="text-slate-300 text-base md:text-lg leading-relaxed font-normal mb-5">
-                            From mesmerizing ground spinners and volcanic flower pots to high-altitude sky shot cakes — explore our full line of licensed green crackers.
+                {/* ── Category Grid heading ── */}
+                <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between mb-10 mt-4 gap-8 px-4">
+                    <div>
+                        <p className="text-slate-300 text-base md:text-lg leading-relaxed font-normal mb-2 font-tamil">
+                            சுழலும் தரைச் சக்கரங்கள், வண்ண மழை பொழியும் பூச்சட்டிகள், அதிரடி ஒற்றை வெடிகள் மற்றும் சாட்டை வகைகள் — 100% அரசு உரிமம் பெற்ற பசுமை பட்டாசுகளை தேர்ந்தெடுங்கள்.
+                        </p>
+                        <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-5">
+                            Explore our full line of Sivakasi factory-direct licensed green crackers with exclusive festival discounts.
                         </p>
                         <div className="h-1.5 w-24 bg-gradient-to-r from-amber-400 to-rose-500 rounded-full" />
-                    </motion.div>
+                    </div>
                 </div>
 
                 {loading ? (
@@ -161,6 +167,13 @@ const Products = () => {
                         ))}
                     </div>
                 )}
+
+                {/* Advertising Purpose Disclaimer */}
+                <div className="mt-10 text-center px-4">
+                    <p className="text-[11px] sm:text-xs text-slate-400 font-tamil font-medium">
+                        * புகைப்படங்கள் விளம்பர நோக்கத்திற்காக மட்டுமே • Images shown are for advertising / representation purpose only.
+                    </p>
+                </div>
             </div>
         </section>
     );

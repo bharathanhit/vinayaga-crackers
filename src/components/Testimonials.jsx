@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Quote, Star, Sparkles } from 'lucide-react';
 
-const TestimonialCard = ({ quote, name, location, role, image, index }) => (
+const TestimonialCard = ({ quote, name, location, role, initials, color, index }) => (
     <div
         className="group relative px-7 py-8 rounded-3xl bg-[#111827] border border-amber-500/20 shadow-xl hover:border-amber-400/50 hover:-translate-y-1 transition-all duration-500 flex flex-col h-full w-full text-white"
     >
@@ -19,8 +19,8 @@ const TestimonialCard = ({ quote, name, location, role, image, index }) => (
         </p>
 
         <div className="mt-auto flex items-center gap-3 pt-4 border-t border-white/10">
-            <div className="w-10 h-10 rounded-full overflow-hidden border border-amber-400/40 bg-black shrink-0">
-                <img src={image} alt={name} className="w-full h-full object-cover" />
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-xs text-white shadow-md border border-amber-400/40 shrink-0 ${color}`}>
+                {initials}
             </div>
             <div>
                 <h4 className="font-bold text-white text-sm font-cinzel">{name}</h4>
@@ -37,28 +37,32 @@ const Testimonials = () => {
             name: "Rajesh S.",
             location: "Bangalore",
             role: "Apartment Secretary",
-            image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&h=200&auto=format&fit=crop"
+            initials: "RS",
+            color: "bg-gradient-to-tr from-amber-600 to-amber-400"
         },
         {
             quote: "The 60 Shots Grand Finale Aerial Cake was the absolute highlight of our Diwali night. Sky filled with cascading golden willows. Highly impressed with Sivakasi factory direct quality.",
             name: "Priya Venkatesh",
             location: "Chennai",
             role: "Family Customer",
-            image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&h=200&auto=format&fit=crop"
+            initials: "PV",
+            color: "bg-gradient-to-tr from-rose-600 to-orange-400"
         },
         {
             quote: "I have been buying wholesale cracker consignments from Vinayaga Crackers for my seasonal retail counter in Coimbatore for 4 years. Timely LR transport delivery and guaranteed profit margins.",
             name: "Karthik Murugan",
             location: "Coimbatore",
             role: "Retail Stall Owner",
-            image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&h=200&auto=format&fit=crop"
+            initials: "KM",
+            color: "bg-gradient-to-tr from-emerald-600 to-teal-400"
         },
         {
             quote: "Being eco-conscious, we specifically wanted authentic CSIR-NEERI Green Crackers with low smoke for our kids. The sparklers and anars were super safe and long-lasting.",
             name: "Sneha Sharma",
             location: "Hyderabad",
             role: "Verified Buyer",
-            image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=200&h=200&auto=format&fit=crop"
+            initials: "SS",
+            color: "bg-gradient-to-tr from-purple-600 to-pink-500"
         }
     ];
 
@@ -69,13 +73,13 @@ const Testimonials = () => {
             <div className="container relative z-10 mx-auto px-6 mb-12 text-center max-w-2xl">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-400/30 text-amber-300 text-[10px] font-black uppercase tracking-[0.3em] mb-4">
                     <Sparkles size={12} className="text-amber-400" />
-                    Customer Experiences
+                    வாடிக்கையாளர் அநுபவங்கள் • Customer Experiences
                 </div>
                 <h2 className="text-3xl sm:text-5xl font-black font-cinzel uppercase mb-4">
-                    Trusted By Thousands Of Families
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-rose-400">ஆயிரக்கணக்கானை </span>குடும்பங்கள் நம்புகிறார்கள்!
                 </h2>
-                <p className="text-slate-400 text-sm sm:text-base">
-                    Read genuine feedback from families and wholesale buyers who celebrate Diwali with Vinayaga Crackers Sivakasi.
+                <p className="text-slate-400 text-sm sm:text-base font-tamil">
+                    Vinayaga Crackers Sivakasi-யில் தீபாவளி கொண்டாடும் குடும்பங்கள் மற்றும் மொத்த வாங்குபவர்களின் உண்மையான கருத்துக்கள்.
                 </p>
             </div>
 

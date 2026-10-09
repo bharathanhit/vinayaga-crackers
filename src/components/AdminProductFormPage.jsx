@@ -125,9 +125,9 @@ const emptyForm = {
     category: '',
     categorySlug: '',
     imageUrl: '',
-    isHalal: false,
-    status: 'Ready for Export',
-    badgeNote: 'Premium Selection',
+    isGreenCracker: true,
+    status: 'In Stock / Ready to Dispatch',
+    badgeNote: '100% Green Cracker',
     price: '',
     specifications: [{ label: '', value: '' }],
     types: [''],
@@ -213,10 +213,10 @@ const AdminProductFormPage = () => {
                         category: data.category || '',
                         categorySlug: data.categorySlug || '',
                         imageUrl: data.imageUrl || data.image || '',
-                        isHalal: !!data.isHalal,
+                        isGreenCracker: data.isGreenCracker !== undefined ? !!data.isGreenCracker : true,
                         price: data.price || '',
-                        status: data.status || 'Ready for Export',
-                        badgeNote: data.badgeNote || 'Premium Selection',
+                        status: data.status || 'In Stock / Ready to Dispatch',
+                        badgeNote: data.badgeNote || '100% Green Cracker',
                         specifications: data.specifications?.length ? data.specifications : [{ label: '', value: '' }],
                         types: data.types?.length ? data.types : [''],
                         minimumOrder: data.minimumOrder || '',
@@ -249,11 +249,11 @@ const AdminProductFormPage = () => {
             longDescription: form.longDescription || '',
             category: form.category || 'Uncategorized',
             categorySlug: form.categorySlug || '',
-            isHalal: !!form.isHalal,
+            isGreenCracker: !!form.isGreenCracker,
             price: form.price || '',
             imageUrl: form.imageUrl || '',
-            status: form.status || 'Ready for Export',
-            badgeNote: form.badgeNote || 'Premium Selection',
+            status: form.status || 'In Stock / Ready to Dispatch',
+            badgeNote: form.badgeNote || '100% Green Cracker',
             specifications: (form.specifications || []).filter(s => s.label && s.value),
             types: (form.types || []).filter(t => t && t.trim()),
             minimumOrder: form.minimumOrder || '',
@@ -576,14 +576,14 @@ const AdminProductFormPage = () => {
                                 <TextInput
                                     value={form.status}
                                     onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
-                                    placeholder="e.g. Ready for Export"
+                                    placeholder="e.g. In Stock / Ready to Dispatch"
                                 />
                             </Field>
                             <Field label="Display Badge">
                                 <TextInput
                                     value={form.badgeNote}
                                     onChange={e => setForm(f => ({ ...f, badgeNote: e.target.value }))}
-                                    placeholder="e.g. Premium Selection"
+                                    placeholder="e.g. 100% Green Cracker, Best Seller"
                                 />
                             </Field>
                             <Field label="Display Order" hint="Lower numbers appear first. Use negative to pin to top.">
@@ -598,20 +598,20 @@ const AdminProductFormPage = () => {
                                 <TextInput
                                     value={form.minimumOrder}
                                     onChange={e => setForm(f => ({ ...f, minimumOrder: e.target.value }))}
-                                    placeholder="e.g. 1 Metric Ton, 500 kg"
+                                    placeholder="e.g. 1 Box, 5 Boxes, 1 Pack"
                                 />
                             </Field>
 
-                            {/* Halal Toggle */}
+                            {/* Green Cracker Toggle */}
                             <div className="flex items-center gap-3 py-1">
                                 <button
                                     type="button"
-                                    onClick={() => setForm(f => ({ ...f, isHalal: !f.isHalal }))}
-                                    className={`w-11 h-6 rounded-full transition-all flex-shrink-0 ${form.isHalal ? 'bg-secondary' : 'bg-slate-200'}`}
+                                    onClick={() => setForm(f => ({ ...f, isGreenCracker: !f.isGreenCracker }))}
+                                    className={`w-11 h-6 rounded-full transition-all flex-shrink-0 ${form.isGreenCracker ? 'bg-secondary' : 'bg-slate-200'}`}
                                 >
-                                    <div className={`w-5 h-5 rounded-full bg-white shadow-sm mx-0.5 transform transition-transform ${form.isHalal ? 'translate-x-5' : 'translate-x-0'}`} />
+                                    <div className={`w-5 h-5 rounded-full bg-white shadow-sm mx-0.5 transform transition-transform ${form.isGreenCracker ? 'translate-x-5' : 'translate-x-0'}`} />
                                 </button>
-                                <label className="text-sm font-black text-slate-600">Halal Certified</label>
+                                <label className="text-sm font-black text-slate-600">CSIR-NEERI Green Cracker Certified</label>
                             </div>
                         </SectionCard>
 

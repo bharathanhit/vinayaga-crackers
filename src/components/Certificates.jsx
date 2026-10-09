@@ -3,11 +3,6 @@ import { motion } from 'framer-motion';
 import { Award, ShieldCheck, ArrowLeft, Flame, Sparkles, CheckCircle2, FileText, Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-import GST_P1 from '../assets/GST/gst_p1.png';
-import GST_P2 from '../assets/GST/gst_p2.png';
-import MSME_P1 from '../assets/MSME/msme_p1.png';
-import MSME_P2 from '../assets/MSME/msme_p2.png';
-
 const CRACKER_LICENSES = [
     {
         id: 'peso-license',
@@ -16,8 +11,7 @@ const CRACKER_LICENSES = [
         description: 'Certified explosive handling, warehouse compliance, and safety-verified fireworks manufacturing under the Indian Explosives Act.',
         badge: 'Statutory License',
         color: '#dc2626',
-        gradient: 'from-rose-600 to-red-800',
-        images: []
+        gradient: 'from-rose-600 to-red-800'
     },
     {
         id: 'neeri-green-crackers',
@@ -26,8 +20,7 @@ const CRACKER_LICENSES = [
         description: 'Official emission authorization for SWAS, STAR, and SAFAL formulations guaranteeing 30-35% lower particulate emissions with zero barium.',
         badge: 'Green Certified',
         color: '#059669',
-        gradient: 'from-emerald-600 to-green-800',
-        images: []
+        gradient: 'from-emerald-600 to-green-800'
     },
     {
         id: 'gst-registration',
@@ -36,8 +29,7 @@ const CRACKER_LICENSES = [
         description: 'Authorized tax filing and wholesale merchant billing registration for commercial inter-state cracker supplies.',
         badge: 'Tax Compliant',
         color: '#f59e0b',
-        gradient: 'from-amber-500 to-amber-700',
-        images: [GST_P1, GST_P2]
+        gradient: 'from-amber-500 to-amber-700'
     },
     {
         id: 'msme-udyam',
@@ -46,8 +38,7 @@ const CRACKER_LICENSES = [
         description: 'Official enterprise recognition under Government of India promoting Sivakasi traditional pyrotechnic craft and industry.',
         badge: 'Govt Recognized',
         color: '#7c3aed',
-        gradient: 'from-purple-600 to-indigo-800',
-        images: [MSME_P1, MSME_P2]
+        gradient: 'from-purple-600 to-indigo-800'
     },
     {
         id: 'tnmfa-association',
@@ -56,8 +47,7 @@ const CRACKER_LICENSES = [
         description: 'Registered member dedicated to standard quality control, worker welfare, and child-labor-free industrial operations.',
         badge: 'Industry Member',
         color: '#0284c7',
-        gradient: 'from-sky-600 to-blue-800',
-        images: []
+        gradient: 'from-sky-600 to-blue-800'
     }
 ];
 

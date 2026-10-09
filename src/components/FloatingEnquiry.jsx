@@ -26,7 +26,7 @@ const FloatingEnquiry = () => {
             return;
         }
 
-        const companyPhone = "+919655889426";
+        const companyPhone = "+918940921075";
         const companyEmail = "vinayagacrackerssivakasi@gmail.com";
 
         setIsSubmitting(true);
@@ -56,7 +56,7 @@ const FloatingEnquiry = () => {
             }
         } catch (error) {
             console.error("Inquiry Error:", error);
-            window.open(`https://wa.me/919655889426?text=Hi%20Vinayaga%20Crackers%20Sivakasi`, '_blank');
+            window.open(`https://wa.me/918940921075?text=Hi%20Vinayaga%20Crackers%20Sivakasi`, '_blank');
         } finally {
             setIsSubmitting(false);
             setIsOpen(false);
@@ -64,7 +64,7 @@ const FloatingEnquiry = () => {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+        <div className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-50 flex flex-col items-end gap-3">
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
