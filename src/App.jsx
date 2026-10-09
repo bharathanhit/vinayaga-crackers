@@ -1,13 +1,9 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { doc, getDoc, setDoc, updateDoc, increment } from 'firebase/firestore';
-import { db, analytics } from './firebase';
-import { logEvent } from 'firebase/analytics';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 import TermsAndConditions from './components/TermsAndConditions';
 import PrivacyPolicy from './components/PrivacyPolicy';
-import Certificates from './components/Certificates';
 import ProductDetail from './components/ProductDetail';
 import AdminPanel from './components/AdminPanel';
 import AdminProductFormPage from './components/AdminProductFormPage';
@@ -21,22 +17,7 @@ import Footer from './components/Footer';
 import FloatingEnquiry from './components/FloatingEnquiry';
 import WelcomePopup from './components/WelcomePopup';
 import BuyingSection from './components/BuyingSection';
-
-// Analytics Page View Tracker
-const AnalyticsTracker = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    if (analytics) {
-      logEvent(analytics, 'page_view', {
-        page_path: location.pathname,
-        page_search: location.search
-      });
-    }
-  }, [location]);
-
-  return null;
-};
+import SpecialBundlesPage from './components/SpecialBundlesPage';
 
 // Scroll to top on route change
 const ScrollToTop = () => {
@@ -50,38 +31,15 @@ const ScrollToTop = () => {
 };
 
 function App() {
-  useEffect(() => {
-    const trackVisitor = async () => {
-      if (!sessionStorage.getItem('hasVisited')) {
-        sessionStorage.setItem('hasVisited', 'true');
-        try {
-          const docRef = doc(db, 'analytics', 'visitors');
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            await updateDoc(docRef, { count: increment(1) });
-          } else {
-            await setDoc(docRef, { count: 1 });
-          }
-        } catch (error) {
-          console.error("Error tracking visitor:", error);
-        }
-      }
-    };
-    trackVisitor();
-  }, []);
-
   return (
     <div className="min-h-screen bg-white selection:bg-secondary selection:text-white font-inter">
       <ScrollToTop />
-      <AnalyticsTracker />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/terms" element={<TermsAndConditions />} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
-        {/* Legacy /wood-crafts route removed — replaced by Vinayaga Crackers category routes */}
-        <Route path="/certificates" element={<Certificates />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/product/:id" element={<ProductDetail />} />
@@ -89,6 +47,8 @@ function App() {
         <Route path="/price-list" element={<BuyingSection />} />
         <Route path="/order" element={<BuyingSection />} />
         <Route path="/quick-order" element={<BuyingSection />} />
+        <Route path="/special-bundles" element={<SpecialBundlesPage />} />
+        <Route path="/bundles" element={<SpecialBundlesPage />} />
         <Route path="/category/:slug" element={<CategoryPage />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/payment-terms" element={<PaymentTerms />} />

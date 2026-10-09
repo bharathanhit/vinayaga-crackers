@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Hero from './Hero';
 import TrustBar from './TrustBar';
+import SpecialBundleShowcase from './SpecialBundleShowcase';
 import PromoBanners from './PromoBanners';
 import Products from './Products';
 import About from './About';
@@ -16,6 +17,7 @@ const Home = () => {
         <main>
             <Hero />
             <TrustBar />
+            <SpecialBundleShowcase />
             <PromoBanners />
             <Products />
             <About />

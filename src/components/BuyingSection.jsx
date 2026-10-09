@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     Sparkles, ShoppingCart, ArrowRight, CheckCircle2,
     Search, Trash2, Printer, PhoneCall, Download, ShieldCheck,
-    Flame, RotateCw, X, Plus, Minus, FileText, ChevronRight, Share2, Eye
+    Flame, RotateCw, X, Plus, Minus, FileText, ChevronRight, Share2, Eye, MapPin
 } from 'lucide-react';
+import { collection, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase';
 import { priceListCategories, priceListProducts } from '../data/priceListProducts';
 
 const MIN_ORDER_AMOUNT = 3000;
@@ -16,12 +18,74 @@ const BuyingSection = () => {
     }, []);
 
     // State
+    const [allProducts, setAllProducts] = useState(priceListProducts);
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
     const [viewMode, setViewMode] = useState('table'); // 'table' or 'grid'
     const [quantities, setQuantities] = useState({});
     const [showCheckoutModal, setShowCheckoutModal] = useState(false);
     const [previewPhoto, setPreviewPhoto] = useState(null);
+
+    // Sync live products from Firestore (price changes, stock changes, deletions, new products)
+    useEffect(() => {
+        const unsub = onSnapshot(collection(db, 'products'), (snap) => {
+            let merged = priceListProducts.map(p => ({ ...p }));
+            if (!snap.empty) {
+                const firestoreProds = snap.docs.map(d => ({ docId: d.id, ...d.data() }));
+                firestoreProds.forEach(fp => {
+                    const idx = merged.findIndex(p => {
+                        const idMatch = p.id && fp.id && String(p.id) === String(fp.id);
+                        const docIdMatch = p.id && fp.docId && String(p.id) === String(fp.docId);
+                        const snoMatch = p.sno && fp.sno && Number(p.sno) === Number(fp.sno);
+                        const normalize = (s) => (s || '').toLowerCase().trim().replace(/\s+/g, ' ');
+                        const nameMatch = normalize(p.nameEn) === normalize(fp.title || fp.nameEn);
+                        return idMatch || docIdMatch || snoMatch || nameMatch;
+                    });
+
+                    const cleanOffer = fp.discountPrice ? fp.discountPrice : (fp.price ? parseFloat(String(fp.price).replace(/[^\d.]/g, '')) : 0);
+                    const cleanMrp = fp.price && fp.discountPrice ? parseFloat(String(fp.originalPrice || fp.price).replace(/[^\d.]/g, '')) : (fp.originalPrice ? parseFloat(String(fp.originalPrice).replace(/[^\d.]/g, '')) : 0);
+
+                    const updatedFields = {
+                        nameEn: fp.nameEn || fp.title,
+                        nameTa: fp.nameTa,
+                        discountPrice: cleanOffer > 0 ? cleanOffer : undefined,
+                        price: cleanMrp > 0 ? cleanMrp : undefined,
+                        per: fp.per,
+                        image: fp.imageUrl || fp.image,
+                        isOutOfStock: fp.isOutOfStock !== undefined ? !!fp.isOutOfStock : fp.status === 'Out of Stock',
+                        isDeleted: !!fp.isDeleted
+                    };
+
+                    Object.keys(updatedFields).forEach(k => updatedFields[k] === undefined && delete updatedFields[k]);
+
+                    if (idx !== -1) {
+                        merged[idx] = { ...merged[idx], ...updatedFields };
+                    } else if (!fp.isDeleted) {
+                        merged.push({
+                            id: fp.docId || fp.id || ('prod_' + Date.now()),
+                            sno: Number(fp.sno) || merged.length + 1,
+                            categoryKey: fp.categorySlug || 'new-crackers-2025',
+                            categoryTa: fp.category || 'பட்டாசுகள்',
+                            nameEn: fp.title || fp.nameEn || 'New Cracker',
+                            nameTa: fp.nameTa || fp.title || '',
+                            per: fp.per || '1 Box',
+                            price: cleanMrp || cleanOffer || 100,
+                            discountPrice: cleanOffer || 20,
+                            image: fp.imageUrl || fp.image || '/assets/crackers/2-3-4-kuruvi-crackers.jpg',
+                            isOutOfStock: !!fp.isOutOfStock,
+                            isDeleted: !!fp.isDeleted
+                        });
+                    }
+                });
+            }
+            merged = merged.filter(p => !p.isDeleted);
+            merged.sort((a, b) => Number(a.sno || 0) - Number(b.sno || 0));
+            setAllProducts(merged);
+        }, (err) => {
+            console.error("Firestore error in BuyingSection:", err);
+        });
+        return () => unsub();
+    }, []);
 
     // Customer form for order
     const [customer, setCustomer] = useState({
@@ -53,16 +117,16 @@ const BuyingSection = () => {
 
     // Filter products
     const filteredProducts = useMemo(() => {
-        return priceListProducts.filter(item => {
+        return allProducts.filter(item => {
             const matchesCat = selectedCategory === 'all' || item.categoryKey === selectedCategory;
             const q = searchQuery.toLowerCase().trim();
             const matchesSearch = !q ||
-                item.nameEn.toLowerCase().includes(q) ||
-                item.nameTa.includes(q) ||
+                (item.nameEn && item.nameEn.toLowerCase().includes(q)) ||
+                (item.nameTa && item.nameTa.includes(q)) ||
                 String(item.sno) === q;
             return matchesCat && matchesSearch;
         });
-    }, [selectedCategory, searchQuery]);
+    }, [allProducts, selectedCategory, searchQuery]);
 
     // Calculations
     const cartSummary = useMemo(() => {
@@ -72,18 +136,18 @@ const BuyingSection = () => {
         let totalDiscounted = 0;
         const selectedItems = [];
 
-        priceListProducts.forEach(product => {
+        allProducts.forEach(product => {
             const qty = quantities[product.id] || 0;
             if (qty > 0) {
                 totalItems += 1;
                 totalUnits += qty;
-                totalMrp += product.price * qty;
-                totalDiscounted += product.discountPrice * qty;
+                totalMrp += (Number(product.price) || Number(product.discountPrice) || 0) * qty;
+                totalDiscounted += (Number(product.discountPrice) || 0) * qty;
                 selectedItems.push({
                     ...product,
                     qty,
-                    subtotal: product.discountPrice * qty,
-                    mrpSubtotal: product.price * qty
+                    subtotal: (Number(product.discountPrice) || 0) * qty,
+                    mrpSubtotal: (Number(product.price) || 0) * qty
                 });
             }
         });
@@ -102,8 +166,16 @@ const BuyingSection = () => {
         };
     }, [quantities]);
 
+    // Sync cart count with Navbar
+    useEffect(() => {
+        try {
+            localStorage.setItem('vinayaga_cart_count', String(cartSummary.totalItems));
+            window.dispatchEvent(new Event('cartUpdated'));
+        } catch (e) {}
+    }, [cartSummary.totalItems]);
+
     // WhatsApp Order Submission
-    const handleSendWhatsAppOrder = (e) => {
+    const handleSendWhatsAppOrder = async (e) => {
         if (e) e.preventDefault();
         if (cartSummary.totalItems === 0) {
             alert("தயவுசெய்து குறைந்தது ஒரு பொருளையாவது தேர்வு செய்யவும். (Please add at least one item).");
@@ -114,6 +186,40 @@ const BuyingSection = () => {
             return;
         }
 
+        // Save order as an inquiry in Firestore so admin can generate invoice PDF
+        try {
+            await addDoc(collection(db, 'inquiries'), {
+                name: customer.name.trim(),
+                phone: customer.phone.trim(),
+                city: customer.city.trim() || 'Tamil Nadu',
+                destination: customer.city.trim() || 'Tamil Nadu',
+                address: customer.address.trim() || '',
+                product: `Diwali Order (${cartSummary.totalItems} Items - ₹${cartSummary.totalDiscounted.toLocaleString('en-IN')})`,
+                industry: 'Diwali Cracker Purchase',
+                contactMethod: 'WhatsApp',
+                source: 'Buying Section Price List',
+                items: cartSummary.selectedItems.map(item => ({
+                    sno: item.sno || '',
+                    nameTa: item.nameTa || '',
+                    nameEn: item.nameEn || '',
+                    qty: item.qty,
+                    per: item.per || 'Pkt',
+                    mrp: item.mrp || 0,
+                    discountPrice: item.discountPrice || 0,
+                    subtotal: item.subtotal || 0
+                })),
+                totalItems: cartSummary.totalItems,
+                totalUnits: cartSummary.totalUnits,
+                totalMrp: cartSummary.totalMrp,
+                totalDiscounted: cartSummary.totalDiscounted,
+                totalSavings: cartSummary.totalSavings,
+                status: 'new',
+                createdAt: serverTimestamp()
+            });
+        } catch (err) {
+            console.error('Error recording order inquiry:', err);
+        }
+
         let orderItemsText = "";
         cartSummary.selectedItems.forEach((item, idx) => {
             orderItemsText += `${idx + 1}. *${item.nameTa}* (${item.nameEn}) [S.No: ${item.sno}]\n` +
@@ -122,6 +228,7 @@ const BuyingSection = () => {
 
         const waText =
 `🎆 *VINAYAGA CRACKERS SIVAKASI* 🎆
+🏬 *கடை முகவரி:* Shop No : 3/6136, Om Sakthi Nagar, Perapatti, Sivakasi - 626189
 *தீபாவளி பட்டாசு நேரடி கொள்முதல் பட்டியல்*
 ----------------------------------------
 👤 *வாடிக்கையாளர்:* ${customer.name.trim()}
@@ -167,6 +274,12 @@ ${orderItemsText}
                     <p className="text-slate-300 text-xs sm:text-sm max-w-2xl mx-auto font-medium font-tamil leading-relaxed">
                         தேவையான எண்ணிக்கையை (Requirement) உள்ளிட்டு உடனடியாக நேரடி சிவகாசி வாட்ஸ்அப் ஆர்டர் செய்யுங்கள். 90% வரை நேரடி தள்ளுபடி!
                     </p>
+
+                    {/* Official Shop Address Badge */}
+                    <div className="mt-4 mb-2 inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-black/60 border border-amber-400/40 text-amber-200 text-xs sm:text-sm font-bold shadow-xl">
+                        <MapPin size={16} className="text-amber-400 shrink-0" />
+                        <span>கடை முகவரி: Shop No : 3/6136, Om Sakthi Nagar, Perapatti, Sivakasi – 626189</span>
+                    </div>
 
                     {/* Quick Highlights */}
                     <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-6 pt-6 border-t border-white/10 text-xs font-bold text-slate-200">
@@ -319,13 +432,16 @@ ${orderItemsText}
 
                                                 {/* Category Product Rows */}
                                                 {catItems.map((product) => {
+                                                    const isOut = !!product.isOutOfStock || product.status === 'Out of Stock';
                                                     const qty = quantities[product.id] || 0;
-                                                    const amount = qty * product.discountPrice;
+                                                    const amount = qty * (Number(product.discountPrice) || 0);
 
                                                     return (
                                                         <tr
                                                             key={product.id}
-                                                            className={`transition-colors hover:bg-slate-50 ${qty > 0 ? 'bg-amber-50/30' : ''}`}
+                                                            className={`transition-colors hover:bg-slate-50 ${
+                                                                isOut ? 'opacity-70 bg-slate-50/60' : qty > 0 ? 'bg-amber-50/30' : ''
+                                                            }`}
                                                         >
                                                             {/* S.No */}
                                                             <td className="py-3.5 px-4 text-center font-black text-base text-slate-800">
@@ -340,6 +456,11 @@ ${orderItemsText}
                                                                 <div className="text-xs sm:text-sm font-bold font-tamil text-rose-600 mt-0.5">
                                                                     {product.nameTa}
                                                                 </div>
+                                                                {isOut && (
+                                                                    <span className="inline-block mt-1 px-2 py-0.5 bg-rose-100 text-rose-700 text-[10px] font-black rounded font-tamil">
+                                                                        கையிருப்பு இல்லை (Out of Stock)
+                                                                    </span>
+                                                                )}
                                                             </td>
 
                                                             {/* Original MRP */}
@@ -359,38 +480,46 @@ ${orderItemsText}
 
                                                             {/* Requirement (Quantity field with stepper) */}
                                                             <td className="py-3.5 px-4 bg-amber-50/30">
-                                                                <div className="flex items-center justify-center gap-1.5">
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => updateQty(product.id, qty - 1)}
-                                                                        disabled={qty === 0}
-                                                                        className="w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-slate-700 font-bold transition-all cursor-pointer"
-                                                                    >
-                                                                        <Minus size={13} />
-                                                                    </button>
+                                                                {isOut ? (
+                                                                    <div className="text-center py-1">
+                                                                        <span className="text-xs font-bold text-rose-600 font-tamil">
+                                                                            கையிருப்பு இல்லை
+                                                                        </span>
+                                                                    </div>
+                                                                ) : (
+                                                                    <div className="flex items-center justify-center gap-1.5">
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => updateQty(product.id, qty - 1)}
+                                                                            disabled={qty === 0}
+                                                                            className="w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-slate-700 font-bold transition-all cursor-pointer"
+                                                                        >
+                                                                            <Minus size={13} />
+                                                                        </button>
 
-                                                                    <input
-                                                                        type="number"
-                                                                        min="0"
-                                                                        value={qty === 0 ? '' : qty}
-                                                                        placeholder="0"
-                                                                        onChange={e => updateQty(product.id, e.target.value)}
-                                                                        className="w-14 text-center py-1 rounded-lg border-2 border-slate-300 focus:border-rose-500 focus:outline-none font-black text-slate-900 text-sm bg-white"
-                                                                    />
+                                                                        <input
+                                                                            type="number"
+                                                                            min="0"
+                                                                            value={qty === 0 ? '' : qty}
+                                                                            placeholder="0"
+                                                                            onChange={e => updateQty(product.id, e.target.value)}
+                                                                            className="w-14 text-center py-1 rounded-lg border-2 border-slate-300 focus:border-rose-500 focus:outline-none font-black text-slate-900 text-sm bg-white"
+                                                                        />
 
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => updateQty(product.id, qty + 1)}
-                                                                        className="w-7 h-7 rounded-lg bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center font-bold transition-all cursor-pointer shadow-sm"
-                                                                    >
-                                                                        <Plus size={13} />
-                                                                    </button>
-                                                                </div>
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => updateQty(product.id, qty + 1)}
+                                                                            className="w-7 h-7 rounded-lg bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center font-bold transition-all cursor-pointer shadow-sm"
+                                                                        >
+                                                                            <Plus size={13} />
+                                                                        </button>
+                                                                    </div>
+                                                                )}
                                                             </td>
 
                                                             {/* Amount */}
                                                             <td className="py-3.5 px-4 text-center font-black text-slate-900 text-base">
-                                                                {amount > 0 ? `₹${amount.toLocaleString('en-IN')}` : '-'}
+                                                                {!isOut && amount > 0 ? `₹${amount.toLocaleString('en-IN')}` : '-'}
                                                             </td>
 
                                                             {/* Photo Preview */}
@@ -422,29 +551,41 @@ ${orderItemsText}
                     /* ── Grid View: Cards Layout ── */
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
                         {filteredProducts.map(product => {
+                            const isOut = !!product.isOutOfStock || product.status === 'Out of Stock';
                             const qty = quantities[product.id] || 0;
-                            const amount = qty * product.discountPrice;
+                            const amount = qty * (Number(product.discountPrice) || 0);
 
                             return (
                                 <motion.div
                                     key={product.id}
                                     initial={{ opacity: 0, y: 15 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col justify-between"
+                                    className={`bg-white rounded-2xl border overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col justify-between ${
+                                        isOut ? 'border-slate-300 opacity-75' : 'border-slate-200'
+                                    }`}
                                 >
                                     <div>
                                         {/* Image Header with S.No & Discount Badge */}
                                         <div className="relative h-44 bg-slate-100 overflow-hidden">
-                                            <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-[#DC2626] text-white shadow-md z-10">
-                                                90% OFF
-                                            </span>
+                                            {!isOut && (
+                                                <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-[#DC2626] text-white shadow-md z-10">
+                                                    90% OFF
+                                                </span>
+                                            )}
                                             <span className="absolute top-3 right-3 px-2 py-0.5 rounded-md text-[10px] font-black bg-slate-900/80 text-white backdrop-blur-md z-10">
                                                 #{product.sno}
                                             </span>
+                                            {isOut && (
+                                                <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px] flex items-center justify-center z-20 p-2">
+                                                    <span className="px-3 py-1 bg-rose-700 text-white font-black text-[11px] font-tamil rounded-lg shadow-lg">
+                                                        கையிருப்பு இல்லை • Out of Stock
+                                                    </span>
+                                                </div>
+                                            )}
                                             <img
                                                 src={product.image}
                                                 alt={product.nameEn}
-                                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                                                className={`w-full h-full object-cover transition-transform duration-500 ${isOut ? 'opacity-50' : 'hover:scale-105'}`}
                                             />
                                         </div>
 
@@ -477,35 +618,43 @@ ${orderItemsText}
 
                                     {/* Footer Stepper */}
                                     <div className="p-4 pt-0">
-                                        <div className="flex items-center justify-between gap-2 bg-slate-50 p-2 rounded-xl border border-slate-200">
-                                            <span className="text-[11px] font-bold font-tamil text-slate-700">
-                                                தேவை (Qty):
-                                            </span>
-                                            <div className="flex items-center gap-1.5">
-                                                <button
-                                                    onClick={() => updateQty(product.id, qty - 1)}
-                                                    disabled={qty === 0}
-                                                    className="w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 disabled:opacity-30 text-slate-800 font-bold flex items-center justify-center cursor-pointer"
-                                                >
-                                                    <Minus size={13} />
-                                                </button>
-                                                <input
-                                                    type="number"
-                                                    min="0"
-                                                    value={qty === 0 ? '' : qty}
-                                                    placeholder="0"
-                                                    onChange={e => updateQty(product.id, e.target.value)}
-                                                    className="w-12 text-center py-1 rounded-md border border-slate-300 font-black text-sm bg-white"
-                                                />
-                                                <button
-                                                    onClick={() => updateQty(product.id, qty + 1)}
-                                                    className="w-7 h-7 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold flex items-center justify-center cursor-pointer"
-                                                >
-                                                    <Plus size={13} />
-                                                </button>
+                                        {isOut ? (
+                                            <div className="w-full text-center py-2.5 px-3 bg-rose-50 border border-rose-200 rounded-xl">
+                                                <span className="text-xs font-black text-rose-700 font-tamil">
+                                                    கையிருப்பு இல்லை (Out of Stock)
+                                                </span>
                                             </div>
-                                        </div>
-                                        {amount > 0 && (
+                                        ) : (
+                                            <div className="flex items-center justify-between gap-2 bg-slate-50 p-2 rounded-xl border border-slate-200">
+                                                <span className="text-[11px] font-bold font-tamil text-slate-700">
+                                                    தேவை (Qty):
+                                                </span>
+                                                <div className="flex items-center gap-1.5">
+                                                    <button
+                                                        onClick={() => updateQty(product.id, qty - 1)}
+                                                        disabled={qty === 0}
+                                                        className="w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 disabled:opacity-30 text-slate-800 font-bold flex items-center justify-center cursor-pointer"
+                                                    >
+                                                        <Minus size={13} />
+                                                    </button>
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        value={qty === 0 ? '' : qty}
+                                                        placeholder="0"
+                                                        onChange={e => updateQty(product.id, e.target.value)}
+                                                        className="w-12 text-center py-1 rounded-md border border-slate-300 font-black text-sm bg-white"
+                                                    />
+                                                    <button
+                                                        onClick={() => updateQty(product.id, qty + 1)}
+                                                        className="w-7 h-7 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold flex items-center justify-center cursor-pointer"
+                                                    >
+                                                        <Plus size={13} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {!isOut && amount > 0 && (
                                             <div className="mt-2 text-right text-xs font-black text-emerald-700">
                                                 தொகை: ₹{amount.toLocaleString('en-IN')}
                                             </div>
@@ -672,6 +821,10 @@ ${orderItemsText}
                                 <p className="text-xs text-slate-300 font-tamil mt-1">
                                     விவரங்களை பூர்த்தி செய்து உடனடியாக ஆர்டர் அனுப்புங்கள்
                                 </p>
+                                <div className="mt-2.5 inline-flex items-center gap-1.5 text-[11px] text-amber-200 bg-white/10 border border-white/15 px-3 py-1 rounded-lg">
+                                    <MapPin size={12} className="text-amber-400 shrink-0" />
+                                    <span>Shop No : 3/6136, Om Sakthi Nagar, Perapatti, Sivakasi - 626189</span>
+                                </div>
                             </div>
 
                             {/* Modal Body */}

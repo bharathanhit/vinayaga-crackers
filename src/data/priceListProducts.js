@@ -1,14 +1,34 @@
-import groundChakkarsImg from '../assets/crackers/ground-chakkars.jpg';
-import flowerPotsImg from '../assets/crackers/flower-pots.jpg';
-import sparklersImg from '../assets/crackers/sparklers.jpg';
+import bundleTablePhoto from '../assets/crackers/bundle-60-items-photo.jpg';
+import bundle70TablePhoto from '../assets/crackers/bundle-70-items-photo.jpg';
+import { oneSoundProducts } from './oneSoundProducts';
+import { groundChakkarsProducts } from './groundChakkarsProducts';
+import { flowerPotsProducts } from './flowerPotsProducts';
+import { twinklingStarProducts } from './twinklingStarProducts';
+import { pencilCrackersProducts } from './pencilCrackersProducts';
 import { childrenFountainProducts } from './childrenFountainProducts';
-
-import skyShotsImg from '../assets/crackers/sky-shots.jpg';
-
-// Sound crackers image for One Sound Crackers
-const soundCrackersImg = skyShotsImg;
+import { peacockFountainProducts } from './peacockFountainProducts';
+import { bombProducts } from './bombProducts';
+import { rocketProducts } from './rocketProducts';
+import { bijiliProducts } from './bijiliProducts';
+import { chorsaDeluxeProducts } from './chorsaDeluxeProducts';
+import { walaProducts } from './walaProducts';
+import { arialNightShotProducts } from './arialNightShotProducts';
+import { fancySkyShotProducts } from './fancySkyShotProducts';
+import { repeaterShotProducts } from './repeaterShotProducts';
+import { rollcapMatchesProducts } from './rollcapMatchesProducts';
+import { sparklersProducts } from './sparklersProducts';
+import { newCrackers2025Products } from './newCrackers2025Products';
 
 export const priceListCategories = [
+    {
+        id: 'mega-bundles',
+        titleEn: 'MEGA SPECIAL COMBO PACKS',
+        titleTa: 'தீபாவளி மெகா ஸ்பெஷல் காம்போ பேக்',
+        slug: 'mega-combo-packs',
+        badge: '🔥 64% Discount Hamper',
+        itemCount: 2,
+        color: '#E11D48'
+    },
     {
         id: 'one-sound',
         titleEn: 'ONE SOUND CRACKERS',
@@ -46,6 +66,15 @@ export const priceListCategories = [
         color: '#8B5CF6'
     },
     {
+        id: 'pencil-crackers',
+        titleEn: 'PENCIL CRACKERS',
+        titleTa: 'பென்சில் வகைகள்',
+        slug: 'pencil-crackers',
+        badge: 'Pencil & Stone Crackers',
+        itemCount: 9,
+        color: '#2563EB'
+    },
+    {
         id: 'childrens-special-fountains',
         titleEn: "CHILDREN'S SPECIAL FOUNTAINS",
         titleTa: 'குழந்தைகள் சிறப்பு பவுண்டைன்ஸ்',
@@ -53,452 +82,234 @@ export const priceListCategories = [
         badge: 'Special Fountains',
         itemCount: 20,
         color: '#0891B2'
+    },
+    {
+        id: 'peacock-fountains',
+        titleEn: 'PEACOCK FOUNTAINS',
+        titleTa: 'பீக்காக் பவுண்டைன்',
+        slug: 'peacock-fountains',
+        badge: 'Peacock Fountains',
+        itemCount: 6,
+        color: '#059669'
+    },
+    {
+        id: 'bomb-crackers',
+        titleEn: 'BOMB CRACKERS',
+        titleTa: 'பாம் வகைகள்',
+        slug: 'bomb-crackers',
+        badge: 'High Decibel Bombs',
+        itemCount: 7,
+        color: '#DC2626'
+    },
+    {
+        id: 'rockets',
+        titleEn: 'ROCKETS',
+        titleTa: 'ராக்கெட் வகைகள்',
+        slug: 'rockets',
+        badge: 'Sky Rockets',
+        itemCount: 6,
+        color: '#7C3AED'
+    },
+    {
+        id: 'bijili-crackers',
+        titleEn: 'BIJILI CRACKERS',
+        titleTa: 'பிஜிலி வகைகள்',
+        slug: 'bijili-crackers',
+        badge: 'Bijili Crackers',
+        itemCount: 4,
+        color: '#EA580C'
+    },
+    {
+        id: 'chorsa-deluxe-crackers',
+        titleEn: 'CHORSA & DELUXE CRACKERS',
+        titleTa: 'சோர்சா & டீலக்ஸ் கிராக்கர்ஸ்',
+        slug: 'chorsa-deluxe-crackers',
+        badge: 'Deluxe Crackers',
+        itemCount: 5,
+        color: '#E11D48'
+    },
+    {
+        id: 'wala-crackers',
+        titleEn: 'WALA',
+        titleTa: 'சரவெடிகள்',
+        slug: 'wala-crackers',
+        badge: 'Continuous Burst Garland',
+        itemCount: 7,
+        color: '#DC2626'
+    },
+    {
+        id: 'arial-night-shots',
+        titleEn: 'ARIAL NIGHT SHOTS',
+        titleTa: 'ஏரியல் நைட் சாட்ஸ்',
+        slug: 'arial-night-shots',
+        badge: 'Sky Night Shots',
+        itemCount: 4,
+        color: '#2563EB'
+    },
+    {
+        id: 'fancy-sky-shots',
+        titleEn: 'FANCY SKY SHOTS',
+        titleTa: 'பேன்சி ஸ்கை சாட்ஸ்',
+        slug: 'fancy-sky-shots',
+        badge: 'Pipe Sky Shots',
+        itemCount: 12,
+        color: '#8B5CF6'
+    },
+    {
+        id: 'repeater-shots',
+        titleEn: 'MULTI SKY SHOTS',
+        titleTa: 'மல்டி ஸ்கை சாட்ஸ்',
+        slug: 'repeater-shots',
+        badge: 'Multi-Shot Cakes',
+        itemCount: 10,
+        color: '#D97706'
+    },
+    {
+        id: 'rollcap-matches',
+        titleEn: 'ROLLCAP & COLOUR MATCHES',
+        titleTa: 'ரோல் கேப்ஸ் & கலர் மத்தப்புகள்',
+        slug: 'rollcap-matches',
+        badge: 'Rollcap & Matches',
+        itemCount: 6,
+        color: '#EA580C'
+    },
+    {
+        id: 'sparklers',
+        titleEn: 'SPARKLERS',
+        titleTa: 'கம்பிமத்தாப்புகள்',
+        slug: 'sparklers',
+        badge: 'Sparklers',
+        itemCount: 23,
+        color: '#F59E0B'
+    },
+    {
+        id: 'new-crackers-2025',
+        titleEn: '2025 NEW CRACKERS',
+        titleTa: 'புதிய வரவுகள்',
+        slug: 'new-crackers-2025',
+        badge: '2025 Novelties & Gift Boxes',
+        itemCount: 42,
+        color: '#E11D48'
     }
 ];
 
 export const priceListProducts = [
+    // ── MEGA SPECIAL COMBO PACKS - மெகா ஸ்பெஷல் காம்போ பேக் ──
+    {
+        sno: 'MEGA-1',
+        id: 'p-bundle-60',
+        nameEn: 'Vinayaga Family Pack - 60 Items Special Combo',
+        nameTa: 'வினாயகா ஃபேமிலி பேக் - 60 பொருட்கள் (ரூ.7000 மதிப்பு)',
+        categoryKey: 'mega-bundles',
+        categoryEn: 'MEGA SPECIAL COMBO PACKS',
+        categoryTa: 'தீபாவளி மெகா ஸ்பெஷல் காம்போ பேக்',
+        price: 7000,
+        discountPrice: 2499,
+        per: '1 Mega Family Hamper',
+        image: bundleTablePhoto,
+        badge: '🔥 64% Discount Combo',
+        tagTa: '60 ரகங்கள் மெகா பேக்'
+    },
+    {
+        sno: 'MEGA-2',
+        id: 'p-bundle-70',
+        nameEn: 'VIP Special Family Pack - 70 Items Mega Set',
+        nameTa: 'வி.ஐ.பி ஸ்பெஷல் ஃபேமிலி பேக் - 70 பொருட்கள் (ரூ.10999 மதிப்பு)',
+        categoryKey: 'mega-bundles',
+        categoryEn: 'MEGA SPECIAL COMBO PACKS',
+        categoryTa: 'தீபாவளி மெகா ஸ்பெஷல் காம்போ பேக்',
+        price: 10999,
+        discountPrice: 3999,
+        per: '1 VIP Mega Hamper',
+        image: bundle70TablePhoto,
+        badge: '👑 VIP Royal Pack',
+        tagTa: '70 ரகங்கள் வி.ஐ.பி பேக்'
+    },
+
     // ── ONE SOUND CRACKERS - ஒற்றை வெடிகள் (S.No 1 - 9) ──
-    {
-        sno: 1,
-        id: 'p-1',
-        nameEn: '2 ¾" Kuruvi',
-        nameTa: '2¾" குருவி',
+    ...oneSoundProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image, badge, tagTa }) => ({
+        sno,
+        id: `p-${sno}`,
+        nameEn,
+        nameTa,
         categoryKey: 'one-sound',
         categoryEn: 'ONE SOUND CRACKERS',
         categoryTa: 'ஒற்றை வெடிகள்',
-        price: 35,
-        discountPrice: 5,
-        per: '1 Pkt',
-        image: soundCrackersImg,
-        badge: 'Classic Best Seller',
-        tagTa: 'பாரம்பரிய வெடி'
-    },
-    {
-        sno: 2,
-        id: 'p-2',
-        nameEn: '3 ½" Lakshmi',
-        nameTa: '3¾" லட்சுமி',
-        categoryKey: 'one-sound',
-        categoryEn: 'ONE SOUND CRACKERS',
-        categoryTa: 'ஒற்றை வெடிகள்',
-        price: 60,
-        discountPrice: 8,
-        per: '1 Pkt',
-        image: soundCrackersImg,
-        badge: 'Festive Choice',
-        tagTa: 'லட்சுமி வெடி'
-    },
-    {
-        sno: 3,
-        id: 'p-3',
-        nameEn: '4" Deluxe Lakshmi',
-        nameTa: '4" டீலக்ஸ் லட்சுமி',
-        categoryKey: 'one-sound',
-        categoryEn: 'ONE SOUND CRACKERS',
-        categoryTa: 'ஒற்றை வெடிகள்',
-        price: 100,
-        discountPrice: 14,
-        per: '1 Pkt',
-        image: soundCrackersImg,
-        badge: 'Deluxe Sound',
-        tagTa: 'உயர்ந்த சத்தம்'
-    },
-    {
-        sno: 4,
-        id: 'p-4',
-        nameEn: '4" Gold Lakshmi',
-        nameTa: '4" கோல்டு லட்சுமி',
-        categoryKey: 'one-sound',
-        categoryEn: 'ONE SOUND CRACKERS',
-        categoryTa: 'ஒற்றை வெடிகள்',
-        price: 100,
-        discountPrice: 15,
-        per: '1 Pkt',
-        image: soundCrackersImg,
-        badge: 'Gold Edition',
-        tagTa: 'தங்க லட்சுமி'
-    },
-    {
-        sno: 5,
-        id: 'p-5',
-        nameEn: '5" Lakshmi',
-        nameTa: '5" லட்சுமி',
-        categoryKey: 'one-sound',
-        categoryEn: 'ONE SOUND CRACKERS',
-        categoryTa: 'ஒற்றை வெடிகள்',
-        price: 150,
-        discountPrice: 20,
-        per: '1 Pkt',
-        image: soundCrackersImg,
-        badge: 'Heavy Sound',
-        tagTa: 'பெரிய லட்சுமி'
-    },
-    {
-        sno: 6,
-        id: 'p-6',
-        nameEn: '5" Gold Lakshmi',
-        nameTa: '5" கோல்டு லட்சுமி',
-        categoryKey: 'one-sound',
-        categoryEn: 'ONE SOUND CRACKERS',
-        categoryTa: 'ஒற்றை வெடிகள்',
-        price: 165,
-        discountPrice: 23,
-        per: '1 Pkt',
-        image: soundCrackersImg,
-        badge: 'Super Gold',
-        tagTa: 'கோல்டு ஸ்பெஷல்'
-    },
-    {
-        sno: 7,
-        id: 'p-7',
-        nameEn: '5" Deluxe',
-        nameTa: '5" டீலக்ஸ்',
-        categoryKey: 'one-sound',
-        categoryEn: 'ONE SOUND CRACKERS',
-        categoryTa: 'ஒற்றை வெடிகள்',
-        price: 165,
-        discountPrice: 24,
-        per: '1 Pkt',
-        image: soundCrackersImg,
-        badge: 'Mega Sound',
-        tagTa: 'டீலக்ஸ் சத்தம்'
-    },
-    {
-        sno: 8,
-        id: 'p-8',
-        nameEn: '6" Jallikattu, Bahubali',
-        nameTa: '6" ஜல்லிகட்டு, பாகுபலி',
-        categoryKey: 'one-sound',
-        categoryEn: 'ONE SOUND CRACKERS',
-        categoryTa: 'ஒற்றை வெடிகள்',
-        price: 200,
-        discountPrice: 29,
-        per: '1 Pkt',
-        image: soundCrackersImg,
-        badge: 'Boom Blast',
-        tagTa: 'பாகுபலி அதிரடி'
-    },
-    {
-        sno: 9,
-        id: 'p-9',
-        nameEn: 'Two Sound',
-        nameTa: 'டபுள் சவுண்ட்',
-        categoryKey: 'one-sound',
-        categoryEn: 'ONE SOUND CRACKERS',
-        categoryTa: 'ஒற்றை வெடிகள்',
-        price: 175,
-        discountPrice: 23,
-        per: '1 Pkt',
-        image: soundCrackersImg,
-        badge: 'Double Burst',
-        tagTa: 'இரட்டை வெடி'
-    },
+        price,
+        discountPrice,
+        per: per || '1 Pkt',
+        image,
+        badge: badge || 'Classic Best Seller',
+        tagTa: tagTa || 'பாரம்பரிய வெடி'
+    })),
 
     // ── GROUND CHAKKARS - தரைச்சக்கரம் வகைகள் (S.No 10 - 20) ──
-    {
-        sno: 10,
-        id: 'p-10',
-        nameEn: 'Chakkar Big (10 Pcs)',
-        nameTa: 'சக்கரம் பெரியது',
+    ...groundChakkarsProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image, badge, tagTa }) => ({
+        sno,
+        id: `p-${sno}`,
+        nameEn,
+        nameTa,
         categoryKey: 'ground-chakkars',
         categoryEn: 'GROUND CHAKKARS',
         categoryTa: 'தரைச்சக்கரம் வகைகள்',
-        price: 190,
-        discountPrice: 25,
-        per: '1 Box',
-        image: groundChakkarsImg,
-        badge: '10 Pieces Box',
-        tagTa: '10 துண்டுகள்'
-    },
-    {
-        sno: 11,
-        id: 'p-11',
-        nameEn: 'Chakkar Special',
-        nameTa: 'சக்கரம் ஸ்பெஷல்',
-        categoryKey: 'ground-chakkars',
-        categoryEn: 'GROUND CHAKKARS',
-        categoryTa: 'தரைச்சக்கரம் வகைகள்',
-        price: 300,
-        discountPrice: 35,
-        per: '1 Box',
-        image: groundChakkarsImg,
-        badge: 'Long Spinning',
-        tagTa: 'நீண்ட சுழற்சி'
-    },
-    {
-        sno: 12,
-        id: 'p-12',
-        nameEn: 'Dancing Wheel',
-        nameTa: 'டேன்சிங் வீல்',
-        categoryKey: 'ground-chakkars',
-        categoryEn: 'GROUND CHAKKARS',
-        categoryTa: 'தரைச்சக்கரம் வகைகள்',
-        price: 400,
-        discountPrice: 60,
-        per: '1 Box',
-        image: groundChakkarsImg,
-        badge: 'Dancing Sparks',
-        tagTa: 'ஆடும் சக்கரம்'
-    },
-    {
-        sno: 13,
-        id: 'p-13',
-        nameEn: 'Disco Wheel',
-        nameTa: 'டிஸ்கோ வீல்',
-        categoryKey: 'ground-chakkars',
-        categoryEn: 'GROUND CHAKKARS',
-        categoryTa: 'தரைச்சக்கரம் வகைகள்',
-        price: 400,
-        discountPrice: 60,
-        per: '1 Box',
-        image: groundChakkarsImg,
-        badge: 'Disco Light',
-        tagTa: 'டிஸ்கோ ஒளி'
-    },
-    {
-        sno: 14,
-        id: 'p-14',
-        nameEn: 'Chakkar Big (25 Pcs)',
-        nameTa: 'சக்கரம் பெரியது',
-        categoryKey: 'ground-chakkars',
-        categoryEn: 'GROUND CHAKKARS',
-        categoryTa: 'தரைச்சக்கரம் வகைகள்',
-        price: 425,
-        discountPrice: 65,
-        per: '1 Box',
-        image: groundChakkarsImg,
-        badge: 'Family 25 Pack',
-        tagTa: '25 துண்டுகள் பேக்'
-    },
-    {
-        sno: 15,
-        id: 'p-15',
-        nameEn: 'Sound Wheel',
-        nameTa: 'சவுண்ட் வீல்',
-        categoryKey: 'ground-chakkars',
-        categoryEn: 'GROUND CHAKKARS',
-        categoryTa: 'தரைச்சக்கரம் வகைகள்',
-        price: 500,
-        discountPrice: 70,
-        per: '1 Box',
-        image: groundChakkarsImg,
-        badge: 'Spin + Whistle',
-        tagTa: 'சத்தத்துடன் சுழலும்'
-    },
-    {
-        sno: 16,
-        id: 'p-16',
-        nameEn: 'Jumping Jack Chakkar',
-        nameTa: 'ஜம்பிங் ஜாக் சக்கார்',
-        categoryKey: 'ground-chakkars',
-        categoryEn: 'GROUND CHAKKARS',
-        categoryTa: 'தரைச்சக்கரம் வகைகள்',
-        price: 500,
-        discountPrice: 80,
-        per: '1 Box',
-        image: groundChakkarsImg,
-        badge: 'Jumping Action',
-        tagTa: 'குதிக்கும் சக்கரம்'
-    },
-    {
-        sno: 17,
-        id: 'p-17',
-        nameEn: 'Chakkar Deluxe',
-        nameTa: 'சக்கரம் டீலக்ஸ்',
-        categoryKey: 'ground-chakkars',
-        categoryEn: 'GROUND CHAKKARS',
-        categoryTa: 'தரைச்சக்கரம் வகைகள்',
-        price: 600,
-        discountPrice: 90,
-        per: '1 Box',
-        image: groundChakkarsImg,
-        badge: 'Deluxe Radius',
-        tagTa: 'அகன்ற வட்டம்'
-    },
-    {
-        sno: 18,
-        id: 'p-18',
-        nameEn: 'Colourful Wheel',
-        nameTa: 'கலர்புல் வீல்',
-        categoryKey: 'ground-chakkars',
-        categoryEn: 'GROUND CHAKKARS',
-        categoryTa: 'தரைச்சக்கரம் வகைகள்',
-        price: 600,
-        discountPrice: 100,
-        per: '1 Box',
-        image: groundChakkarsImg,
-        badge: 'Vibrant Colors',
-        tagTa: 'வண்ண ஒளி வட்டங்கள்'
-    },
-    {
-        sno: 19,
-        id: 'p-19',
-        nameEn: 'Wire Chakkar',
-        nameTa: 'வயர் சக்கார்',
-        categoryKey: 'ground-chakkars',
-        categoryEn: 'GROUND CHAKKARS',
-        categoryTa: 'தரைச்சக்கரம் வகைகள்',
-        price: 750,
-        discountPrice: 100,
-        per: '1 Box',
-        image: groundChakkarsImg,
-        badge: 'Wire Spinning',
-        tagTa: 'வயர் சக்கரம்'
-    },
-    {
-        sno: 20,
-        id: 'p-20',
-        nameEn: 'Spl Spinner Wheel',
-        nameTa: 'ஸ்பெஷல் ஸ்பின்னர் வீல்',
-        categoryKey: 'ground-chakkars',
-        categoryEn: 'GROUND CHAKKARS',
-        categoryTa: 'தரைச்சக்கரம் வகைகள்',
-        price: 750,
-        discountPrice: 110,
-        per: '1 Box',
-        image: groundChakkarsImg,
-        badge: 'Super Spinner',
-        tagTa: 'ஸ்பெஷல் ஸ்பின்னர்'
-    },
+        price,
+        discountPrice,
+        per: per || '1 Box',
+        image,
+        badge: badge || 'Spinning Sparklers',
+        tagTa: tagTa || 'தரைச்சக்கரம்'
+    })),
 
     // ── FLOWER POTS - பூச்சட்டி வகைகள் (S.No 21 - 27) ──
-    {
-        sno: 21,
-        id: 'p-21',
-        nameEn: 'Flower Pots Small',
-        nameTa: 'பூச்சட்டி சிறியது',
+    ...flowerPotsProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image, badge, tagTa }) => ({
+        sno,
+        id: `p-${sno}`,
+        nameEn,
+        nameTa,
         categoryKey: 'flower-pots',
         categoryEn: 'FLOWER POTS',
         categoryTa: 'பூச்சட்டி வகைகள்',
-        price: 250,
-        discountPrice: 30,
-        per: '1 Box',
-        image: flowerPotsImg,
-        badge: 'Small Anar',
-        tagTa: 'சிறிய பூச்சட்டி'
-    },
-    {
-        sno: 22,
-        id: 'p-22',
-        nameEn: 'Flower Pots Big',
-        nameTa: 'பூச்சட்டி பெரியது',
-        categoryKey: 'flower-pots',
-        categoryEn: 'FLOWER POTS',
-        categoryTa: 'பூச்சட்டி வகைகள்',
-        price: 275,
-        discountPrice: 40,
-        per: '1 Box',
-        image: flowerPotsImg,
-        badge: 'Big Anar',
-        tagTa: 'பெரிய பூச்சட்டி'
-    },
-    {
-        sno: 23,
-        id: 'p-23',
-        nameEn: 'Flower Pots Special',
-        nameTa: 'பூச்சட்டி ஸ்பெஷல்',
-        categoryKey: 'flower-pots',
-        categoryEn: 'FLOWER POTS',
-        categoryTa: 'பூச்சட்டி வகைகள்',
-        price: 350,
-        discountPrice: 50,
-        per: '1 Box',
-        image: flowerPotsImg,
-        badge: 'Special Shower',
-        tagTa: 'ஸ்பெஷல் பூச்சட்டி'
-    },
-    {
-        sno: 24,
-        id: 'p-24',
-        nameEn: 'Flower Pots Ashoka',
-        nameTa: 'பூச்சட்டி அசோகா',
-        categoryKey: 'flower-pots',
-        categoryEn: 'FLOWER POTS',
-        categoryTa: 'பூச்சட்டி வகைகள்',
-        price: 450,
-        discountPrice: 70,
-        per: '1 Box',
-        image: flowerPotsImg,
-        badge: 'Ashoka Giant',
-        tagTa: 'அசோகா பூச்சட்டி'
-    },
-    {
-        sno: 25,
-        id: 'p-25',
-        nameEn: 'Colour Koti',
-        nameTa: 'கலர் கோட்டி',
-        categoryKey: 'flower-pots',
-        categoryEn: 'FLOWER POTS',
-        categoryTa: 'பூச்சட்டி வகைகள்',
-        price: 900,
-        discountPrice: 130,
-        per: '1 Box',
-        image: flowerPotsImg,
-        badge: 'Multi Sparks',
-        tagTa: 'வண்ணக் கோட்டி'
-    },
-    {
-        sno: 26,
-        id: 'p-26',
-        nameEn: 'Multi Tricolour Fountain',
-        nameTa: 'மல்டி டிரைகலர் பவுண்டைன்',
-        categoryKey: 'flower-pots',
-        categoryEn: 'FLOWER POTS',
-        categoryTa: 'பூச்சட்டி வகைகள்',
-        price: 1250,
-        discountPrice: 190,
-        per: '1 Box',
-        image: flowerPotsImg,
-        badge: 'Tricolour Giant',
-        tagTa: 'மும்வண்ண பவுண்டைன்'
-    },
-    {
-        sno: 27,
-        id: 'p-27',
-        nameEn: 'Colour Koti Deluxe',
-        nameTa: 'கலர் கோட்டி டீலக்ஸ்',
-        categoryKey: 'flower-pots',
-        categoryEn: 'FLOWER POTS',
-        categoryTa: 'பூச்சட்டி வகைகள்',
-        price: 1750,
-        discountPrice: 250,
-        per: '1 Box',
-        image: flowerPotsImg,
-        badge: 'Deluxe Height',
-        tagTa: 'டீலக்ஸ் கோட்டி'
-    },
+        price,
+        discountPrice,
+        per: per || '1 Box',
+        image,
+        badge: badge || 'Color Fountains',
+        tagTa: tagTa || 'பூச்சட்டி'
+    })),
 
     // ── TWINKLING STAR - சாட்டை வகைகள் (S.No 28 - 29) ──
-    {
-        sno: 28,
-        id: 'p-28',
-        nameEn: '1 ½" Twinkling Star',
-        nameTa: '1 1/2" சாட்டை',
+    ...twinklingStarProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image, badge, tagTa }) => ({
+        sno,
+        id: `p-${sno}`,
+        nameEn,
+        nameTa,
         categoryKey: 'twinkling-star',
         categoryEn: 'TWINKLING STAR',
         categoryTa: 'சாட்டை வகைகள்',
-        price: 125,
-        discountPrice: 15,
-        per: '1 Box',
-        image: sparklersImg,
-        badge: 'Twinkling Crackle',
-        tagTa: 'மின்னும் சாட்டை'
-    },
-    {
-        sno: 29,
-        id: 'p-29',
-        nameEn: '4" Twinkling Star',
-        nameTa: '4" சாட்டை',
-        categoryKey: 'twinkling-star',
-        categoryEn: 'TWINKLING STAR',
-        categoryTa: 'சாட்டை வகைகள்',
-        price: 350,
-        discountPrice: 50,
-        per: '1 Box',
-        image: sparklersImg,
-        badge: 'Long Whip Star',
-        tagTa: 'நீண்ட சாட்டை'
-    },
+        price,
+        discountPrice,
+        per: per || '1 Box',
+        image,
+        badge: badge || 'Sparkling Whips',
+        tagTa: tagTa || 'சாட்டை'
+    })),
+
+    // ── PENCIL CRACKERS - பென்சில் வகைகள் (S.No 30 - 38) ──
+    ...pencilCrackersProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image, badge, tagTa }) => ({
+        sno,
+        id: `p-${sno}`,
+        nameEn,
+        nameTa,
+        categoryKey: 'pencil-crackers',
+        categoryEn: 'PENCIL CRACKERS',
+        categoryTa: 'பென்சில் வகைகள்',
+        price,
+        discountPrice,
+        per: per || '1 Box',
+        image,
+        badge: badge || 'Pencil & Stone',
+        tagTa: tagTa || 'பென்சில்'
+    })),
     ...childrenFountainProducts.map(({ sno, nameEn, nameTa, price, discountPrice, image }) => ({
         sno,
         id: `p-${sno}`,
@@ -513,5 +324,185 @@ export const priceListProducts = [
         image,
         badge: 'Special Fountain',
         tagTa: 'சிறப்பு பவுண்டைன்'
+    })),
+    ...peacockFountainProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        sno,
+        id: `p-${sno}`,
+        nameEn,
+        nameTa,
+        categoryKey: 'peacock-fountains',
+        categoryEn: 'PEACOCK FOUNTAINS',
+        categoryTa: 'பீக்காக் பவுண்டைன்',
+        price,
+        discountPrice,
+        per: per || '1 Box',
+        image,
+        badge: 'Peacock Fountain',
+        tagTa: 'மயில் பவுண்டைன்'
+    })),
+    ...bombProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        sno,
+        id: `p-${sno}`,
+        nameEn,
+        nameTa,
+        categoryKey: 'bomb-crackers',
+        categoryEn: 'BOMB CRACKERS',
+        categoryTa: 'பாம் வகைகள்',
+        price,
+        discountPrice,
+        per: per || '1 Box',
+        image,
+        badge: 'Bomb Cracker',
+        tagTa: 'அதிரடி பாம்'
+    })),
+    ...rocketProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        sno,
+        id: `p-${sno}`,
+        nameEn,
+        nameTa,
+        categoryKey: 'rockets',
+        categoryEn: 'ROCKETS',
+        categoryTa: 'ராக்கெட் வகைகள்',
+        price,
+        discountPrice,
+        per: per || '1 Box',
+        image,
+        badge: 'Sky Rocket',
+        tagTa: 'வான்வெடி ராக்கெட்'
+    })),
+    ...bijiliProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        sno,
+        id: `p-${sno}`,
+        nameEn,
+        nameTa,
+        categoryKey: 'bijili-crackers',
+        categoryEn: 'BIJILI CRACKERS',
+        categoryTa: 'பிஜிலி வகைகள்',
+        price,
+        discountPrice,
+        per: per || '1 Box',
+        image,
+        badge: 'Bijili Cracker',
+        tagTa: 'பிஜிலி வெடி'
+    })),
+    ...chorsaDeluxeProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        sno,
+        id: `p-${sno}`,
+        nameEn,
+        nameTa,
+        categoryKey: 'chorsa-deluxe-crackers',
+        categoryEn: 'CHORSA & DELUXE CRACKERS',
+        categoryTa: 'சோர்சா & டீலக்ஸ் கிராக்கர்ஸ்',
+        price,
+        discountPrice,
+        per: per || '1 Box',
+        image,
+        badge: 'Deluxe Cracker',
+        tagTa: 'டீலக்ஸ் வெடி'
+    })),
+    ...walaProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        sno,
+        id: `p-${sno}`,
+        nameEn,
+        nameTa,
+        categoryKey: 'wala-crackers',
+        categoryEn: 'WALA',
+        categoryTa: 'சரவெடிகள்',
+        price,
+        discountPrice,
+        per: per || '1 Box',
+        image,
+        badge: 'Sara Vedi',
+        tagTa: 'சரவெடி'
+    })),
+    ...arialNightShotProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        sno,
+        id: `p-${sno}`,
+        nameEn,
+        nameTa,
+        categoryKey: 'arial-night-shots',
+        categoryEn: 'ARIAL NIGHT SHOTS',
+        categoryTa: 'ஏரியல் நைட் சாட்ஸ்',
+        price,
+        discountPrice,
+        per: per || '1 Box',
+        image,
+        badge: 'Arial Night Shot',
+        tagTa: 'நைட் ஷாட்'
+    })),
+    ...fancySkyShotProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        sno,
+        id: `p-${sno}`,
+        nameEn,
+        nameTa,
+        categoryKey: 'fancy-sky-shots',
+        categoryEn: 'FANCY SKY SHOTS',
+        categoryTa: 'பேன்சி ஸ்கை சாட்ஸ்',
+        price,
+        discountPrice,
+        per: per || '1 Box',
+        image,
+        badge: 'Fancy Sky Shot',
+        tagTa: 'பேன்சி ஸ்கை சாட்'
+    })),
+    ...repeaterShotProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        sno,
+        id: `p-${sno}`,
+        nameEn,
+        nameTa,
+        categoryKey: 'repeater-shots',
+        categoryEn: 'MULTI SKY SHOTS',
+        categoryTa: 'மல்டி ஸ்கை சாட்ஸ்',
+        price,
+        discountPrice,
+        per: per || '1 Box',
+        image,
+        badge: 'Multi-Shot Cake',
+        tagTa: 'மல்டி ஷாட்ஸ்'
+    })),
+    ...rollcapMatchesProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        sno,
+        id: `p-${sno}`,
+        nameEn,
+        nameTa,
+        categoryKey: 'rollcap-matches',
+        categoryEn: 'ROLLCAP & COLOUR MATCHES',
+        categoryTa: 'ரோல் கேப்ஸ் & கலர் மத்தப்புகள்',
+        price,
+        discountPrice,
+        per: per || '1 Box',
+        image,
+        badge: 'Roll Cap & Match',
+        tagTa: 'ரோல் கேப்'
+    })),
+    ...sparklersProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        sno,
+        id: `p-${sno}`,
+        nameEn,
+        nameTa,
+        categoryKey: 'sparklers',
+        categoryEn: 'SPARKLERS',
+        categoryTa: 'கம்பிமத்தாப்புகள்',
+        price,
+        discountPrice,
+        per: per || '1 Box',
+        image,
+        badge: 'Sparklers',
+        tagTa: 'கம்பிமத்தாப்பு'
+    })),
+    ...newCrackers2025Products.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        sno,
+        id: `p-${sno}`,
+        nameEn,
+        nameTa,
+        categoryKey: 'new-crackers-2025',
+        categoryEn: '2025 NEW CRACKERS',
+        categoryTa: 'புதிய வரவுகள்',
+        price,
+        discountPrice,
+        per: per || '1 Box',
+        image,
+        badge: '2025 New Arrival',
+        tagTa: 'புதிய வரவு'
     }))
 ];

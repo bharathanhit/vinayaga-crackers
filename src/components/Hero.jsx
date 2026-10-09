@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowRight, PhoneCall } from 'lucide-react';
+import { ArrowRight, PhoneCall, Sparkles } from 'lucide-react';
 import heroFireworksImg from '../assets/crackers/hero-fireworks.jpg';
 import skyShotsImg from '../assets/crackers/sky-shots.jpg';
 import flowerPotsImg from '../assets/crackers/flower-pots.jpg';
@@ -97,6 +97,13 @@ const Hero = () => {
                         >
                             இப்போதே வாங்க <ArrowRight size={16} />
                         </Link>
+                        <a
+                            href="#special-bundles"
+                            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-3 rounded-full font-black text-white text-xs sm:text-sm uppercase tracking-wide bg-gradient-to-r from-rose-600 via-rose-500 to-amber-500 hover:from-rose-500 hover:to-amber-400 shadow-xl shadow-rose-900/40 hover:scale-105 active:scale-95 transition-transform text-center border border-amber-300/40"
+                        >
+                            <Sparkles size={14} className="text-amber-300 animate-spin" style={{ animationDuration: '3s' }} />
+                            <span>60 & 70 காம்போ பேக் (₹2499)</span>
+                        </a>
                         <a
                             href="https://wa.me/918940921075?text=வணக்கம்%20Vinayaga%20Crackers%20Sivakasi,%20விலைப்பட்டியல்%20அனுப்பவும்."
                             target="_blank"

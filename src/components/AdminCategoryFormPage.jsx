@@ -306,23 +306,6 @@ const AdminCategoryFormPage = () => {
                     {/* Right — sidebar */}
                     <div className="space-y-6">
                         <SectionCard title="Display Settings">
-                            {/* Color Picker */}
-                            <Field label="Accent Color">
-                                <div className="flex items-center gap-3">
-                                    <input
-                                        type="color"
-                                        value={form.color}
-                                        onChange={e => setForm(f => ({ ...f, color: e.target.value }))}
-                                        className="w-12 h-11 rounded-xl border border-slate-200 cursor-pointer"
-                                    />
-                                    <span className="text-sm font-mono text-slate-500 flex-1">{form.color}</span>
-                                </div>
-                                <div
-                                    className="mt-3 h-2 rounded-full"
-                                    style={{ background: `linear-gradient(to right, ${form.color}22, ${form.color})` }}
-                                />
-                            </Field>
-
                             {/* Display Order */}
                             <Field label="Display Order" hint="Lower numbers appear first in Navbar and Products Grid">
                                 <TextInput
@@ -352,8 +335,7 @@ const AdminCategoryFormPage = () => {
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Live Preview</p>
                                 <div className="flex items-center gap-4">
                                     <div
-                                        className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-lg font-black"
-                                        style={{ backgroundColor: form.color }}
+                                        className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-lg font-black bg-secondary shadow-md shadow-secondary/20"
                                     >
                                         {form.title.charAt(0).toUpperCase()}
                                     </div>

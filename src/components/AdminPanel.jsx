@@ -7,17 +7,18 @@ import {
     Plus, Trash2, Edit2, X, Check, FolderOpen, ChevronDown, ChevronUp, Link, Mail,
     MessageSquare, Facebook, Twitter, Instagram, Linkedin, Youtube,
     Truck, Search, Settings, Award, Zap, FileImage, UploadCloud,
-    MessageCircle, Phone, Clock, GripVertical
+    MessageCircle, Phone, Clock, GripVertical, RotateCcw, CheckCircle2, Tag, Percent,
+    Printer, FileText, Download
 } from 'lucide-react';
 import {
-    collection, addDoc, updateDoc, deleteDoc, doc,
+    collection, addDoc, updateDoc, deleteDoc, doc, setDoc, getDocs, where,
     onSnapshot, query, orderBy, serverTimestamp, writeBatch
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { categories as staticCategories, products as staticProducts } from '../data/products';
 // ─── Environment Credentials ─────────────────────────────────────────
-const ADMIN_USER = import.meta.env.VITE_ADMIN_USER;
-const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS;
+const ADMIN_USER = import.meta.env.VITE_ADMIN_USER || 'saran raj';
+const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS || 'vinayaga572';
 
 const slugify = (str) => str.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 const resizeImage = (file, maxWidth = 800) => {
@@ -315,10 +316,654 @@ const ContactIcon = ({ method }) => {
     if (method === 'call') return <Phone size={14} className="text-orange-500" />;
     return <Globe size={14} className="text-slate-400" />;
 };
+// ─── Customer Invoice / Estimate Generator ────────────────────────
+export const generateInvoiceHTML = (iq) => {
+    const invoiceNo = `VC-EST-${new Date(iq.createdAt?.toDate?.() || Date.now()).getFullYear()}-${(iq.docId || '001').slice(-6).toUpperCase()}`;
+    const invoiceDate = iq.createdAt?.toDate?.() 
+        ? new Date(iq.createdAt.toDate()).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+        : new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    const invoiceTime = iq.createdAt?.toDate?.()
+        ? new Date(iq.createdAt.toDate()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    const items = (Array.isArray(iq.items) && iq.items.length > 0)
+        ? iq.items
+        : [{
+            sno: 1,
+            nameTa: iq.product || 'தீபாவளி பட்டாசு தொகுப்பு',
+            nameEn: iq.product || 'Diwali Fireworks Estimate / Quotation',
+            per: 'Order',
+            qty: 1,
+            mrp: iq.totalMrp || iq.budget || '-',
+            discountPrice: iq.totalDiscounted || iq.budget || '-',
+            subtotal: iq.totalDiscounted || iq.budget || '-'
+        }];
+
+    const totalMrp = iq.totalMrp ? Number(iq.totalMrp).toLocaleString('en-IN') : null;
+    const totalDiscounted = iq.totalDiscounted 
+        ? Number(iq.totalDiscounted).toLocaleString('en-IN') 
+        : (iq.budget ? Number(iq.budget).toLocaleString('en-IN') : null);
+    const totalSavings = iq.totalSavings ? Number(iq.totalSavings).toLocaleString('en-IN') : null;
+
+    const itemsHtml = items.map((it, idx) => {
+        const mrpVal = it.mrp ? (typeof it.mrp === 'number' ? `₹${it.mrp.toLocaleString('en-IN')}` : it.mrp) : '-';
+        const rateVal = it.discountPrice ? (typeof it.discountPrice === 'number' ? `₹${it.discountPrice.toLocaleString('en-IN')}` : it.discountPrice) : '-';
+        const subVal = it.subtotal ? (typeof it.subtotal === 'number' ? `₹${it.subtotal.toLocaleString('en-IN')}` : it.subtotal) : rateVal;
+
+        return `
+            <tr>
+                <td style="text-align: center; font-weight: 600;">${it.sno || idx + 1}</td>
+                <td>
+                    <div style="font-weight: 700; color: #0f172a;">${it.nameTa || it.title || ''}</div>
+                    <div style="font-size: 11px; color: #475569;">${it.nameEn || it.title || ''}</div>
+                </td>
+                <td style="text-align: center; font-weight: 500;">${it.per || 'Pkt'}</td>
+                <td style="text-align: right; color: #64748b; text-decoration: line-through;">${mrpVal}</td>
+                <td style="text-align: right; font-weight: 700; color: #0f172a;">${rateVal}</td>
+                <td style="text-align: center; font-weight: 700;">${it.qty || 1}</td>
+                <td style="text-align: right; font-weight: 800; color: #b91c1c;">${subVal}</td>
+            </tr>
+        `;
+    }).join('');
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Estimate_Invoice_${invoiceNo}</title>
+    <style>
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #0f172a;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .page-container {
+            max-width: 820px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 32px;
+            position: relative;
+        }
+        @media print {
+            body { background: #fff; padding: 0; }
+            .page-container { box-shadow: none; border-radius: 0; padding: 10mm 12mm; max-width: 100%; }
+            .no-print { display: none !important; }
+            @page { size: A4; margin: 10mm; }
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 3px double #e2e8f0;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .brand-title {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            color: #b91c1c;
+            text-transform: uppercase;
+            margin: 0;
+        }
+        .brand-tamil {
+            font-size: 15px;
+            font-weight: 700;
+            color: #d97706;
+            margin: 2px 0 6px 0;
+        }
+        .brand-details {
+            font-size: 11px;
+            color: #475569;
+            line-height: 1.5;
+        }
+        .invoice-badge {
+            background: #0f172a;
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 10px;
+            text-align: right;
+        }
+        .invoice-badge h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            color: #f59e0b;
+        }
+        .meta-text {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+        .meta-text span {
+            color: #fff;
+            font-weight: 700;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .info-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px 16px;
+        }
+        .info-card-title {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #b91c1c;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 4px;
+        }
+        .info-row {
+            font-size: 12px;
+            line-height: 1.6;
+            color: #1e293b;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #64748b;
+            display: inline-block;
+            width: 105px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+        th {
+            background: #0f172a;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 10px;
+            border: 1px solid #0f172a;
+        }
+        td {
+            padding: 7px 10px;
+            border: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+        tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+        .totals-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+        .totals-box {
+            width: 320px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f8fafc;
+            overflow: hidden;
+        }
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 14px;
+            font-size: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .totals-row.grand-total {
+            background: #b91c1c;
+            color: #ffffff;
+            font-weight: 900;
+            font-size: 15px;
+            border-bottom: none;
+        }
+        .notes-section {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 14px;
+            margin-bottom: 20px;
+        }
+        .notes-title {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+        .notes-list {
+            font-size: 10px;
+            color: #64748b;
+            margin: 0;
+            padding-left: 18px;
+            line-height: 1.6;
+        }
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 32px;
+            padding-top: 16px;
+            border-top: 1px dashed #cbd5e1;
+        }
+        .sig-block {
+            text-align: center;
+            width: 200px;
+        }
+        .sig-line {
+            border-top: 1px solid #0f172a;
+            margin-bottom: 6px;
+        }
+        .sig-text {
+            font-size: 11px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .controls-bar {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e293b;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 10px;
+        }
+        .btn-print {
+            background: #e11d48;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-print:hover { background: #be123c; }
+        .btn-close {
+            background: #334155;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .btn-close:hover { background: #475569; }
+    </style>
+</head>
+<body>
+    <div class="no-print controls-bar">
+        <div>
+            <strong>Vinayaga Supreme Crackers — Official Invoice / Estimate Bill</strong>
+            <div style="font-size: 11px; opacity: 0.8;">Click the print button below and select Destination: "Save as PDF".</div>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
+            <button class="btn-close" onclick="window.close()">✖ Close</button>
+        </div>
+    </div>
+
+    <div class="page-container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1 class="brand-title">Vinayaga Supreme Crackers</h1>
+                <div class="brand-tamil">ஸ்ரீ விநாயகர் சுப்ரீம் பட்டாசு சிவகாசி</div>
+                <div class="brand-details">
+                    📍 <strong>Shop No :</strong> 3/6136, Om Sakthi Nagar, Perapatti, Sivakasi - 626189<br>
+                    📞 <strong>Mobile / WhatsApp:</strong> +91 89409 21075<br>
+                    ✉️ <strong>Email:</strong> vinayagacrackers@gmail.com | 🌐 <strong>Direct Sivakasi Factory Rates</strong>
+                </div>
+            </div>
+            <div class="invoice-badge">
+                <h2>ESTIMATE / INVOICE</h2>
+                <div style="font-size: 10px; color: #fcd34d; font-weight: 700; margin-top: 2px;">விலை மதிப்பீட்டு ரசீது</div>
+                <div class="meta-text">No: <span>${invoiceNo}</span></div>
+                <div class="meta-text">Date: <span>${invoiceDate}</span></div>
+                <div class="meta-text">Time: <span>${invoiceTime}</span></div>
+            </div>
+        </div>
+
+        <!-- Info Grid -->
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-card-title">Customer / வாடிக்கையாளர் விபரம்</div>
+                <div class="info-row"><span class="info-label">Name:</span> <strong>${iq.name || 'Valued Customer'}</strong></div>
+                <div class="info-row"><span class="info-label">Mobile:</span> <strong>${iq.phone || 'N/A'}</strong></div>
+                ${iq.email && iq.email !== 'N/A' ? `<div class="info-row"><span class="info-label">Email:</span> ${iq.email}</div>` : ''}
+                <div class="info-row"><span class="info-label">Destination:</span> <strong>${iq.destination || iq.city || 'Tamil Nadu'}</strong></div>
+                ${iq.address ? `<div class="info-row"><span class="info-label">Address:</span> ${iq.address}</div>` : ''}
+            </div>
+            <div class="info-card">
+                <div class="info-card-title">Order & Dispatch / விபரம்</div>
+                <div class="info-row"><span class="info-label">Order Source:</span> ${iq.source || iq.industry || 'Online Order Form'}</div>
+                <div class="info-row"><span class="info-label">Transport Hub:</span> ${iq.logistics || 'Sivakasi Parcel Service (To Pay)'}</div>
+                <div class="info-row"><span class="info-label">Payment Mode:</span> UPI / GPay / Net Banking</div>
+                <div class="info-row"><span class="info-label">Order Status:</span> <strong style="color: #047857;">${iq.status === 'read' ? 'Confirmed / Processed' : 'New Order Enquiry'}</strong></div>
+            </div>
+        </div>
+
+        <!-- Products Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 45px; text-align: center;">S.No</th>
+                    <th>Cracker Name / பட்டாசு விபரம்</th>
+                    <th style="width: 65px; text-align: center;">Unit</th>
+                    <th style="width: 80px; text-align: right;">MRP (₹)</th>
+                    <th style="width: 85px; text-align: right;">Rate (₹)</th>
+                    <th style="width: 55px; text-align: center;">Qty</th>
+                    <th style="width: 100px; text-align: right;">Amount (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${itemsHtml}
+            </tbody>
+        </table>
+
+        <!-- Totals -->
+        <div class="totals-section">
+            <div class="totals-box">
+                <div class="totals-row">
+                    <span style="font-weight: 600; color: #475569;">Total Items / வகைகள்:</span>
+                    <strong>${items.length} Products (${iq.totalUnits || items.reduce((acc, it) => acc + (Number(it.qty) || 1), 0)} Units)</strong>
+                </div>
+                ${totalMrp ? `
+                <div class="totals-row">
+                    <span style="font-weight: 600; color: #475569;">Total MRP Value:</span>
+                    <strong style="text-decoration: line-through; color: #64748b;">₹${totalMrp}</strong>
+                </div>` : ''}
+                ${totalSavings ? `
+                <div class="totals-row">
+                    <span style="font-weight: 600; color: #047857;">Festival Discount Savings:</span>
+                    <strong style="color: #047857;">- ₹${totalSavings}</strong>
+                </div>` : ''}
+                <div class="totals-row grand-total">
+                    <span>NET PAYABLE AMOUNT:</span>
+                    <span>${totalDiscounted ? `₹${totalDiscounted}` : (iq.budget ? `₹${Number(iq.budget).toLocaleString('en-IN')}` : 'To Be Confirmed')}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes / Safety -->
+        <div class="notes-section">
+            <div class="notes-title">Terms & Safety Guidelines / விதிமுறைகள்:</div>
+            <ol class="notes-list">
+                <li>All crackers manufactured in Sivakasi complying with PESO safety norms and guidelines.</li>
+                <li>Freight / Parcel transport charges will be collected by the transport service at delivery point.</li>
+                <li>Goods once booked and dispatched cannot be cancelled or returned.</li>
+                <li>UPI / WhatsApp confirmation contact: <strong>+91 89409 21075</strong>.</li>
+            </ol>
+        </div>
+
+        <!-- Signatures -->
+        <div class="signature-section">
+            <div class="sig-block">
+                <div class="sig-line"></div>
+                <div class="sig-text">Customer Signature</div>
+            </div>
+            <div style="font-size: 11px; font-weight: 800; color: #b91c1c; text-align: center;">
+                ✨ WISHING YOU A SAFE & HAPPY DIWALI ✨<br>
+                <span style="font-size: 9px; color: #64748b; font-weight: 500;">Thank you for your business!</span>
+            </div>
+            <div class="sig-block">
+                <div class="sig-line"></div>
+                <div class="sig-text">For Vinayaga Supreme Crackers</div>
+                <div style="font-size: 9px; color: #64748b;">Authorized Signatory</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>`;
+};
+
+export const openInvoicePrintWindow = (iq) => {
+    const html = generateInvoiceHTML(iq);
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+        alert("Pop-up was blocked. Please allow pop-ups for this page to download or print the invoice PDF.");
+        return;
+    }
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+        try {
+            printWindow.print();
+        } catch (e) {
+            console.error('Print window error:', e);
+        }
+    }, 450);
+};
+
+// ─── Modal Preview Component ──────────────────────────────────────
+const InvoicePreviewModal = ({ iq, onClose, onPrint }) => {
+    if (!iq) return null;
+
+    const invoiceNo = `VC-EST-${new Date(iq.createdAt?.toDate?.() || Date.now()).getFullYear()}-${(iq.docId || '001').slice(-6).toUpperCase()}`;
+    const invoiceDate = iq.createdAt?.toDate?.() 
+        ? new Date(iq.createdAt.toDate()).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+        : new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    const invoiceTime = iq.createdAt?.toDate?.()
+        ? new Date(iq.createdAt.toDate()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    const items = (Array.isArray(iq.items) && iq.items.length > 0)
+        ? iq.items
+        : [{
+            sno: 1,
+            nameTa: iq.product || 'தீபாவளி பட்டாசு தொகுப்பு',
+            nameEn: iq.product || 'Diwali Fireworks Estimate / Quotation',
+            per: 'Order',
+            qty: 1,
+            mrp: iq.totalMrp || iq.budget || '-',
+            discountPrice: iq.totalDiscounted || iq.budget || '-',
+            subtotal: iq.totalDiscounted || iq.budget || '-'
+        }];
+
+    const totalMrp = iq.totalMrp ? Number(iq.totalMrp).toLocaleString('en-IN') : null;
+    const totalDiscounted = iq.totalDiscounted 
+        ? Number(iq.totalDiscounted).toLocaleString('en-IN') 
+        : (iq.budget ? Number(iq.budget).toLocaleString('en-IN') : null);
+    const totalSavings = iq.totalSavings ? Number(iq.totalSavings).toLocaleString('en-IN') : null;
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
+            <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden my-4">
+                {/* Modal Top Bar */}
+                <div className="flex items-center justify-between px-6 py-4 bg-slate-900 text-white shrink-0">
+                    <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                            <FileText size={18} />
+                        </div>
+                        <div>
+                            <h3 className="font-black text-sm uppercase tracking-wider text-white">Invoice & Estimate Preview</h3>
+                            <p className="text-[11px] text-slate-400">Estimate No: {invoiceNo}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => onPrint(iq)}
+                            className="px-4 py-2 bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-600 hover:to-rose-700 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-md transition-all cursor-pointer"
+                        >
+                            <Printer size={15} /> Download PDF / Print
+                        </button>
+                        <button
+                            onClick={onClose}
+                            className="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-all cursor-pointer"
+                        >
+                            <X size={18} />
+                        </button>
+                    </div>
+                </div>
+
+                {/* Printable Document Preview */}
+                <div className="p-6 md:p-8 overflow-y-auto flex-1 bg-slate-50 text-slate-800">
+                    <div className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm max-w-3xl mx-auto space-y-6">
+                        
+                        {/* Header */}
+                        <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pb-6 border-b-2 border-dashed border-slate-200">
+                            <div>
+                                <h1 className="text-2xl font-black text-rose-700 uppercase tracking-tight">Vinayaga Supreme Crackers</h1>
+                                <p className="text-sm font-bold text-amber-600">ஸ்ரீ விநாயகர் சுப்ரீம் பட்டாசு சிவகாசி</p>
+                                <div className="text-xs text-slate-500 mt-2 space-y-0.5 leading-relaxed">
+                                    <p>📍 Shop No : 3/6136, Om Sakthi Nagar, Perapatti, Sivakasi - 626189</p>
+                                    <p>📞 Phone / WhatsApp: +91 89409 21075 | ✉️ vinayagacrackers@gmail.com</p>
+                                    <p>🌐 Direct Sivakasi Factory Wholesale & Retail Rates</p>
+                                </div>
+                            </div>
+                            <div className="bg-slate-900 text-white p-4 rounded-xl text-right sm:min-w-[200px]">
+                                <span className="text-xs font-black text-amber-400 uppercase tracking-widest block">Estimate / Invoice</span>
+                                <span className="text-[10px] text-slate-300 block mb-2">விலை மதிப்பீட்டு ரசீது</span>
+                                <div className="text-xs text-slate-300">No: <span className="text-white font-bold">{invoiceNo}</span></div>
+                                <div className="text-xs text-slate-300">Date: <span className="text-white font-bold">{invoiceDate}</span></div>
+                                <div className="text-xs text-slate-300">Time: <span className="text-white font-bold">{invoiceTime}</span></div>
+                            </div>
+                        </div>
+
+                        {/* Customer & Order Details */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                                <h4 className="text-[10px] font-black text-rose-700 uppercase tracking-wider mb-2 border-b border-slate-200 pb-1">
+                                    Customer Details / வாடிக்கையாளர்
+                                </h4>
+                                <div className="text-xs space-y-1 text-slate-700">
+                                    <p><span className="font-bold text-slate-500 w-24 inline-block">Name:</span> <strong className="text-slate-900">{iq.name || 'Valued Customer'}</strong></p>
+                                    <p><span className="font-bold text-slate-500 w-24 inline-block">Mobile:</span> <strong>{iq.phone || 'N/A'}</strong></p>
+                                    {iq.email && iq.email !== 'N/A' && <p><span className="font-bold text-slate-500 w-24 inline-block">Email:</span> {iq.email}</p>}
+                                    <p><span className="font-bold text-slate-500 w-24 inline-block">Destination:</span> <strong>{iq.destination || iq.city || 'Tamil Nadu'}</strong></p>
+                                    {iq.address && <p><span className="font-bold text-slate-500 w-24 inline-block">Address:</span> {iq.address}</p>}
+                                </div>
+                            </div>
+
+                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                                <h4 className="text-[10px] font-black text-rose-700 uppercase tracking-wider mb-2 border-b border-slate-200 pb-1">
+                                    Dispatch & Order / விபரம்
+                                </h4>
+                                <div className="text-xs space-y-1 text-slate-700">
+                                    <p><span className="font-bold text-slate-500 w-24 inline-block">Source:</span> {iq.source || iq.industry || 'Online Order Form'}</p>
+                                    <p><span className="font-bold text-slate-500 w-24 inline-block">Transport:</span> {iq.logistics || 'Sivakasi Parcel Service (To Pay)'}</p>
+                                    <p><span className="font-bold text-slate-500 w-24 inline-block">Payment:</span> UPI / GPay / Net Banking</p>
+                                    <p><span className="font-bold text-slate-500 w-24 inline-block">Status:</span> <strong className="text-emerald-700">{iq.status === 'read' ? 'Confirmed / Processed' : 'New Order Enquiry'}</strong></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Items Table */}
+                        <div className="overflow-x-auto border border-slate-200 rounded-xl">
+                            <table className="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr className="bg-slate-900 text-white uppercase text-[10px] tracking-wider">
+                                        <th className="py-2.5 px-3 text-center w-12">S.No</th>
+                                        <th className="py-2.5 px-3">Cracker Item / பட்டாசு விபரம்</th>
+                                        <th className="py-2.5 px-3 text-center w-16">Unit</th>
+                                        <th className="py-2.5 px-3 text-right w-20">MRP (₹)</th>
+                                        <th className="py-2.5 px-3 text-right w-20">Rate (₹)</th>
+                                        <th className="py-2.5 px-3 text-center w-14">Qty</th>
+                                        <th className="py-2.5 px-3 text-right w-24">Amount (₹)</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-200">
+                                    {items.map((it, idx) => {
+                                        const mrpVal = it.mrp ? (typeof it.mrp === 'number' ? `₹${it.mrp.toLocaleString('en-IN')}` : it.mrp) : '-';
+                                        const rateVal = it.discountPrice ? (typeof it.discountPrice === 'number' ? `₹${it.discountPrice.toLocaleString('en-IN')}` : it.discountPrice) : '-';
+                                        const subVal = it.subtotal ? (typeof it.subtotal === 'number' ? `₹${it.subtotal.toLocaleString('en-IN')}` : it.subtotal) : rateVal;
+
+                                        return (
+                                            <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'}>
+                                                <td className="py-2 px-3 text-center font-bold text-slate-500">{it.sno || idx + 1}</td>
+                                                <td className="py-2 px-3">
+                                                    <div className="font-bold text-slate-900">{it.nameTa || it.title || ''}</div>
+                                                    <div className="text-[11px] text-slate-500">{it.nameEn || it.title || ''}</div>
+                                                </td>
+                                                <td className="py-2 px-3 text-center text-slate-600 font-medium">{it.per || 'Pkt'}</td>
+                                                <td className="py-2 px-3 text-right text-slate-400 line-through">{mrpVal}</td>
+                                                <td className="py-2 px-3 text-right font-bold text-slate-900">{rateVal}</td>
+                                                <td className="py-2 px-3 text-center font-black text-slate-800">{it.qty || 1}</td>
+                                                <td className="py-2 px-3 text-right font-black text-rose-700">{subVal}</td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Totals Summary */}
+                        <div className="flex justify-end">
+                            <div className="w-full sm:w-80 bg-slate-50 border border-slate-200 rounded-xl overflow-hidden text-xs">
+                                <div className="flex justify-between p-2.5 border-b border-slate-200">
+                                    <span className="text-slate-600 font-medium">Total Products / வகைகள்:</span>
+                                    <strong className="text-slate-900">{items.length} Products ({iq.totalUnits || items.reduce((acc, it) => acc + (Number(it.qty) || 1), 0)} Units)</strong>
+                                </div>
+                                {totalMrp && (
+                                    <div className="flex justify-between p-2.5 border-b border-slate-200">
+                                        <span className="text-slate-600 font-medium">Total MRP Value:</span>
+                                        <span className="text-slate-400 line-through">₹{totalMrp}</span>
+                                    </div>
+                                )}
+                                {totalSavings && (
+                                    <div className="flex justify-between p-2.5 border-b border-slate-200 text-emerald-700">
+                                        <span className="font-medium">Festival Discount Savings:</span>
+                                        <strong>- ₹{totalSavings}</strong>
+                                    </div>
+                                )}
+                                <div className="flex justify-between p-3 bg-rose-700 text-white font-black text-sm">
+                                    <span>NET PAYABLE:</span>
+                                    <span>{totalDiscounted ? `₹${totalDiscounted}` : (iq.budget ? `₹${Number(iq.budget).toLocaleString('en-IN')}` : 'To Be Confirmed')}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Terms */}
+                        <div className="border-t border-slate-200 pt-3 text-[11px] text-slate-500 space-y-1">
+                            <p className="font-bold uppercase tracking-wider text-slate-700">Terms & Safety Guidelines / விதிமுறைகள்:</p>
+                            <p>1. All crackers manufactured in Sivakasi complying with PESO safety norms.</p>
+                            <p>2. Freight / Parcel transport charges will be collected by the transport service at delivery point.</p>
+                            <p>3. Goods once dispatched cannot be returned or cancelled.</p>
+                        </div>
+
+                        {/* Signatures */}
+                        <div className="flex justify-between items-end pt-8 border-t border-dashed border-slate-200 text-xs">
+                            <div className="text-center w-40">
+                                <div className="border-t border-slate-800 pt-1 font-bold text-slate-800">Customer Signature</div>
+                            </div>
+                            <div className="text-center text-xs font-black text-rose-700">
+                                ✨ SAFE & HAPPY DIWALI ✨
+                            </div>
+                            <div className="text-center w-48">
+                                <div className="border-t border-slate-800 pt-1 font-bold text-slate-800">Vinayaga Supreme Crackers</div>
+                                <div className="text-[10px] text-slate-500">Authorized Signatory</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const InquiryManager = () => {
     const [inquiries, setInquiries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all'); // all, new, read
+    const [previewInvoiceIq, setPreviewInvoiceIq] = useState(null);
 
     useEffect(() => {
         const q = query(collection(db, 'inquiries'), orderBy('createdAt', 'desc'));
@@ -358,7 +1003,7 @@ const InquiryManager = () => {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <h2 className="text-4xl font-black text-primary tracking-tighter uppercase">Inquiry Dashboard</h2>
-                    <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mt-2 px-1">Manage global business leads from forms</p>
+                    <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mt-2 px-1">Manage customer orders & download invoice estimates</p>
                 </div>
                 <div className="flex bg-slate-100 p-1 rounded-xl w-fit">
                     {['all', 'new', 'read'].map((f) => (
@@ -394,7 +1039,7 @@ const InquiryManager = () => {
                                             <StatusBadge status={iq.status} />
                                         </div>
                                         <div className="flex items-center gap-3">
-                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{iq.industry}</span>
+                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{iq.industry || 'Diwali Fireworks'}</span>
                                             <div className="w-1 h-1 rounded-full bg-slate-200" />
                                             <div className="flex items-center gap-1.5 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
                                                 <ContactIcon method={iq.contactMethod} />
@@ -430,22 +1075,22 @@ const InquiryManager = () => {
                                     <div className="md:col-span-1">
                                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Business / Source</p>
                                         <p className="text-sm font-bold text-slate-700 truncate" title={iq.industry}>
-                                            {iq.company && iq.company !== 'N/A' ? iq.company : iq.industry}
+                                            {iq.company && iq.company !== 'N/A' ? iq.company : (iq.source || iq.industry || 'Direct')}
                                         </p>
                                         {iq.company && iq.company !== 'N/A' && iq.industry && (
                                             <p className="text-[9px] text-slate-400 font-medium truncate mt-0.5">{iq.industry}</p>
                                         )}
                                     </div>
                                     <div className="md:col-span-1">
-                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Destination Port</p>
+                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Delivery Destination</p>
                                         <p className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                                            <Globe size={14} className="text-blue-400" /> {iq.destination}
+                                            <Globe size={14} className="text-blue-400" /> {iq.destination || iq.city || 'Tamil Nadu'}
                                         </p>
                                     </div>
                                     <div className="md:col-span-1">
-                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Logistics</p>
+                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Parcel Transport</p>
                                         <p className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                                            <Truck size={14} className="text-secondary" /> {iq.logistics}
+                                            <Truck size={14} className="text-secondary" /> {iq.logistics || 'Standard Transport'}
                                         </p>
                                     </div>
                                     <div className="md:col-span-1">
@@ -468,19 +1113,62 @@ const InquiryManager = () => {
                                         "{iq.message || iq.note}"
                                     </div>
                                 )}
+
+                                {/* Bottom Order Summary & Invoice Download Action Bar */}
+                                <div className="mt-6 pt-5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4">
+                                    <div className="flex flex-wrap items-center gap-3">
+                                        {iq.items?.length > 0 ? (
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <span className="px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
+                                                    <Package size={13} /> {iq.items.length} Products ({iq.totalUnits || 0} Units)
+                                                </span>
+                                                {iq.totalDiscounted && (
+                                                    <span className="px-3 py-1.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-black">
+                                                        Net: ₹{Number(iq.totalDiscounted).toLocaleString('en-IN')}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <span className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 text-xs font-bold uppercase tracking-wider">
+                                                Customer Product Enquiry
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => setPreviewInvoiceIq(iq)}
+                                            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer"
+                                        >
+                                            <Eye size={14} /> Preview Invoice
+                                        </button>
+                                        <button
+                                            onClick={() => openInvoicePrintWindow(iq)}
+                                            className="px-4 py-2 bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-600 hover:to-rose-700 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer"
+                                        >
+                                            <Printer size={14} /> Download PDF Invoice
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="flex lg:flex-col gap-3">
                                 <button
+                                    onClick={() => openInvoicePrintWindow(iq)}
+                                    title="Download / Print Invoice PDF"
+                                    className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-600 hover:bg-amber-500 hover:text-white flex items-center justify-center transition-all shadow-sm cursor-pointer"
+                                >
+                                    <Printer size={20} />
+                                </button>
+                                <button
                                     onClick={() => toggleStatus(iq.docId, iq.status)}
                                     title={iq.status === 'new' ? 'Mark as Read' : 'Mark as New'}
-                                    className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all border shadow-sm ${iq.status === 'new' ? 'bg-secondary/10 border-secondary/20 text-secondary hover:bg-secondary hover:text-white' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-slate-100'}`}
+                                    className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all border shadow-sm cursor-pointer ${iq.status === 'new' ? 'bg-secondary/10 border-secondary/20 text-secondary hover:bg-secondary hover:text-white' : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-slate-100'}`}
                                 >
                                     {iq.status === 'new' ? <Check size={20} /> : <MessageSquare size={20} />}
                                 </button>
                                 <button
                                     onClick={() => handleDelete(iq.docId)}
-                                    className="w-12 h-12 rounded-2xl bg-white border border-red-100 text-red-200 hover:bg-red-500 hover:text-white hover:border-red-500 flex items-center justify-center transition-all shadow-sm"
+                                    className="w-12 h-12 rounded-2xl bg-white border border-red-100 text-red-300 hover:bg-red-500 hover:text-white hover:border-red-500 flex items-center justify-center transition-all shadow-sm cursor-pointer"
                                 >
                                     <Trash2 size={20} />
                                 </button>
@@ -501,6 +1189,15 @@ const InquiryManager = () => {
                     </div>
                 )}
             </div>
+
+            {/* Invoice Preview Modal */}
+            {previewInvoiceIq && (
+                <InvoicePreviewModal
+                    iq={previewInvoiceIq}
+                    onClose={() => setPreviewInvoiceIq(null)}
+                    onPrint={openInvoicePrintWindow}
+                />
+            )}
         </div>
     );
 };
@@ -709,74 +1406,183 @@ const CategoryManager = () => {
     );
 };
 
-const ProductItem = ({ prod, openEdit, handleDelete }) => {
-    const controls = useDragControls();
+// ─── Quick Price Edit Modal ─────────────────────────────────────────
+const QuickPriceModal = ({ prod, onClose, onSave }) => {
+    const rawOffer = prod?.price ? String(prod.price).replace(/[^\d.]/g, '') : (prod?.discountPrice ? String(prod.discountPrice) : '');
+    const rawMrp = prod?.originalPrice ? String(prod.originalPrice).replace(/[^\d.]/g, '') : '';
+    const [price, setPrice] = useState(rawOffer);
+    const [originalPrice, setOriginalPrice] = useState(rawMrp);
+    const [saving, setSaving] = useState(false);
+
+    const handleSave = async () => {
+        setSaving(true);
+        await onSave(prod, price, originalPrice);
+        setSaving(false);
+        onClose();
+    };
+
     return (
-        <Reorder.Item 
-            value={prod} 
-            dragListener={false} 
-            dragControls={controls}
-            whileDrag={{ scale: 1.02, boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)' }}
-            className="flex items-center gap-4 bg-white border border-slate-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all cursor-default relative z-0"
-        >
-            <div className="flex items-center gap-3">
-                <div 
-                    onPointerDown={(e) => controls.start(e)}
-                    className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 cursor-grab active:cursor-grabbing hover:bg-secondary/10 hover:text-secondary transition-all"
-                >
-                    <GripVertical size={20} />
+        <Modal title="Quick Price Update" onClose={onClose} onSave={handleSave} saving={saving} valid={!!price}>
+            <div className="space-y-4">
+                <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-white shrink-0 border border-slate-200">
+                        <img src={prod.imageUrl || prod.image} alt="" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="min-w-0">
+                        <h4 className="font-black text-slate-800 text-sm truncate">{prod.title}</h4>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">{prod.category}</span>
+                    </div>
                 </div>
-                <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-slate-100">
+
+                <div className="grid grid-cols-2 gap-4">
+                    <Field label="Discount / Offer Price (₹) *">
+                        <TextInput
+                            type="number"
+                            value={price}
+                            onChange={e => setPrice(e.target.value)}
+                            placeholder="e.g. 15"
+                            autoFocus
+                        />
+                    </Field>
+                    <Field label="Original MRP (₹)">
+                        <TextInput
+                            type="number"
+                            value={originalPrice}
+                            onChange={e => setOriginalPrice(e.target.value)}
+                            placeholder="e.g. 100"
+                        />
+                    </Field>
+                </div>
+                <p className="text-[11px] text-slate-400 font-medium">
+                    This price will instantly update across both the website product cards and the order price list table.
+                </p>
+            </div>
+        </Modal>
+    );
+};
+
+const ProductItem = ({ prod, openEdit, openPriceEdit, handleToggleStock, handleDelete, handleRestore, isTrashView }) => {
+    const isOut = prod.isOutOfStock || prod.status === 'Out of Stock';
+
+    return (
+        <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border rounded-2xl p-4 shadow-sm hover:shadow-md transition-all ${
+            isOut ? 'border-amber-200 bg-amber-50/20' : 'border-slate-100'
+        }`}>
+            <div className="flex items-center gap-3 min-w-0">
+                <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-slate-100 relative border border-slate-100">
                     {(prod.imageUrl || prod.image) && (
                         <img src={prod.imageUrl || prod.image} alt={prod.title} className="w-full h-full object-cover" />
                     )}
-                </div>
-            </div>
-            <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                    <h4 className="font-black text-slate-900">{prod.title}</h4>
-                    {prod.isStatic && <span className="text-[8px] font-black bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded-full uppercase tracking-widest border border-slate-200">Static</span>}
-                    {prod.isFirestore && <span className="text-[8px] font-black bg-secondary/10 text-secondary px-1.5 py-0.5 rounded-full uppercase tracking-widest border border-secondary/20">Live</span>}
-                    {(prod.isGreenCracker || prod.safetyRating?.includes('Green Cracker')) && (
-                        <span className="text-[9px] font-black bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full uppercase tracking-widest">Green Cracker</span>
+                    {prod.sno && (
+                        <span className="absolute top-1 left-1 px-1.5 py-0.5 bg-black/80 rounded text-[9px] font-black text-amber-300">
+                            #{prod.sno}
+                        </span>
                     )}
                 </div>
-                <p className="text-xs text-slate-400 truncate font-medium">{prod.description}</p>
-                <span className="text-[10px] font-black text-secondary uppercase tracking-widest">{prod.category}</span>
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <h4 className="font-black text-slate-900 text-sm truncate">{prod.title}</h4>
+                        {prod.isStatic && <span className="text-[8px] font-black bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded-full uppercase tracking-widest border border-slate-200">Preset</span>}
+                        {prod.isFirestore && <span className="text-[8px] font-black bg-secondary/10 text-secondary px-1.5 py-0.5 rounded-full uppercase tracking-widest border border-secondary/20">Live</span>}
+                        {isOut ? (
+                            <span className="text-[9px] font-black bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
+                                <AlertCircle size={10} /> Out of Stock
+                            </span>
+                        ) : (
+                            <span className="text-[9px] font-black bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
+                                <Check size={10} /> In Stock
+                            </span>
+                        )}
+                    </div>
+                    <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+                        <span className="text-[10px] font-black text-secondary uppercase tracking-widest bg-secondary/5 px-2 py-0.5 rounded-md">
+                            {prod.category}
+                        </span>
+                        <div className="flex items-center gap-1.5 text-xs font-black">
+                            <span className="text-emerald-700 font-bold">
+                                {prod.price ? (String(prod.price).startsWith('₹') ? prod.price : `₹${prod.price}`) : `₹${prod.discountPrice || 0}`}
+                            </span>
+                            {prod.originalPrice && (
+                                <span className="text-slate-400 line-through text-[11px] font-semibold">
+                                    {String(prod.originalPrice).startsWith('₹') ? prod.originalPrice : `₹${prod.originalPrice}`}
+                                </span>
+                            )}
+                            <button
+                                onClick={() => openPriceEdit(prod)}
+                                className="text-[10px] font-black text-blue-600 hover:text-blue-800 hover:underline uppercase tracking-wider ml-1"
+                                title="Quick Edit Price"
+                            >
+                                ✏ Edit Price
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div className="flex gap-2 flex-shrink-0">
-                <button onClick={() => openEdit(prod)} className="w-9 h-9 rounded-xl border border-slate-100 flex items-center justify-center text-slate-400 hover:text-secondary hover:border-secondary transition-all">
-                    <Edit2 size={15} />
-                </button>
-                <button onClick={() => handleDelete(prod)} className="w-9 h-9 rounded-xl border border-slate-100 flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-200 transition-all">
-                    <Trash2 size={15} />
-                </button>
+            <div className="flex items-center gap-2 flex-shrink-0 justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
+                {!isTrashView ? (
+                    <>
+                        <button
+                            onClick={() => handleToggleStock(prod)}
+                            className={`px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 border ${
+                                isOut
+                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                                    : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100'
+                            }`}
+                            title={isOut ? "Mark as In Stock" : "Mark as Out of Stock"}
+                        >
+                            {isOut ? <><Check size={13} /> Set In Stock</> : <><AlertCircle size={13} /> Set Out of Stock</>}
+                        </button>
+                        <button
+                            onClick={() => openEdit(prod)}
+                            className="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-500 hover:text-secondary hover:border-secondary transition-all"
+                            title="Edit Full Details"
+                        >
+                            <Edit2 size={15} />
+                        </button>
+                        <button
+                            onClick={() => handleDelete(prod)}
+                            className="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-600 hover:border-red-300 transition-all"
+                            title="Delete Product"
+                        >
+                            <Trash2 size={15} />
+                        </button>
+                    </>
+                ) : (
+                    <button
+                        onClick={() => handleRestore(prod)}
+                        className="px-4 py-2 rounded-xl bg-blue-50 text-blue-600 border border-blue-200 text-xs font-black uppercase tracking-wider hover:bg-blue-600 hover:text-white transition-all flex items-center gap-1.5"
+                    >
+                        <RotateCcw size={13} /> Restore Product
+                    </button>
+                )}
             </div>
-        </Reorder.Item>
+        </div>
     );
 };
 
 // ─── Product Manager ───────────────────────────────────────────────
 const ProductManager = () => {
     const navigate = useNavigate();
-    const [reordering, setReordering] = useState(false);
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [filterCat, setFilterCat] = useState('all');
+    const [stockFilter, setStockFilter] = useState('all'); // 'all', 'in_stock', 'out_of_stock', 'trash'
+    const [searchQuery, setSearchQuery] = useState('');
+    const [priceModalProd, setPriceModalProd] = useState(null);
 
     useEffect(() => {
-        const unsub1 = onSnapshot(query(collection(db, 'products'), orderBy('order', 'asc')), (snap) => {
-            if (reordering) return;
+        const unsub1 = onSnapshot(collection(db, 'products'), (snap) => {
             const firestoreProds = snap.docs.map(d => ({ docId: d.id, ...d.data(), isFirestore: true }));
             const merged = staticProducts.map(p => ({ ...p, isStatic: true }));
 
             firestoreProds.forEach(fp => {
                 const idx = merged.findIndex(p => {
                     const idMatch = p.id && fp.id && p.id === fp.id;
+                    const docIdMatch = p.id && fp.docId && p.id === fp.docId;
                     const normalize = (s) => (s || '').toLowerCase().trim().replace(/\s+/g, ' ');
                     const titleMatch = normalize(p.title) === normalize(fp.title);
-                    return idMatch || titleMatch;
+                    return idMatch || docIdMatch || titleMatch;
                 });
                 if (idx !== -1) {
                     merged[idx] = { ...merged[idx], ...fp, isStatic: false };
@@ -784,14 +1590,7 @@ const ProductManager = () => {
                     merged.push(fp);
                 }
             });
-            merged.sort((a, b) => {
-                const getOrder = (p) => {
-                    if (typeof p.order === 'number') return p.order;
-                    if (p.title?.toLowerCase().includes('rice')) return -1000;
-                    return 0;
-                };
-                return getOrder(a) - getOrder(b);
-            });
+            merged.sort((a, b) => (Number(a.sno || a.order || 0)) - (Number(b.sno || b.order || 0)));
             setProducts(merged);
         });
 
@@ -811,394 +1610,261 @@ const ProductManager = () => {
         });
 
         return () => { unsub1(); unsub2(); };
-    }, [reordering]);
+    }, []);
 
-    const handleDelete = async (prod) => {
-        if (!prod.isFirestore) {
-            alert("This product is defined in the source code. To modify it, edit and save it once to 'promote' it to the database.");
-            return;
+    // ─── One-Click Stock Toggle ───
+    const handleToggleStock = async (prod) => {
+        const targetId = prod.docId || prod.id || slugify(prod.title || prod.nameEn);
+        const isCurrentlyOut = prod.isOutOfStock || prod.status === 'Out of Stock';
+        const newOutOfStock = !isCurrentlyOut;
+
+        try {
+            await setDoc(doc(db, 'products', targetId), {
+                id: prod.id || targetId,
+                title: prod.title || prod.nameEn || '',
+                categorySlug: prod.categorySlug || '',
+                isOutOfStock: newOutOfStock,
+                status: newOutOfStock ? 'Out of Stock' : 'In Stock / Ready to Dispatch',
+                updatedAt: serverTimestamp()
+            }, { merge: true });
+        } catch (err) {
+            console.error("Failed to update stock:", err);
+            alert("Error updating stock status: " + err.message);
         }
-        if (!window.confirm(`Delete "${prod.title}"?`)) return;
-        await deleteDoc(doc(db, 'products', prod.docId));
+    };
+
+    // ─── Quick Price Save ───
+    const handleSavePrice = async (prod, newOffer, newMrp) => {
+        const targetId = prod.docId || prod.id || slugify(prod.title || prod.nameEn);
+        const cleanOffer = String(newOffer).replace(/[^\d.]/g, '');
+        const cleanMrp = String(newMrp).replace(/[^\d.]/g, '');
+        const offerNum = parseFloat(cleanOffer) || 0;
+        const mrpNum = parseFloat(cleanMrp) || 0;
+        const discountPct = mrpNum > 0 ? Math.round(((mrpNum - offerNum) / mrpNum) * 100) : 90;
+
+        try {
+            await setDoc(doc(db, 'products', targetId), {
+                id: prod.id || targetId,
+                title: prod.title || prod.nameEn || '',
+                categorySlug: prod.categorySlug || '',
+                price: `₹${cleanOffer}`,
+                discountPrice: offerNum,
+                originalPrice: cleanMrp ? `₹${cleanMrp}` : prod.originalPrice || '',
+                discount: `${discountPct}% OFF`,
+                updatedAt: serverTimestamp()
+            }, { merge: true });
+        } catch (err) {
+            console.error("Failed to update price:", err);
+            alert("Error updating price: " + err.message);
+        }
+    };
+
+    // ─── Remove / Delete Product (Works on all products) ───
+    const handleDelete = async (prod) => {
+        if (!window.confirm(`Delete "${prod.title || prod.nameEn}"? This will remove it from the store.`)) return;
+        const targetId = prod.docId || prod.id || slugify(prod.title || prod.nameEn);
+
+        try {
+            await setDoc(doc(db, 'products', targetId), {
+                id: prod.id || targetId,
+                title: prod.title || prod.nameEn || '',
+                categorySlug: prod.categorySlug || '',
+                isDeleted: true,
+                updatedAt: serverTimestamp()
+            }, { merge: true });
+        } catch (err) {
+            console.error("Failed to delete product:", err);
+            alert("Error deleting product: " + err.message);
+        }
+    };
+
+    // ─── Restore Deleted Product ───
+    const handleRestore = async (prod) => {
+        const targetId = prod.docId || prod.id || slugify(prod.title || prod.nameEn);
+        try {
+            await setDoc(doc(db, 'products', targetId), {
+                isDeleted: false,
+                updatedAt: serverTimestamp()
+            }, { merge: true });
+        } catch (err) {
+            console.error("Failed to restore product:", err);
+            alert("Error restoring product: " + err.message);
+        }
     };
 
     const openEdit = (prod) => {
-        // If it's firestore, use docId. If it's static, use the id (slug) from the object.
-        const idToUse = prod.isFirestore ? prod.docId : (prod.id || slugify(prod.title));
+        const idToUse = prod.docId || prod.id || slugify(prod.title || prod.nameEn);
         navigate(`/admin/product/edit/${idToUse}`);
     };
 
-    const handleReorder = (reorderedSub) => {
-        let updatedFull;
-        if (filterCat === 'all') {
-            updatedFull = reorderedSub;
+    // Filter computation
+    const nonDeleted = products.filter(p => !p.isDeleted);
+    const deletedList = products.filter(p => !!p.isDeleted);
+    const inStockList = nonDeleted.filter(p => !p.isOutOfStock && p.status !== 'Out of Stock');
+    const outOfStockList = nonDeleted.filter(p => !!p.isOutOfStock || p.status === 'Out of Stock');
+
+    const filtered = products.filter(p => {
+        // Stock / Trash filter
+        if (stockFilter === 'trash') {
+            if (!p.isDeleted) return false;
         } else {
-            // Keep the non-filtered items in their original absolute positions where possible
-            updatedFull = [...products];
-            let subIndex = 0;
-            for (let i = 0; i < updatedFull.length; i++) {
-                if (updatedFull[i].categorySlug === filterCat) {
-                    updatedFull[i] = reorderedSub[subIndex++];
-                }
-            }
+            if (p.isDeleted) return false;
+            if (stockFilter === 'in_stock' && (p.isOutOfStock || p.status === 'Out of Stock')) return false;
+            if (stockFilter === 'out_of_stock' && !p.isOutOfStock && p.status !== 'Out of Stock') return false;
         }
-        setProducts(updatedFull);
-        setReordering(true);
-    };
 
-    // Buffered sequence sync for products
-    useEffect(() => {
-        if (!products.length || !reordering) return;
-        const timeout = setTimeout(async () => {
-            const batch = writeBatch(db);
-            let changes = false;
-            products.forEach((prod, i) => {
-                if (prod.order !== i) {
-                    if (prod.isFirestore && prod.docId) {
-                        batch.update(doc(db, 'products', prod.docId), { 
-                            order: i, 
-                            updatedAt: serverTimestamp() 
-                        });
-                        changes = true;
-                    } else {
-                        // Thin promotion to save order to Firestore while keeping rest static
-                        const newRef = doc(collection(db, 'products'));
-                        batch.set(newRef, {
-                            title: prod.title,
-                            id: prod.id || slugify(prod.title),
-                            categorySlug: prod.categorySlug,
-                            order: i,
-                            createdAt: serverTimestamp(),
-                            updatedAt: serverTimestamp()
-                        });
-                        changes = true;
-                    }
-                }
-            });
-            if (changes) await batch.commit();
-            setReordering(false);
-        }, 1500);
-        return () => clearTimeout(timeout);
-    }, [products]);
+        // Category filter
+        if (filterCat !== 'all' && p.categorySlug !== filterCat) return false;
 
-    const filtered = filterCat === 'all' ? products : products.filter(p => p.categorySlug === filterCat);
+        // Search query
+        if (searchQuery.trim()) {
+            const q = searchQuery.toLowerCase().trim();
+            const matchTitle = (p.title || '').toLowerCase().includes(q);
+            const matchEn = (p.nameEn || '').toLowerCase().includes(q);
+            const matchTa = (p.nameTa || '').includes(q);
+            const matchSno = String(p.sno || '').includes(q);
+            if (!matchTitle && !matchEn && !matchTa && !matchSno) return false;
+        }
+
+        return true;
+    });
 
     return (
-        <div>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div className="space-y-6">
+            {/* Header & Controls */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">Products</h2>
-                    <div className="flex items-center gap-3">
-                        <p className="text-slate-400 text-sm font-medium">{products.length} products in Firestore</p>
-                        {reordering && (
-                            <span className="flex items-center gap-1.5 text-[10px] font-black text-secondary uppercase animate-pulse">
-                                <Activity size={12} /> Syncing sequence...
-                            </span>
-                        )}
-                    </div>
-                </div>
-                <div className="flex gap-3">
-                    <div className="relative">
-                        <select value={filterCat} onChange={e => setFilterCat(e.target.value)}
-                            className="appearance-none border border-slate-200 rounded-xl px-4 py-2.5 pr-9 text-xs font-black text-slate-600 outline-none focus:border-secondary transition-all bg-white cursor-pointer">
-                            <option value="all">All Categories</option>
-                            {categories.map(c => <option key={c.slug} value={c.slug}>{c.title}</option>)}
-                        </select>
-                        <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                    </div>
-                    <button onClick={() => navigate('/admin/product/new')}
-                        className="flex items-center gap-2 px-5 py-3 bg-secondary text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-secondary/90 transition-all shadow-lg shadow-secondary/20">
-                        <Plus size={16} /> Add Product
-                    </button>
-                </div>
-            </div>
-
-            <Reorder.Group axis="y" values={filtered} onReorder={handleReorder} className="space-y-3">
-                {filtered.map((prod) => (
-                    <ProductItem key={prod.docId || prod.id} prod={prod} openEdit={openEdit} handleDelete={handleDelete} />
-                ))}
-            </Reorder.Group>
-        </div>
-    );
-};
-
-// ─── Certificate Manager ──────────────────────────────────────────
-const CertificateManager = () => {
-    const [certs, setCerts] = useState([]);
-    const [showForm, setShowForm] = useState(false);
-    const [editing, setEditing] = useState(null);
-    const [saving, setSaving] = useState(false);
-    const [uploadingPage, setUploadingPage] = useState(false);
-
-    // Form state
-    const [form, setForm] = useState({ name: '', description: '', icon: 'Award' });
-    // Pages = array of base64 or URL strings
-    const [pages, setPages] = useState([]);
-    const [pageUrl, setPageUrl] = useState('');
-
-    const iconOptions = ['Award', 'ShieldCheck', 'FileImage', 'Check', 'Globe', 'Lock'];
-
-    useEffect(() => {
-        const q = query(collection(db, 'certificates'), orderBy('createdAt', 'desc'));
-        return onSnapshot(q, (snap) =>
-            setCerts(snap.docs.map(d => ({ docId: d.id, ...d.data() })))
-        );
-    }, []);
-
-    const reset = () => {
-        setForm({ name: '', description: '', icon: 'Award' });
-        setPages([]);
-        setPageUrl('');
-        setEditing(null);
-    };
-
-    const handleFileUpload = async (e) => {
-        const files = Array.from(e.target.files);
-        if (!files.length) return;
-        setUploadingPage(true);
-        const results = [];
-        for (const file of files) {
-            const resized = await resizeImage(file, 1200);
-            results.push(resized);
-        }
-        setPages(prev => [...prev, ...results]);
-        setUploadingPage(false);
-        e.target.value = '';
-    };
-
-    const addPageUrl = () => {
-        if (!pageUrl.trim()) return;
-        setPages(prev => [...prev, pageUrl.trim()]);
-        setPageUrl('');
-    };
-
-    const removePage = (idx) => {
-        setPages(prev => prev.filter((_, i) => i !== idx));
-    };
-
-    const handleSave = async () => {
-        if (!form.name || pages.length === 0) {
-            alert('Please enter a certificate name and add at least one page image.');
-            return;
-        }
-        setSaving(true);
-        const payload = {
-            name: form.name,
-            description: form.description,
-            icon: form.icon,
-            pages,
-            updatedAt: serverTimestamp(),
-        };
-        try {
-            if (editing && editing.docId) {
-                await updateDoc(doc(db, 'certificates', editing.docId), payload);
-            } else {
-                await addDoc(collection(db, 'certificates'), { ...payload, createdAt: serverTimestamp() });
-            }
-            reset();
-            setShowForm(false);
-        } catch (e) {
-            console.error(e);
-            alert('Error saving certificate: ' + e.message);
-        }
-        setSaving(false);
-    };
-
-    const handleDelete = async (certId) => {
-        if (!window.confirm('Delete this certificate group?')) return;
-        await deleteDoc(doc(db, 'certificates', certId));
-    };
-
-    const openEdit = (cert) => {
-        setEditing(cert);
-        setForm({ name: cert.name, description: cert.description || '', icon: cert.icon || 'Award' });
-        setPages(cert.pages || []);
-        setShowForm(true);
-    };
-
-    return (
-        <div>
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase">Certificates</h2>
-                    <p className="text-slate-400 text-sm font-medium">Manage official certificates displayed on the website</p>
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">Product Inventory Management</h2>
+                    <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mt-0.5">
+                        Add new crackers, update prices in 1-click, remove products & manage live stock
+                    </p>
                 </div>
                 <button
-                    onClick={() => { reset(); setShowForm(true); }}
-                    className="flex items-center gap-2 px-5 py-3 bg-secondary text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-secondary/90 transition-all shadow-lg"
+                    onClick={() => navigate('/admin/product/new')}
+                    className="flex items-center gap-2 px-5 py-3 bg-secondary text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-secondary/90 transition-all shadow-lg shadow-secondary/20 w-fit"
                 >
-                    <Plus size={16} /> Add Certificate
+                    <Plus size={16} /> Add New Product
                 </button>
             </div>
 
-            <AnimatePresence>
-                {showForm && (
-                    <motion.div
-                        key="cert-form"
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="bg-white border border-slate-100 rounded-[2rem] p-8 mb-8 shadow-sm"
+            {/* Quick Status Tabs (All, In Stock, Out of Stock, Trash) */}
+            <div className="flex flex-wrap gap-2 pt-2 border-b border-slate-200 pb-4">
+                <button
+                    onClick={() => setStockFilter('all')}
+                    className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 ${
+                        stockFilter === 'all' ? 'bg-slate-900 text-white shadow-md' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                >
+                    All Products
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] ${stockFilter === 'all' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'}`}>
+                        {nonDeleted.length}
+                    </span>
+                </button>
+
+                <button
+                    onClick={() => setStockFilter('in_stock')}
+                    className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 ${
+                        stockFilter === 'in_stock' ? 'bg-emerald-600 text-white shadow-md' : 'bg-white border border-slate-200 text-emerald-700 hover:bg-emerald-50'
+                    }`}
+                >
+                    <Check size={14} /> In Stock
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] ${stockFilter === 'in_stock' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800'}`}>
+                        {inStockList.length}
+                    </span>
+                </button>
+
+                <button
+                    onClick={() => setStockFilter('out_of_stock')}
+                    className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 ${
+                        stockFilter === 'out_of_stock' ? 'bg-rose-600 text-white shadow-md' : 'bg-white border border-slate-200 text-rose-700 hover:bg-rose-50'
+                    }`}
+                >
+                    <AlertCircle size={14} /> Out of Stock List
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] ${stockFilter === 'out_of_stock' ? 'bg-white/20 text-white' : 'bg-rose-100 text-rose-800'}`}>
+                        {outOfStockList.length}
+                    </span>
+                </button>
+
+                {deletedList.length > 0 && (
+                    <button
+                        onClick={() => setStockFilter('trash')}
+                        className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 ${
+                            stockFilter === 'trash' ? 'bg-amber-600 text-white shadow-md' : 'bg-white border border-slate-200 text-amber-700 hover:bg-amber-50'
+                        }`}
                     >
-                        <div className="flex items-center justify-between mb-6">
-                            <h3 className="font-black text-slate-900 text-lg">{editing ? 'Edit Certificate' : 'New Certificate Group'}</h3>
-                            <button onClick={() => { setShowForm(false); reset(); }} className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-200 transition-all">
-                                <X size={16} />
-                            </button>
-                        </div>
+                        <Trash2 size={14} /> Deleted / Trash
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] ${stockFilter === 'trash' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-800'}`}>
+                            {deletedList.length}
+                        </span>
+                    </button>
+                )}
+            </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-                            <div>
-                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Certificate Name *</label>
-                                <input
-                                    value={form.name}
-                                    onChange={e => setForm({ ...form, name: e.target.value })}
-                                    placeholder="e.g. GST Registration"
-                                    className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-secondary transition-all"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Icon</label>
-                                <select
-                                    value={form.icon}
-                                    onChange={e => setForm({ ...form, icon: e.target.value })}
-                                    className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-secondary"
-                                >
-                                    {iconOptions.map(opt => <option key={opt}>{opt}</option>)}
-                                </select>
-                            </div>
-                            <div className="md:col-span-2">
-                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Description</label>
-                                <input
-                                    value={form.description}
-                                    onChange={e => setForm({ ...form, description: e.target.value })}
-                                    placeholder="e.g. GOVERNMENT OF INDIA • TAX REGISTRATION"
-                                    className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-secondary transition-all"
-                                />
-                            </div>
-                        </div>
+            {/* Filter and Search Bar */}
+            <div className="flex flex-col sm:flex-row items-center gap-3">
+                <div className="relative flex-1 w-full">
+                    <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                        placeholder="Search by product name, S.No, Tamil name..."
+                        className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-bold text-slate-800 outline-none focus:border-secondary transition-all"
+                    />
+                    {searchQuery && (
+                        <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                            <X size={14} />
+                        </button>
+                    )}
+                </div>
 
-                        {/* Page Images Section */}
-                        <div className="mb-6">
-                            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Certificate Pages ({pages.length} added) *</label>
+                <div className="relative w-full sm:w-auto min-w-[200px]">
+                    <select
+                        value={filterCat}
+                        onChange={e => setFilterCat(e.target.value)}
+                        className="w-full appearance-none border border-slate-200 rounded-xl px-4 py-2.5 pr-9 text-xs font-black text-slate-700 outline-none focus:border-secondary transition-all bg-white cursor-pointer"
+                    >
+                        <option value="all">All Categories ({categories.length})</option>
+                        {categories.map(c => <option key={c.slug} value={c.slug}>{c.title}</option>)}
+                    </select>
+                    <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                </div>
+            </div>
 
-                            {/* Upload File */}
-                            <div className="border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center mb-4 hover:border-secondary transition-colors relative">
-                                {uploadingPage ? (
-                                    <div className="flex items-center justify-center gap-3 text-secondary">
-                                        <div className="w-5 h-5 border-2 border-secondary border-t-transparent rounded-full animate-spin" />
-                                        <span className="text-sm font-bold">Processing images...</span>
-                                    </div>
-                                ) : (
-                                    <>
-                                        <UploadCloud size={28} className="text-slate-300 mx-auto mb-2" />
-                                        <p className="text-sm font-bold text-slate-400 mb-1">Upload certificate image</p>
-                                        <p className="text-[10px] text-slate-300 mb-3">Only the 1st image will be displayed on the website.</p>
-                                        <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black text-slate-500 uppercase tracking-widest hover:border-secondary hover:text-secondary transition-all">
-                                            <Plus size={14} /> Browse Files
-                                            <input type="file" multiple accept="image/*" onChange={handleFileUpload} className="hidden" />
-                                        </label>
-                                    </>
-                                )}
-                            </div>
+            {/* Product List */}
+            <div className="space-y-3">
+                {filtered.length === 0 ? (
+                    <div className="text-center py-16 bg-white border border-slate-100 rounded-2xl">
+                        <AlertCircle size={32} className="mx-auto text-slate-300 mb-2" />
+                        <p className="text-slate-500 font-bold text-sm">No products found matching your filter</p>
+                        <p className="text-slate-400 text-xs mt-1">Try clearing your search or switching categories</p>
+                    </div>
+                ) : (
+                    filtered.map((prod) => (
+                        <ProductItem
+                            key={prod.docId || prod.id}
+                            prod={prod}
+                            openEdit={openEdit}
+                            openPriceEdit={p => setPriceModalProd(p)}
+                            handleToggleStock={handleToggleStock}
+                            handleDelete={handleDelete}
+                            handleRestore={handleRestore}
+                            isTrashView={stockFilter === 'trash'}
+                        />
+                    ))
+                )}
+            </div>
 
-
-                            {/* Pages preview grid */}
-                            {pages.length > 0 && (
-                                <div className="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
-                                    {pages.map((pg, idx) => (
-                                        <div key={idx} className="relative rounded-xl overflow-hidden border border-slate-200 group aspect-[3/4]">
-                                            <img src={pg} alt={`Page ${idx + 1}`} className="w-full h-full object-cover" onError={e => e.target.src = 'https://via.placeholder.com/150?text=Error'} />
-                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                <button
-                                                    onClick={() => removePage(idx)}
-                                                    className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center"
-                                                >
-                                                    <X size={14} />
-                                                </button>
-                                            </div>
-                                            <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[8px] font-black px-1.5 py-0.5 rounded">
-                                                {idx + 1}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-                            <button
-                                onClick={() => { setShowForm(false); reset(); }}
-                                className="px-6 py-3 text-slate-400 text-xs font-black uppercase tracking-widest hover:text-slate-700 transition-all"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleSave}
-                                disabled={saving || !form.name || pages.length === 0}
-                                className="flex items-center gap-2 px-6 py-3 bg-secondary text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-secondary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
-                            >
-                                {saving ? (
-                                    <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Saving...</>
-                                ) : (
-                                    <><Check size={14} /> {editing ? 'Update Certificate' : 'Save Certificate'}</>
-                                )}
-                            </button>
-                        </div>
-                    </motion.div>
+            {/* Quick Price Modal */}
+            <AnimatePresence>
+                {priceModalProd && (
+                    <QuickPriceModal
+                        prod={priceModalProd}
+                        onClose={() => setPriceModalProd(null)}
+                        onSave={handleSavePrice}
+                    />
                 )}
             </AnimatePresence>
-
-            {/* Certificate List */}
-            {certs.length === 0 && !showForm && (
-                <div className="py-20 text-center bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-200">
-                    <Award size={40} className="text-slate-300 mx-auto mb-4" />
-                    <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-sm">No certificates yet</p>
-                    <p className="text-slate-300 text-xs mt-1">Click "Add Certificate" to get started</p>
-                </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {certs.map(cert => (
-                    <div key={cert.docId} className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm flex items-start gap-5 relative group">
-                        {/* Icon */}
-                        <div className="w-14 h-14 rounded-2xl bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
-                            <Award size={24} />
-                        </div>
-                        {/* Info */}
-                        <div className="flex-1 min-w-0">
-                            <h4 className="font-black text-slate-900 text-lg uppercase tracking-tight">{cert.name}</h4>
-                            {cert.description && <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{cert.description}</p>}
-                            {/* Page thumbnails */}
-                            <div className="flex gap-2 mt-3 flex-wrap">
-                                {(cert.pages || []).slice(0, 5).map((pg, i) => (
-                                    <div key={i} className="w-10 h-12 rounded-lg overflow-hidden border border-slate-200 bg-slate-50">
-                                        <img src={pg} alt={`Page ${i + 1}`} className="w-full h-full object-cover" onError={e => e.target.src = 'https://via.placeholder.com/40?text='} />
-                                    </div>
-                                ))}
-                                {(cert.pages || []).length > 5 && (
-                                    <div className="w-10 h-12 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-center text-[10px] font-black text-slate-400">
-                                        +{cert.pages.length - 5}
-                                    </div>
-                                )}
-                            </div>
-                            <p className="text-[10px] text-slate-300 font-bold uppercase tracking-widest mt-2">{(cert.pages || []).length} pages total • 1st page visible</p>
-                        </div>
-                        {/* Actions */}
-                        <div className="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onClick={() => openEdit(cert)} className="p-2 hover:text-secondary transition-colors"><Edit2 size={16} /></button>
-                            <button onClick={() => handleDelete(cert.docId)} className="p-2 hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            <div className="mt-8 p-6 bg-slate-50 border border-slate-200 rounded-2xl">
-                <p className="text-slate-600 text-xs font-bold">
-                    <span className="font-black">ℹ️ Note:</span> Certificates are displayed as <strong>static images</strong>. Only the first page you upload will be visible on the public site.
-                </p>
-            </div>
-
         </div>
     );
 };
@@ -1210,9 +1876,6 @@ const DashboardOverview = () => {
     const [inquiryCount, setInquiryCount] = useState(0);
     const [newInquiryCount, setNewInquiryCount] = useState(0);
     const [appointmentCount, setAppointmentCount] = useState(0);
-    const [visitorCount, setVisitorCount] = useState(0);
-
-    const [certCount, setCertCount] = useState(0);
     const [allProducts, setAllProducts] = useState([]);
 
     useEffect(() => {
@@ -1245,22 +1908,14 @@ const DashboardOverview = () => {
             setNewInquiryCount(s.docs.filter(d => d.data().status === 'new').length);
         });
         const u4 = onSnapshot(collection(db, 'appointments'), s => setAppointmentCount(s.size));
-        const u5 = onSnapshot(collection(db, 'certificates'), s => setCertCount(s.size));
-        const u6 = onSnapshot(doc(db, 'analytics', 'visitors'), docSnap => {
-            if (docSnap.exists()) {
-                setVisitorCount(docSnap.data().count || 0);
-            }
-        });
-        return () => { u1(); u2(); u3(); u4(); u5(); u6(); };
+        return () => { u1(); u2(); u3(); u4(); };
     }, []);
 
     const stats = [
-        { icon: Users, label: 'Site Visitors', value: visitorCount, color: 'blue' },
         { icon: FolderOpen, label: 'Categories', value: catCount, color: 'purple' },
         { icon: Package, label: 'Products', value: prodCount, color: 'green' },
         { icon: Mail, label: 'Inquiries', value: inquiryCount, color: 'orange', sub: `${newInquiryCount} New` },
         { icon: Calendar, label: 'Scheduled', value: appointmentCount, color: 'emerald' },
-        { icon: Award, label: 'Certificates', value: certCount, color: 'amber' },
     ];
     const colorMap = {
         blue: 'bg-blue-50 text-blue-600',
@@ -1274,7 +1929,7 @@ const DashboardOverview = () => {
 
     return (
         <div className="space-y-8">
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                 {stats.map((s, i) => (
                     <motion.div key={s.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
                         className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-all relative overflow-hidden group">
@@ -1355,7 +2010,6 @@ const Dashboard = ({ onLogout }) => {
         { id: 'products', label: 'Products', icon: Package },
         { id: 'inquiries', label: 'Inquiries', icon: Mail },
         { id: 'appointments', label: 'Call Bookings', icon: Calendar },
-        { id: 'certificates', label: 'Certificates', icon: Award },
     ];
     return (
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-10 md:py-14">
@@ -1393,8 +2047,6 @@ const Dashboard = ({ onLogout }) => {
                     {tab === 'overview' && <DashboardOverview />}
                     {tab === 'categories' && <CategoryManager />}
                     {tab === 'products' && <ProductManager />}
-                    {tab === 'certificates' && <CertificateManager />}
-
                     {tab === 'inquiries' && <InquiryManager />}
                     {tab === 'appointments' && <AppointmentManager />}
                 </motion.div>

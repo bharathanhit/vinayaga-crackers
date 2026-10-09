@@ -35,7 +35,6 @@ const Footer = () => {
         { ta: 'முகப்பு', en: 'Home', href: '/#' },
         { ta: 'பட்டாசுகள்', en: 'Crackers Catalog', href: '/#products' },
         { ta: 'வகைகள்', en: 'All Categories', href: '/#products' },
-        { ta: 'குறிப்புகள் & பாதுகாப்பு', en: 'Safety & Licenses', href: '/certificates' },
         { ta: 'டெலிவரி & கட்டண முறைகள்', en: 'Delivery & Payment', href: '/payment-terms' },
         { ta: 'எங்களை பற்றி', en: 'About Us', href: '/about' },
         { ta: 'தொடர்பு கொள்ள', en: 'Contact Us', href: '/#contact' },
@@ -72,9 +71,12 @@ const Footer = () => {
                         </p>
 
                         <div className="flex flex-col gap-2 text-xs text-slate-300 bg-white/5 p-4 rounded-2xl border border-white/10 max-w-md">
-                            <div className="flex items-start gap-2">
+                            <div className="flex items-start gap-2.5">
                                 <MapPin size={16} className="text-amber-400 shrink-0 mt-0.5" />
-                                <span className="font-tamil">சிவகாசி மெயின் ரோடு, விருதுநகர் மாவட்டம், தமிழ்நாடு – 626123.</span>
+                                <div>
+                                    <p className="font-bold text-amber-300 font-tamil">கடை முகவரி (Shop Address):</p>
+                                    <p className="text-slate-200">Shop No : 3/6136, Om Sakthi Nagar, Perapatti, Sivakasi – 626189</p>
+                                </div>
                             </div>
                             <div className="flex items-center gap-2 pt-1 border-t border-white/5">
                                 <Truck size={14} className="text-blue-400 shrink-0" />

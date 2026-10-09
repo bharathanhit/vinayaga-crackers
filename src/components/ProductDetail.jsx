@@ -41,8 +41,16 @@ const ProductDetail = () => {
                 if (!actualSnap.empty) {
                     const firestoreProd = { ...actualSnap.docs[0].data(), docId: actualSnap.docs[0].id };
                     let finalProd = { ...staticProd, ...firestoreProd };
+                    if (finalProd.isDeleted) {
+                        navigate('/#products');
+                        return;
+                    }
                     setProduct(finalProd);
                 } else if (staticProd) {
+                    if (staticProd.isDeleted) {
+                        navigate('/#products');
+                        return;
+                    }
                     setProduct(staticProd);
                 } else {
                     navigate('/#products');
@@ -50,7 +58,7 @@ const ProductDetail = () => {
             } catch (err) {
                 console.error("Firestore lookup failed:", err);
                 const staticProd = staticProducts.find(p => p.id === id);
-                if (staticProd) setProduct(staticProd);
+                if (staticProd && !staticProd.isDeleted) setProduct(staticProd);
                 else navigate('/#products');
             }
             setLoading(false);
@@ -112,7 +120,7 @@ const ProductDetail = () => {
                             <img
                                 src={product.imageUrl || product.image}
                                 alt={product.title}
-                                className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                                className="w-full h-full object-contain p-2 transition-transform duration-700 hover:scale-[1.02]"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
                             
@@ -137,9 +145,15 @@ const ProductDetail = () => {
                                         )}
                                     </div>
                                 </div>
-                                <span className="px-3 py-1 bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 text-[10px] font-bold rounded-lg uppercase">
-                                    In Stock
-                                </span>
+                                {product.isOutOfStock || product.status === 'Out of Stock' ? (
+                                    <span className="px-3 py-1 bg-rose-500/20 border border-rose-400/40 text-rose-400 text-[10px] font-bold rounded-lg uppercase">
+                                        Out of Stock
+                                    </span>
+                                ) : (
+                                    <span className="px-3 py-1 bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 text-[10px] font-bold rounded-lg uppercase">
+                                        In Stock
+                                    </span>
+                                )}
                             </div>
                         </motion.div>
 

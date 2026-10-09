@@ -9,9 +9,92 @@ import anarSpecialImg from '../assets/crackers/anar-special.jpg';
 import twinklingStarImg from '../assets/crackers/twinkling-star.jpg';
 import pencilCrackersImg from '../assets/crackers/pencil-crackers.jpg';
 import pencilSticksImg from '../assets/crackers/pencil-sticks.jpg';
+import colourShowerImg from '../assets/crackers/children-special/colour-shower.jpg';
+import peacockFeatherImg from '../assets/crackers/peacock-fountains/peacock-feather.jpg';
+import hydroBombImg from '../assets/crackers/bomb-crackers/hydro-bomb.jpg';
+import babyRocketImg from '../assets/crackers/rockets/baby-rocket.jpg';
+import redBijili50Img from '../assets/crackers/bijili-crackers/red-bijili-50.jpg';
+import twentyEightGiantImg from '../assets/crackers/chorsa-deluxe/28-giant.jpg';
+import thousandSoundImg from '../assets/crackers/wala/1000-sound.jpg';
+import colourSevenShotImg from '../assets/crackers/arial-night-shots/colour-7-shot.jpg';
+import threeHalfSkyShotImg from '../assets/crackers/fancy-sky-shots/3-half-inch-sky-shot.jpg';
+import twelveShotsCracklingImg from '../assets/crackers/repeater-shots/12-shots-crackling.jpg';
 import { childrenFountainProducts } from './childrenFountainProducts';
+import { peacockFountainProducts } from './peacockFountainProducts';
+import { bombProducts } from './bombProducts';
+import { rocketProducts } from './rocketProducts';
+import { bijiliProducts } from './bijiliProducts';
+import { chorsaDeluxeProducts } from './chorsaDeluxeProducts';
+import { walaProducts } from './walaProducts';
+import { arialNightShotProducts } from './arialNightShotProducts';
+import { fancySkyShotProducts } from './fancySkyShotProducts';
+import { repeaterShotProducts } from './repeaterShotProducts';
+import ringCupImg from '../assets/crackers/rollcap-matches/ring-cup.jpg';
+import tenCmColourSparklersImg from '../assets/crackers/sparklers/10cm-colour-sparklers.jpg';
+import { rollcapMatchesProducts } from './rollcapMatchesProducts';
+import { sparklersProducts } from './sparklersProducts';
+import iLoveSparklingImg from '../assets/crackers/new-crackers-2025/i-love-sparkling.jpg';
+import { newCrackers2025Products } from './newCrackers2025Products';
+import bundleTablePhoto from '../assets/crackers/bundle-60-items-photo.jpg';
+import bundle70TablePhoto from '../assets/crackers/bundle-70-items-photo.jpg';
+
+
+// --- Individual Product Images (S.No 1 - 38) ---
+import kuruvi1Img from '../assets/crackers/one-sound/kuruvi-2-half.jpg';
+import lakshmi2Img from '../assets/crackers/one-sound/lakshmi-3-half.jpg';
+import lakshmi3DeluxeImg from '../assets/crackers/one-sound/lakshmi-4-deluxe.jpg';
+import lakshmi4GoldImg from '../assets/crackers/one-sound/lakshmi-4-gold.jpg';
+import lakshmi5InchImg from '../assets/crackers/one-sound/lakshmi-5-inch.jpg';
+import lakshmi6GoldImg from '../assets/crackers/one-sound/lakshmi-5-gold.jpg';
+import deluxe7Img from '../assets/crackers/one-sound/deluxe-5-inch.jpg';
+import jallikattu8Img from '../assets/crackers/one-sound/jallikattu-6-inch.jpg';
+import twoSound9Img from '../assets/crackers/one-sound/two-sound-crackers.jpg';
+
+import chakkarBig10Img from '../assets/crackers/ground-chakkars/chakkar-big-10.jpg';
+import chakkarSpecial11Img from '../assets/crackers/ground-chakkars/chakkar-special.jpg';
+import dancingWheel12Img from '../assets/crackers/ground-chakkars/dancing-wheel.jpg';
+import discoWheel13Img from '../assets/crackers/ground-chakkars/disco-wheel.jpg';
+import chakkarBig25Img from '../assets/crackers/ground-chakkars/chakkar-big-25.jpg';
+import soundWheel15Img from '../assets/crackers/ground-chakkars/sound-wheel.jpg';
+import jumpingJackChakkar16Img from '../assets/crackers/ground-chakkars/jumping-jack-chakkar.jpg';
+import chakkarDeluxe17Img from '../assets/crackers/ground-chakkars/chakkar-deluxe.jpg';
+import colourfulWheel18Img from '../assets/crackers/ground-chakkars/colourful-wheel.jpg';
+import wireChakkar19Img from '../assets/crackers/ground-chakkars/wire-chakkar.jpg';
+import splSpinnerWheel20Img from '../assets/crackers/ground-chakkars/spl-spinner-wheel.jpg';
+
+import flowerPotsSmall21Img from '../assets/crackers/flower-pots/flower-pots-small.jpg';
+import flowerPotsBig22Img from '../assets/crackers/flower-pots/flower-pots-big.jpg';
+import flowerPotsSpecial23Img from '../assets/crackers/flower-pots/flower-pots-special.jpg';
+import flowerPotsAshoka24Img from '../assets/crackers/flower-pots/flower-pots-ashoka.jpg';
+import colourKoti25Img from '../assets/crackers/flower-pots/colour-koti.jpg';
+import multiTricolourFountain26Img from '../assets/crackers/flower-pots/multi-tricolour-fountain.jpg';
+import colourKotiDeluxe27Img from '../assets/crackers/flower-pots/colour-koti-deluxe.jpg';
+
+import twinklingStar28Img from '../assets/crackers/twinkling-star/twinkling-star-1-half.jpg';
+import twinklingStar29Img from '../assets/crackers/twinkling-star/twinkling-star-4-inch.jpg';
+
+import zeeBoomBaa30Img from '../assets/crackers/pencil-crackers/zee-boom-baa.jpg';
+import colourEliteStone31Img from '../assets/crackers/pencil-crackers/colour-elite-stone.jpg';
+import popPop32Img from '../assets/crackers/pencil-crackers/pop-pop.jpg';
+import partyCandle33Img from '../assets/crackers/pencil-crackers/party-candle-12.jpg';
+import ultraPencil34Img from '../assets/crackers/pencil-crackers/ultra-pencil.jpg';
+import magicPencil35Img from '../assets/crackers/pencil-crackers/magic-pencil.jpg';
+import selfieStick36Img from '../assets/crackers/pencil-crackers/selfie-stick.jpg';
+import starRainPencil37Img from '../assets/crackers/pencil-crackers/star-rain-pencil.jpg';
+import sivakasiPencil38Img from '../assets/crackers/pencil-crackers/sivakasi-pencil.jpg';
 
 export const categories = [
+    {
+        id: 'mega-combo-packs',
+        title: 'Mega Combo Packs',
+        titleTa: 'தீபாவளி மெகா பேக்',
+        descTa: '60 & 70 ரகங்கள் மெகா ஸ்பெஷல் ஃபேமிலி காம்போ • 64% தள்ளுபடி!',
+        slug: 'mega-combo-packs',
+        description: 'Complete all-in-one family hampers: 60 items & 70 items VIP sets at direct factory rates.',
+        image: bundleTablePhoto,
+        color: '#e11d48',
+        gradient: 'from-rose-600 to-amber-600',
+    },
     {
         id: 'one-sound-crackers',
         title: 'One Sound Crackers',
@@ -74,13 +157,197 @@ export const categories = [
         descTa: 'வண்ண ஒளி பொழியும் சிறப்பு பவுண்டைன்கள் • 20 வகைகள்',
         slug: 'childrens-special-fountains',
         description: "A colourful collection of Sivakasi special fountains. Adult supervision required.",
-        image: flowerPotsImg,
+        image: colourShowerImg,
         color: '#0891b2',
         gradient: 'from-cyan-600 to-cyan-950',
+    },
+    {
+        id: 'peacock-fountains',
+        title: 'Peacock Fountains',
+        titleTa: 'பீக்காக் பவுண்டைன்',
+        descTa: 'வண்ணமயமான மயில் தோகை பவுண்டைன்கள் • 6 வகைகள்',
+        slug: 'peacock-fountains',
+        description: 'Spectacular peacock feather fountains, colorful multi-step spray and grand festive fountains.',
+        image: peacockFeatherImg,
+        color: '#059669',
+        gradient: 'from-emerald-600 to-emerald-950',
+    },
+    {
+        id: 'bomb-crackers',
+        title: 'Bomb Crackers',
+        titleTa: 'பாம் வகைகள்',
+        descTa: 'அதிரடி சத்தம் தரும் ஹைட்ரோ, கொரில்லா மற்றும் பேப்பர் பாம் • 7 வகைகள்',
+        slug: 'bomb-crackers',
+        description: 'High sound explosive bombs including Hydro, King of King, Gorilla Classic, 12 Ply DTS and Adiyal Paper Bombs.',
+        image: hydroBombImg,
+        color: '#dc2626',
+        gradient: 'from-rose-600 to-rose-950',
+    },
+    {
+        id: 'rockets',
+        title: 'Rockets',
+        titleTa: 'ராக்கெட் வகைகள்',
+        descTa: 'வானில் சீறிப்பாயும் வான்வெடி ராக்கெட்டுகள் • 6 வகைகள்',
+        slug: 'rockets',
+        description: 'Sky-soaring rockets including Baby Rocket, Rocket Bomb, Lunik, Two Sound, Three Sound and Whistling Rocket.',
+        image: babyRocketImg,
+        color: '#7c3aed',
+        gradient: 'from-violet-600 to-violet-950',
+    },
+    {
+        id: 'bijili-crackers',
+        title: 'Bijili Crackers',
+        titleTa: 'பிஜிலி வகைகள்',
+        descTa: 'பாரம்பரிய பிஜிலி வெடிகள் • 4 வகைகள் (Red & Stripped Bijili)',
+        slug: 'bijili-crackers',
+        description: 'Traditional crackling Bijili crackers in red and stripped patterns. Quick continuous sparkle and sound.',
+        image: redBijili50Img,
+        color: '#ea580c',
+        gradient: 'from-orange-600 to-orange-950',
+    },
+    {
+        id: 'chorsa-deluxe-crackers',
+        title: 'Chorsa & Deluxe Crackers',
+        titleTa: 'சோர்சா & டீலக்ஸ் கிராக்கர்ஸ்',
+        descTa: 'அதிரடி சரங்கள் • 5 வகைகள் (28 Chorsa, 28 Giant, 24/50/100 Deluxe)',
+        slug: 'chorsa-deluxe-crackers',
+        description: 'Authentic Sivakasi Chorsa and Deluxe string crackers delivering high-energy rhythmic sound bursts.',
+        image: twentyEightGiantImg,
+        color: '#e11d48',
+        gradient: 'from-pink-600 to-pink-950',
+    },
+    {
+        id: 'wala-crackers',
+        title: 'Wala (Sara Vedigal)',
+        titleTa: 'சரவெடிகள்',
+        descTa: 'நீண்ட தொடர் அதிரடி சரவெடிகள் • 7 வகைகள் (100 முதல் 10000 சவுண்ட் வரை)',
+        slug: 'wala-crackers',
+        description: 'Grand Diwali sound garland rolls from 100 Wala up to 10000 Wala for the loudest celebrations.',
+        image: thousandSoundImg,
+        color: '#dc2626',
+        gradient: 'from-red-600 to-red-950',
+    },
+    {
+        id: 'arial-night-shots',
+        title: 'Arial Night Shots',
+        titleTa: 'ஏரியல் நைட் சாட்ஸ்',
+        descTa: 'வானில் வர்ணஜாலம் காட்டும் நைட் சாட்ஸ் • 4 வகைகள்',
+        slug: 'arial-night-shots',
+        description: 'Brilliant aerial night shots and sky kings painting the night sky with stunning bursts and colors.',
+        image: colourSevenShotImg,
+        color: '#2563eb',
+        gradient: 'from-blue-600 to-blue-950',
+    },
+    {
+        id: 'fancy-sky-shots',
+        title: 'Fancy Sky Shots',
+        titleTa: 'பேன்சி ஸ்கை சாட்ஸ்',
+        descTa: 'வானில் சீறிப்பாயும் பிரம்மாண்ட வான்வெடி • 12 வகைகள் (1 Chotta முதல் 6" வரை)',
+        slug: 'fancy-sky-shots',
+        description: 'Single pipe aerial fancy sky shots soaring high into the sky before bursting into gigantic multi-color palms and brocades.',
+        image: threeHalfSkyShotImg,
+        color: '#8b5cf6',
+        gradient: 'from-purple-600 to-purple-950',
+    },
+    {
+        id: 'repeater-shots',
+        title: 'Multi Sky Shots (Repeaters)',
+        titleTa: 'மல்டி ஸ்கை சாட்ஸ்',
+        descTa: 'வானில் தொடர்ந்து வெடிக்கும் கலர் வர்ணஜாலம் • 10 வகைகள் (12 முதல் 500 சாட்ஸ் வரை)',
+        slug: 'repeater-shots',
+        description: 'Multi-shot cake repeaters filling the night sky with non-stop rapid fire bursts, crackles, and multi-colour floral canopies.',
+        image: twelveShotsCracklingImg,
+        color: '#d97706',
+        gradient: 'from-amber-600 to-amber-950',
+    },
+    {
+        id: 'rollcap-matches',
+        title: 'Rollcap & Colour Matches',
+        titleTa: 'ரோல் கேப்ஸ் & கலர் மத்தப்புகள்',
+        descTa: 'ரோல் கேப்ஸ், சிட்டு புட்டு மற்றும் கலர் மத்தப்புகள் • 6 வகைகள்',
+        slug: 'rollcap-matches',
+        description: 'Fun roll caps, chit put ring cups, safety color matchboxes, snake tablets and laptop novelty fireworks.',
+        image: ringCupImg,
+        color: '#ea580c',
+        gradient: 'from-orange-600 to-orange-950',
+    },
+    {
+        id: 'sparklers',
+        title: 'Sparklers',
+        titleTa: 'கம்பிமத்தாப்புகள்',
+        descTa: 'அனைத்து அளவுகளிலும் வண்ணமயமான கம்பிமத்தாப்புகள் • 23 வகைகள் (7cm முதல் 50cm & Galaxy)',
+        slug: 'sparklers',
+        description: 'Dazzling electric, colour, green and red sparklers in sizes from 7cm to 50cm, plus spectacular Galaxy rotating sparklers.',
+        image: tenCmColourSparklersImg,
+        color: '#f59e0b',
+        gradient: 'from-amber-500 to-amber-950',
+    },
+    {
+        id: 'new-crackers-2025',
+        title: '2025 New Crackers',
+        titleTa: 'புதிய வரவுகள்',
+        descTa: '2025 புதிய வரவுகள், புதுமை பட்டாசுகள் மற்றும் கிப்ட் பாக்ஸ்கள் • 42 வகைகள்',
+        slug: 'new-crackers-2025',
+        description: 'Exclusive 2025 brand new arrivals, jumping chakkars, drone novelties, digital wala, and festive combo gift boxes.',
+        image: iLoveSparklingImg,
+        color: '#e11d48',
+        gradient: 'from-pink-600 to-rose-950',
     },
 ];
 
 export const products = [
+    // ── MEGA SPECIAL COMBO PACKS - மெகா ஸ்பெஷல் காம்போ பேக் ──
+    {
+        id: 'p-bundle-60',
+        sno: 'MEGA-1',
+        title: 'Family Pack - 60 Items Special Combo / வினாயகா ஃபேமிலி பேக் 60 ரகங்கள்',
+        nameEn: 'Family Pack - 60 Items Special Combo',
+        nameTa: 'வினாயகா ஃபேமிலி பேக் - 60 பொருட்கள்',
+        order: 0,
+        category: 'Mega Combo Packs',
+        categorySlug: 'mega-combo-packs',
+        image: bundleTablePhoto,
+        price: '₹2499',
+        originalPrice: '₹7000',
+        discount: '64% OFF',
+        per: '1 Mega Hamper (60 Items)',
+        description: 'ஒரே பெட்டியில் 60 வகையான பட்டாசுகள்! 12, 25, 30 ஸ்கை ஷாட்ஸ், 2000 வாலா, ஃபேன்சி பைப்புகள், சக்கரங்கள், பூச்சட்டி மற்றும் குழந்தைகள் ரகங்கள் அடங்கிய முழு குடும்ப தொகுப்பு.',
+        badgeNote: '🔥 Hot Best Seller Combo',
+        safetyRating: '100% Green Crackers',
+        specifications: [
+            { label: 'Total Items', value: '60 Varieties (வானவேடிக்கை & தரை வெடிகள்)' },
+            { label: 'Key Inclusions', value: 'Sky Shots, 2000 Wala, Fancy Sky Pipes, Sparklers' },
+            { label: 'Original Value', value: '₹7,000/- (Save ₹4,501)' },
+            { label: 'Special Deal', value: '₹2,499/- Only' },
+            { label: 'Shop Address', value: 'Shop No: 3/6136, Om Sakthi Nagar, Perapatti, Sivakasi' }
+        ]
+    },
+    {
+        id: 'p-bundle-70',
+        sno: 'MEGA-2',
+        title: 'VIP Special Family Pack - 70 Items / வி.ஐ.பி ஸ்பெஷல் ஃபேமிலி பேக் 70 ரகங்கள்',
+        nameEn: 'VIP Special Family Pack - 70 Items Mega Set',
+        nameTa: 'வி.ஐ.பி ஸ்பெஷல் ஃபேமிலி பேக் - 70 பொருட்கள்',
+        order: 0.5,
+        category: 'Mega Combo Packs',
+        categorySlug: 'mega-combo-packs',
+        image: bundle70TablePhoto,
+        price: '₹3999',
+        originalPrice: '₹10999',
+        discount: '64% OFF',
+        per: '1 VIP Mega Hamper (70 Items)',
+        description: 'பிரீமியம் 70 ரகங்கள் கொண்ட வி.ஐ.பி ராயல் தீபாவளி தொகுப்பு! 30 & 25 மல்டி ஸ்கை ஷாட்ஸ், 6" மெகா ஃபேன்சி பைப், 90W வாலா, படா பீகாக் மற்றும் அதிரடி பாம்கள்.',
+        badgeNote: '👑 VIP Royal Mega Pack',
+        safetyRating: '100% Green Crackers',
+        specifications: [
+            { label: 'Total Items', value: '70 Premium Varieties' },
+            { label: 'Special Highlights', value: '30 Multi Shots, 6" Giant Sky Pipe, 90W Wala, Adiyal Bombs' },
+            { label: 'Original Value', value: '₹10,999/- (Save ₹7,000)' },
+            { label: 'Special Deal', value: '₹3,999/- Only' },
+            { label: 'Shop Address', value: 'Shop No: 3/6136, Om Sakthi Nagar, Perapatti, Sivakasi' }
+        ]
+    },
+
     // ── ONE SOUND CRACKERS - ஒற்றை வெடிகள் (S.No 1 - 9) ──
     {
         id: 'p-1',
@@ -91,7 +358,7 @@ export const products = [
         order: 1,
         category: 'One Sound Crackers',
         categorySlug: 'one-sound-crackers',
-        image: kuruviImg,
+        image: kuruvi1Img,
         price: '₹5',
         originalPrice: '₹35',
         discount: '90% OFF',
@@ -115,7 +382,7 @@ export const products = [
         order: 2,
         category: 'One Sound Crackers',
         categorySlug: 'one-sound-crackers',
-        image: lakshmiImg,
+        image: lakshmi2Img,
         price: '₹8',
         originalPrice: '₹60',
         discount: '90% OFF',
@@ -139,7 +406,7 @@ export const products = [
         order: 3,
         category: 'One Sound Crackers',
         categorySlug: 'one-sound-crackers',
-        image: lakshmiImg,
+        image: lakshmi3DeluxeImg,
         price: '₹14',
         originalPrice: '₹100',
         discount: '90% OFF',
@@ -162,7 +429,7 @@ export const products = [
         order: 4,
         category: 'One Sound Crackers',
         categorySlug: 'one-sound-crackers',
-        image: lakshmiImg,
+        image: lakshmi4GoldImg,
         price: '₹15',
         originalPrice: '₹100',
         discount: '90% OFF',
@@ -185,7 +452,7 @@ export const products = [
         order: 5,
         category: 'One Sound Crackers',
         categorySlug: 'one-sound-crackers',
-        image: deluxeSoundImg,
+        image: lakshmi5InchImg,
         price: '₹20',
         originalPrice: '₹150',
         discount: '90% OFF',
@@ -208,7 +475,7 @@ export const products = [
         order: 6,
         category: 'One Sound Crackers',
         categorySlug: 'one-sound-crackers',
-        image: deluxeSoundImg,
+        image: lakshmi6GoldImg,
         price: '₹23',
         originalPrice: '₹165',
         discount: '90% OFF',
@@ -231,7 +498,7 @@ export const products = [
         order: 7,
         category: 'One Sound Crackers',
         categorySlug: 'one-sound-crackers',
-        image: deluxeSoundImg,
+        image: deluxe7Img,
         price: '₹24',
         originalPrice: '₹165',
         discount: '90% OFF',
@@ -254,7 +521,7 @@ export const products = [
         order: 8,
         category: 'One Sound Crackers',
         categorySlug: 'one-sound-crackers',
-        image: deluxeSoundImg,
+        image: jallikattu8Img,
         price: '₹29',
         originalPrice: '₹200',
         discount: '90% OFF',
@@ -277,7 +544,7 @@ export const products = [
         order: 9,
         category: 'One Sound Crackers',
         categorySlug: 'one-sound-crackers',
-        image: deluxeSoundImg,
+        image: twoSound9Img,
         price: '₹23',
         originalPrice: '₹175',
         discount: '90% OFF',
@@ -302,7 +569,7 @@ export const products = [
         order: 10,
         category: 'Ground Chakkars',
         categorySlug: 'ground-chakkars',
-        image: chakkarSpecialImg,
+        image: chakkarBig10Img,
         price: '₹25',
         originalPrice: '₹190',
         discount: '90% OFF',
@@ -325,7 +592,7 @@ export const products = [
         order: 11,
         category: 'Ground Chakkars',
         categorySlug: 'ground-chakkars',
-        image: groundChakkarsImg,
+        image: chakkarSpecial11Img,
         price: '₹35',
         originalPrice: '₹300',
         discount: '90% OFF',
@@ -347,7 +614,7 @@ export const products = [
         order: 12,
         category: 'Ground Chakkars',
         categorySlug: 'ground-chakkars',
-        image: chakkarSpecialImg,
+        image: dancingWheel12Img,
         price: '₹60',
         originalPrice: '₹400',
         discount: '90% OFF',
@@ -369,7 +636,7 @@ export const products = [
         order: 13,
         category: 'Ground Chakkars',
         categorySlug: 'ground-chakkars',
-        image: chakkarSpecialImg,
+        image: discoWheel13Img,
         price: '₹60',
         originalPrice: '₹400',
         discount: '90% OFF',
@@ -391,7 +658,7 @@ export const products = [
         order: 14,
         category: 'Ground Chakkars',
         categorySlug: 'ground-chakkars',
-        image: groundChakkarsImg,
+        image: chakkarBig25Img,
         price: '₹65',
         originalPrice: '₹425',
         discount: '90% OFF',
@@ -413,7 +680,7 @@ export const products = [
         order: 15,
         category: 'Ground Chakkars',
         categorySlug: 'ground-chakkars',
-        image: chakkarSpecialImg,
+        image: soundWheel15Img,
         price: '₹70',
         originalPrice: '₹500',
         discount: '90% OFF',
@@ -435,7 +702,7 @@ export const products = [
         order: 16,
         category: 'Ground Chakkars',
         categorySlug: 'ground-chakkars',
-        image: chakkarSpecialImg,
+        image: jumpingJackChakkar16Img,
         price: '₹80',
         originalPrice: '₹500',
         discount: '90% OFF',
@@ -457,7 +724,7 @@ export const products = [
         order: 17,
         category: 'Ground Chakkars',
         categorySlug: 'ground-chakkars',
-        image: groundChakkarsImg,
+        image: chakkarDeluxe17Img,
         price: '₹90',
         originalPrice: '₹600',
         discount: '90% OFF',
@@ -479,7 +746,7 @@ export const products = [
         order: 18,
         category: 'Ground Chakkars',
         categorySlug: 'ground-chakkars',
-        image: chakkarSpecialImg,
+        image: colourfulWheel18Img,
         price: '₹100',
         originalPrice: '₹600',
         discount: '90% OFF',
@@ -501,7 +768,7 @@ export const products = [
         order: 19,
         category: 'Ground Chakkars',
         categorySlug: 'ground-chakkars',
-        image: chakkarSpecialImg,
+        image: wireChakkar19Img,
         price: '₹100',
         originalPrice: '₹750',
         discount: '90% OFF',
@@ -523,7 +790,7 @@ export const products = [
         order: 20,
         category: 'Ground Chakkars',
         categorySlug: 'ground-chakkars',
-        image: chakkarSpecialImg,
+        image: splSpinnerWheel20Img,
         price: '₹110',
         originalPrice: '₹750',
         discount: '90% OFF',
@@ -547,7 +814,7 @@ export const products = [
         order: 21,
         category: 'Flower Pots (Anar)',
         categorySlug: 'flower-pots',
-        image: anarSpecialImg,
+        image: flowerPotsSmall21Img,
         price: '₹30',
         originalPrice: '₹250',
         discount: '90% OFF',
@@ -570,7 +837,7 @@ export const products = [
         order: 22,
         category: 'Flower Pots (Anar)',
         categorySlug: 'flower-pots',
-        image: flowerPotsImg,
+        image: flowerPotsBig22Img,
         price: '₹40',
         originalPrice: '₹275',
         discount: '90% OFF',
@@ -593,7 +860,7 @@ export const products = [
         order: 23,
         category: 'Flower Pots (Anar)',
         categorySlug: 'flower-pots',
-        image: anarSpecialImg,
+        image: flowerPotsSpecial23Img,
         price: '₹50',
         originalPrice: '₹350',
         discount: '90% OFF',
@@ -615,7 +882,7 @@ export const products = [
         order: 24,
         category: 'Flower Pots (Anar)',
         categorySlug: 'flower-pots',
-        image: flowerPotsImg,
+        image: flowerPotsAshoka24Img,
         price: '₹70',
         originalPrice: '₹450',
         discount: '90% OFF',
@@ -637,7 +904,7 @@ export const products = [
         order: 25,
         category: 'Flower Pots (Anar)',
         categorySlug: 'flower-pots',
-        image: anarSpecialImg,
+        image: colourKoti25Img,
         price: '₹130',
         originalPrice: '₹900',
         discount: '90% OFF',
@@ -659,7 +926,7 @@ export const products = [
         order: 26,
         category: 'Flower Pots (Anar)',
         categorySlug: 'flower-pots',
-        image: anarSpecialImg,
+        image: multiTricolourFountain26Img,
         price: '₹190',
         originalPrice: '₹1250',
         discount: '90% OFF',
@@ -681,7 +948,7 @@ export const products = [
         order: 27,
         category: 'Flower Pots (Anar)',
         categorySlug: 'flower-pots',
-        image: flowerPotsImg,
+        image: colourKotiDeluxe27Img,
         price: '₹250',
         originalPrice: '₹1750',
         discount: '90% OFF',
@@ -705,7 +972,7 @@ export const products = [
         order: 28,
         category: 'Twinkling Star',
         categorySlug: 'twinkling-star',
-        image: twinklingStarImg,
+        image: twinklingStar28Img,
         price: '₹15',
         originalPrice: '₹125',
         discount: '90% OFF',
@@ -728,7 +995,7 @@ export const products = [
         order: 29,
         category: 'Twinkling Star',
         categorySlug: 'twinkling-star',
-        image: sparklersImg,
+        image: twinklingStar29Img,
         price: '₹50',
         originalPrice: '₹350',
         discount: '90% OFF',
@@ -753,7 +1020,7 @@ export const products = [
         order: 30,
         category: 'Pencil Crackers',
         categorySlug: 'pencil-crackers',
-        image: pencilCrackersImg,
+        image: zeeBoomBaa30Img,
         price: '₹50',
         originalPrice: '₹500',
         discount: '90% OFF',
@@ -777,7 +1044,7 @@ export const products = [
         order: 31,
         category: 'Pencil Crackers',
         categorySlug: 'pencil-crackers',
-        image: pencilCrackersImg,
+        image: colourEliteStone31Img,
         price: '₹50',
         originalPrice: '₹500',
         discount: '90% OFF',
@@ -801,7 +1068,7 @@ export const products = [
         order: 32,
         category: 'Pencil Crackers',
         categorySlug: 'pencil-crackers',
-        image: pencilCrackersImg,
+        image: popPop32Img,
         price: '₹50',
         originalPrice: '₹500',
         discount: '90% OFF',
@@ -825,7 +1092,7 @@ export const products = [
         order: 33,
         category: 'Pencil Crackers',
         categorySlug: 'pencil-crackers',
-        image: pencilSticksImg,
+        image: partyCandle33Img,
         price: '₹375',
         originalPrice: '₹3750',
         discount: '90% OFF',
@@ -849,7 +1116,7 @@ export const products = [
         order: 34,
         category: 'Pencil Crackers',
         categorySlug: 'pencil-crackers',
-        image: pencilSticksImg,
+        image: ultraPencil34Img,
         price: '₹500',
         originalPrice: '₹5000',
         discount: '90% OFF',
@@ -873,7 +1140,7 @@ export const products = [
         order: 35,
         category: 'Pencil Crackers',
         categorySlug: 'pencil-crackers',
-        image: pencilSticksImg,
+        image: magicPencil35Img,
         price: '₹600',
         originalPrice: '₹6000',
         discount: '90% OFF',
@@ -897,7 +1164,7 @@ export const products = [
         order: 36,
         category: 'Pencil Crackers',
         categorySlug: 'pencil-crackers',
-        image: pencilSticksImg,
+        image: selfieStick36Img,
         price: '₹600',
         originalPrice: '₹6000',
         discount: '90% OFF',
@@ -921,7 +1188,7 @@ export const products = [
         order: 37,
         category: 'Pencil Crackers',
         categorySlug: 'pencil-crackers',
-        image: pencilSticksImg,
+        image: starRainPencil37Img,
         price: '₹1000',
         originalPrice: '₹10000',
         discount: '90% OFF',
@@ -945,7 +1212,7 @@ export const products = [
         order: 38,
         category: 'Pencil Crackers',
         categorySlug: 'pencil-crackers',
-        image: pencilSticksImg,
+        image: sivakasiPencil38Img,
         price: '₹1000',
         originalPrice: '₹10000',
         discount: '90% OFF',
@@ -980,6 +1247,282 @@ export const products = [
         specifications: [
             { label: 'Pack Quantity', value: '1 Box' },
             { label: 'Type', value: 'Special Fountain' },
+            { label: 'Origin', value: 'Sivakasi, Tamil Nadu' }
+        ]
+    })),
+    ...peacockFountainProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        id: `p-${sno}`,
+        sno,
+        title: `${nameEn} / ${nameTa}`,
+        nameEn,
+        nameTa,
+        order: sno,
+        category: 'Peacock Fountains',
+        categorySlug: 'peacock-fountains',
+        image,
+        price: `₹${discountPrice}`,
+        originalPrice: `₹${price}`,
+        discount: `${Math.round(((price - discountPrice) / price) * 100)}% OFF`,
+        per: per || '1 Box',
+        description: `${nameEn} — Sivakasi special peacock fountain firework with dazzling multi-color burst.`,
+        badgeNote: 'Peacock Fountain',
+        safetyRating: 'Adult supervision required',
+        specifications: [
+            { label: 'Pack Quantity', value: per || '1 Box' },
+            { label: 'Type', value: 'Peacock Fountain' },
+            { label: 'Origin', value: 'Sivakasi, Tamil Nadu' }
+        ]
+    })),
+    ...bombProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        id: `p-${sno}`,
+        sno,
+        title: `${nameEn} / ${nameTa}`,
+        nameEn,
+        nameTa,
+        order: sno,
+        category: 'Bomb Crackers',
+        categorySlug: 'bomb-crackers',
+        image,
+        price: `₹${discountPrice}`,
+        originalPrice: `₹${price}`,
+        discount: `${Math.round(((price - discountPrice) / price) * 100)}% OFF`,
+        per: per || '1 Box',
+        description: `${nameEn} — Powerful Sivakasi sound bomb cracker. Maintain safe distance after lighting.`,
+        badgeNote: 'High Decibel',
+        safetyRating: 'Maintain 5m+ distance',
+        specifications: [
+            { label: 'Pack Quantity', value: per || '1 Box' },
+            { label: 'Type', value: 'Sound Bomb Cracker' },
+            { label: 'Origin', value: 'Sivakasi, Tamil Nadu' }
+        ]
+    })),
+    ...rocketProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        id: `p-${sno}`,
+        sno,
+        title: `${nameEn} / ${nameTa}`,
+        nameEn,
+        nameTa,
+        order: sno,
+        category: 'Rockets',
+        categorySlug: 'rockets',
+        image,
+        price: `₹${discountPrice}`,
+        originalPrice: `₹${price}`,
+        discount: `${Math.round(((price - discountPrice) / price) * 100)}% OFF`,
+        per: per || '1 Box',
+        description: `${nameEn} — Sivakasi aerial rocket. Launch vertically from bottle or rocket stand in open ground.`,
+        badgeNote: 'Sky Rocket',
+        safetyRating: 'Launch vertically outdoors',
+        specifications: [
+            { label: 'Pack Quantity', value: per || '1 Box' },
+            { label: 'Type', value: 'Aerial Sky Rocket' },
+            { label: 'Origin', value: 'Sivakasi, Tamil Nadu' }
+        ]
+    })),
+    ...bijiliProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        id: `p-${sno}`,
+        sno,
+        title: `${nameEn} / ${nameTa}`,
+        nameEn,
+        nameTa,
+        order: sno,
+        category: 'Bijili Crackers',
+        categorySlug: 'bijili-crackers',
+        image,
+        price: `₹${discountPrice}`,
+        originalPrice: `₹${price}`,
+        discount: `${Math.round(((price - discountPrice) / price) * 100)}% OFF`,
+        per: per || '1 Box',
+        description: `${nameEn} — Traditional Sivakasi Bijili cracker. Quick sharp crackling sound and festive fun.`,
+        badgeNote: 'Bijili Cracker',
+        safetyRating: '100% Green Cracker',
+        specifications: [
+            { label: 'Pack Quantity', value: per || '1 Box' },
+            { label: 'Type', value: 'Bijili Cracker' },
+            { label: 'Origin', value: 'Sivakasi, Tamil Nadu' }
+        ]
+    })),
+    ...chorsaDeluxeProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        id: `p-${sno}`,
+        sno,
+        title: `${nameEn} / ${nameTa}`,
+        nameEn,
+        nameTa,
+        order: sno,
+        category: 'Chorsa & Deluxe Crackers',
+        categorySlug: 'chorsa-deluxe-crackers',
+        image,
+        price: `₹${discountPrice}`,
+        originalPrice: `₹${price}`,
+        discount: `${Math.round(((price - discountPrice) / price) * 100)}% OFF`,
+        per: per || '1 Box',
+        description: `${nameEn} — Sivakasi Chorsa and Deluxe string crackers with crisp rhythmic bursts.`,
+        badgeNote: 'Deluxe Cracker',
+        safetyRating: 'Place flat on ground',
+        specifications: [
+            { label: 'Pack Quantity', value: per || '1 Box' },
+            { label: 'Type', value: 'Chorsa / Deluxe String' },
+            { label: 'Origin', value: 'Sivakasi, Tamil Nadu' }
+        ]
+    })),
+    ...walaProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        id: `p-${sno}`,
+        sno,
+        title: `${nameEn} / ${nameTa}`,
+        nameEn,
+        nameTa,
+        order: sno,
+        category: 'Wala (Sara Vedigal)',
+        categorySlug: 'wala-crackers',
+        image,
+        price: `₹${discountPrice}`,
+        originalPrice: `₹${price}`,
+        discount: `${Math.round(((price - discountPrice) / price) * 100)}% OFF`,
+        per: per || '1 Box',
+        description: `${nameEn} — Authentic Sivakasi Sara Vedi garland roll. Continuous high-decibel celebratory explosions.`,
+        badgeNote: 'Sara Vedi',
+        safetyRating: 'Unroll completely before lighting',
+        specifications: [
+            { label: 'Pack Quantity', value: per || '1 Box' },
+            { label: 'Type', value: 'Wala / Garland Cracker' },
+            { label: 'Origin', value: 'Sivakasi, Tamil Nadu' }
+        ]
+    })),
+    ...arialNightShotProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        id: `p-${sno}`,
+        sno,
+        title: `${nameEn} / ${nameTa}`,
+        nameEn,
+        nameTa,
+        order: sno,
+        category: 'Arial Night Shots',
+        categorySlug: 'arial-night-shots',
+        image,
+        price: `₹${discountPrice}`,
+        originalPrice: `₹${price}`,
+        discount: `${Math.round(((price - discountPrice) / price) * 100)}% OFF`,
+        per: per || '1 Box',
+        description: `${nameEn} — Stunning Sivakasi aerial night shot bursting into vivid colors and crackling stars.`,
+        badgeNote: 'Arial Night Shot',
+        safetyRating: 'Use outdoors with overhead clearance',
+        specifications: [
+            { label: 'Pack Quantity', value: per || '1 Box' },
+            { label: 'Type', value: 'Aerial Night Shot' },
+            { label: 'Origin', value: 'Sivakasi, Tamil Nadu' }
+        ]
+    })),
+    ...fancySkyShotProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        id: `p-${sno}`,
+        sno,
+        title: `${nameEn} / ${nameTa}`,
+        nameEn,
+        nameTa,
+        order: sno,
+        category: 'Fancy Sky Shots',
+        categorySlug: 'fancy-sky-shots',
+        image,
+        price: `₹${discountPrice}`,
+        originalPrice: `₹${price}`,
+        discount: `${Math.round(((price - discountPrice) / price) * 100)}% OFF`,
+        per: per || '1 Box',
+        description: `${nameEn} — Single pipe high-altitude Sivakasi fancy sky shot with colorful brocade burst.`,
+        badgeNote: 'Fancy Sky Shot',
+        safetyRating: 'Launch vertically outdoors only',
+        specifications: [
+            { label: 'Pack Quantity', value: per || '1 Box' },
+            { label: 'Type', value: 'Single Pipe Fancy Sky Shot' },
+            { label: 'Origin', value: 'Sivakasi, Tamil Nadu' }
+        ]
+    })),
+    ...repeaterShotProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        id: `p-${sno}`,
+        sno,
+        title: `${nameEn} / ${nameTa}`,
+        nameEn,
+        nameTa,
+        order: sno,
+        category: 'Multi Sky Shots (Repeaters)',
+        categorySlug: 'repeater-shots',
+        image,
+        price: `₹${discountPrice}`,
+        originalPrice: `₹${price}`,
+        discount: `${Math.round(((price - discountPrice) / price) * 100)}% OFF`,
+        per: per || '1 Box',
+        description: `${nameEn} — Multi-shot cake repeater with non-stop sequential fireworks illuminating the night sky.`,
+        badgeNote: 'Multi-Shot Cake',
+        safetyRating: 'Place flat on ground with overhead clearance',
+        specifications: [
+            { label: 'Pack Quantity', value: per || '1 Box' },
+            { label: 'Type', value: 'Multi-Shot Cake Repeater' },
+            { label: 'Origin', value: 'Sivakasi, Tamil Nadu' }
+        ]
+    })),
+    ...rollcapMatchesProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        id: `p-${sno}`,
+        sno,
+        title: `${nameEn} / ${nameTa}`,
+        nameEn,
+        nameTa,
+        order: sno,
+        category: 'Rollcap & Colour Matches',
+        categorySlug: 'rollcap-matches',
+        image,
+        price: `₹${discountPrice}`,
+        originalPrice: `₹${price}`,
+        discount: `${Math.round(((price - discountPrice) / price) * 100)}% OFF`,
+        per: per || '1 Box',
+        description: `${nameEn} — Festive novelty Sivakasi fireworks for fun and celebrations.`,
+        badgeNote: 'Novelty Fun',
+        safetyRating: 'Safe for children under supervision',
+        specifications: [
+            { label: 'Pack Quantity', value: per || '1 Box' },
+            { label: 'Type', value: 'Rollcap & Colour Matches' },
+            { label: 'Origin', value: 'Sivakasi, Tamil Nadu' }
+        ]
+    })),
+    ...sparklersProducts.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        id: `p-${sno}`,
+        sno,
+        title: `${nameEn} / ${nameTa}`,
+        nameEn,
+        nameTa,
+        order: sno,
+        category: 'Sparklers',
+        categorySlug: 'sparklers',
+        image,
+        price: `₹${discountPrice}`,
+        originalPrice: `₹${price}`,
+        discount: `${Math.round(((price - discountPrice) / price) * 100)}% OFF`,
+        per: per || '1 Box',
+        description: `${nameEn} — Sparkling Sivakasi hand sparklers emitting bright crackles and radiant lights.`,
+        badgeNote: 'Dazzling Sparkler',
+        safetyRating: 'Hold at arm\'s length outdoors',
+        specifications: [
+            { label: 'Pack Quantity', value: per || '1 Box' },
+            { label: 'Type', value: 'Handheld Sparklers' },
+            { label: 'Origin', value: 'Sivakasi, Tamil Nadu' }
+        ]
+    })),
+    ...newCrackers2025Products.map(({ sno, nameEn, nameTa, price, discountPrice, per, image }) => ({
+        id: `p-${sno}`,
+        sno,
+        title: `${nameEn} / ${nameTa}`,
+        nameEn,
+        nameTa,
+        order: sno,
+        category: '2025 New Crackers',
+        categorySlug: 'new-crackers-2025',
+        image,
+        price: `₹${discountPrice}`,
+        originalPrice: `₹${price}`,
+        discount: `${Math.round(((price - discountPrice) / price) * 100)}% OFF`,
+        per: per || '1 Box',
+        description: `${nameEn} — 2025 brand new festive arrival for vibrant and grand Diwali celebrations.`,
+        badgeNote: '2025 New Arrival',
+        safetyRating: 'Safe & green cracker certified',
+        specifications: [
+            { label: 'Pack Quantity', value: per || '1 Box' },
+            { label: 'Type', value: '2025 New Arrival' },
             { label: 'Origin', value: 'Sivakasi, Tamil Nadu' }
         ]
     }))

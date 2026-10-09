@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ShieldCheck, ChevronDown, Sparkles, RotateCw, Flame, Zap, PhoneCall, User, ShoppingBag } from 'lucide-react';
+import { Menu, X, ShieldCheck, ChevronDown, Sparkles, RotateCw, Flame, Zap, PhoneCall, User, ShoppingBag, MapPin } from 'lucide-react';
 import { HashLink } from 'react-router-hash-link';
 import { Link, useLocation } from 'react-router-dom';
 import logoImg from '../assets/crackers/logo.jpg';
@@ -18,6 +18,27 @@ const iconMap = {
 };
 
 const Navbar = () => {
+    const [cartCount, setCartCount] = useState(() => {
+        try {
+            return parseInt(localStorage.getItem('vinayaga_cart_count') || '0', 10);
+        } catch (e) {
+            return 0;
+        }
+    });
+
+    useEffect(() => {
+        const handleCartUpdate = () => {
+            try {
+                setCartCount(parseInt(localStorage.getItem('vinayaga_cart_count') || '0', 10));
+            } catch (e) {}
+        };
+        window.addEventListener('cartUpdated', handleCartUpdate);
+        window.addEventListener('storage', handleCartUpdate);
+        return () => {
+            window.removeEventListener('cartUpdated', handleCartUpdate);
+            window.removeEventListener('storage', handleCartUpdate);
+        };
+    }, []);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [scrollProgress, setScrollProgress] = useState(0);
@@ -98,14 +119,30 @@ const Navbar = () => {
     };
 
     return (
-        <nav className={`fixed w-full z-50 transition-all duration-300 ${isLight ? 'bg-[#090D18]/95 backdrop-blur-md shadow-2xl border-b border-amber-500/20 py-2.5' : 'bg-gradient-to-b from-black/90 via-black/60 to-transparent py-3.5'}`}>
+        <nav className={`fixed w-full z-50 transition-all duration-300 ${isLight ? 'bg-[#090D18]/95 backdrop-blur-md shadow-2xl border-b border-amber-500/20' : 'bg-gradient-to-b from-black/90 via-black/60 to-transparent'}`}>
+            {/* ── Top Address & Phone Info Ribbon ── */}
+            <div className="w-full bg-[#050811]/95 border-b border-white/10 text-[10px] sm:text-[11px] py-1 px-3 sm:px-4 text-slate-300 font-medium">
+                <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 text-amber-300 truncate">
+                        <MapPin size={12} className="text-amber-400 shrink-0" />
+                        <span className="truncate">Shop No : 3/6136, Om Sakthi Nagar, Perapatti, Sivakasi – 626189</span>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                        <span className="text-emerald-400 font-bold hidden md:inline">🚚 All India Delivery</span>
+                        <a href="tel:+918940921075" className="hover:text-amber-300 font-bold text-white flex items-center gap-1">
+                            <PhoneCall size={11} className="text-emerald-400" /> +91 89409 21075
+                        </a>
+                    </div>
+                </div>
+            </div>
+
             {/* Slim festive gold progress bar */}
             <motion.div
                 className="absolute bottom-0 left-0 h-[2.5px] bg-gradient-to-r from-amber-400 via-rose-500 to-amber-300 origin-left"
                 style={{ scaleX: scrollProgress / 100, width: '100%' }}
             />
 
-            <div className="max-w-7xl mx-auto px-3 sm:px-4 flex items-center justify-between gap-2 sm:gap-3">
+            <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-3">
 
                 {/* ── Brand: Vinayaga Crackers Sivakasi (with fireworks star icon) ── */}
                 <HashLink smooth to="/#" className="flex items-center gap-2 sm:gap-3 shrink-0 group">
@@ -198,13 +235,6 @@ const Navbar = () => {
                         </AnimatePresence>
                     </div>
 
-                    {/* குறிப்புகள் (Tips & Safety) */}
-                    <HashLink
-                        smooth to="/certificates"
-                        className="px-3 py-1.5 text-xs font-bold font-tamil text-slate-200 hover:text-amber-300 transition-colors"
-                    >
-                        குறிப்புகள்
-                    </HashLink>
 
                     {/* எங்களை பற்றி (About Us) */}
                     <HashLink
@@ -213,6 +243,15 @@ const Navbar = () => {
                     >
                         எங்களை பற்றி
                     </HashLink>
+
+                    {/* ஸ்பெஷல் காம்போ (Special Bundles) */}
+                    <Link
+                        to="/special-bundles"
+                        className="px-3 py-1.5 text-xs font-bold font-tamil text-amber-300 hover:text-white transition-colors flex items-center gap-1"
+                    >
+                        <Sparkles size={13} className="text-amber-400" />
+                        <span>காம்போ பேக்</span>
+                    </Link>
 
                     {/* வாங்க / விலைப்பட்டியல் (Buy / Price List) */}
                     <Link
@@ -246,30 +285,47 @@ const Navbar = () => {
                     {/* Cart / Order Bag with Counter Badge */}
                     <Link
                         to="/buy"
-                        title="ஆர்டர் பட்டியல் / Order Cart"
+                        title="ஆர்டர் பட்டியல் / Order Cart - Shop: 3/6136, Om Sakthi Nagar, Perapatti, Sivakasi"
                         className="relative p-1.5 rounded-full text-slate-300 hover:text-amber-300 transition-colors cursor-pointer"
                     >
                         <ShoppingBag size={20} />
-                        <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#DC2626] text-white text-[10px] font-black flex items-center justify-center shadow">
-                            29
-                        </span>
+                        {cartCount > 0 && (
+                            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#DC2626] text-white text-[10px] font-black flex items-center justify-center shadow">
+                                {cartCount}
+                            </span>
+                        )}
                     </Link>
                 </div>
 
-                {/* ── Mobile hamburger ── */}
-                <button
-                    onClick={() => setIsMenuOpen(v => !v)}
-                    className="lg:hidden shrink-0 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl transition-all text-white bg-white/10 hover:bg-white/20 border border-white/10 shadow-sm ml-1"
-                    aria-label="Toggle menu"
-                >
-                    <AnimatePresence mode="wait" initial={false}>
-                        <motion.span key={isMenuOpen ? 'x' : 'm'}
-                            initial={{ opacity: 0, rotate: -90 }} animate={{ opacity: 1, rotate: 0 }}
-                            exit={{ opacity: 0, rotate: 90 }} transition={{ duration: 0.15 }}>
-                            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
-                        </motion.span>
-                    </AnimatePresence>
-                </button>
+                {/* ── Mobile Right Actions: Cart Bag & hamburger ── */}
+                <div className="lg:hidden flex items-center gap-2">
+                    <Link
+                        to="/buy"
+                        title="ஆர்டர் பட்டியல் / Order Cart - Shop: 3/6136, Om Sakthi Nagar, Perapatti, Sivakasi"
+                        className="relative p-2 rounded-xl text-slate-200 bg-white/10 hover:bg-white/20 border border-white/10 transition-colors cursor-pointer"
+                    >
+                        <ShoppingBag size={18} />
+                        {cartCount > 0 && (
+                            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#DC2626] text-white text-[10px] font-black flex items-center justify-center shadow">
+                                {cartCount}
+                            </span>
+                        )}
+                    </Link>
+
+                    <button
+                        onClick={() => setIsMenuOpen(v => !v)}
+                        className="shrink-0 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl transition-all text-white bg-white/10 hover:bg-white/20 border border-white/10 shadow-sm"
+                        aria-label="Toggle menu"
+                    >
+                        <AnimatePresence mode="wait" initial={false}>
+                            <motion.span key={isMenuOpen ? 'x' : 'm'}
+                                initial={{ opacity: 0, rotate: -90 }} animate={{ opacity: 1, rotate: 0 }}
+                                exit={{ opacity: 0, rotate: 90 }} transition={{ duration: 0.15 }}>
+                                {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                            </motion.span>
+                        </AnimatePresence>
+                    </button>
+                </div>
             </div>
 
             {/* ── Mobile menu ── */}
@@ -334,9 +390,21 @@ const Navbar = () => {
                             </div>
 
                             <Link
+                                to="/special-bundles"
+                                onClick={() => setIsMenuOpen(false)}
+                                className="flex items-center justify-between px-5 py-3 text-xs font-bold font-tamil text-amber-200 bg-amber-950/30 hover:bg-amber-900/30 border-y border-amber-500/20 transition-all"
+                            >
+                                <span className="flex items-center gap-2">
+                                    <Sparkles size={14} className="text-amber-400" />
+                                    ஸ்பெஷல் காம்போ பேக் (Special Bundles)
+                                </span>
+                                <span className="text-[10px] bg-amber-500 text-slate-950 px-2 py-0.5 rounded-full font-black">60 & 70 ITEMS</span>
+                            </Link>
+
+                            <Link
                                 to="/buy"
                                 onClick={() => setIsMenuOpen(false)}
-                                className="flex items-center justify-between px-5 py-3 text-xs font-bold font-tamil text-amber-300 bg-rose-950/40 hover:bg-rose-900/40 border-y border-rose-500/20 transition-all"
+                                className="flex items-center justify-between px-5 py-3 text-xs font-bold font-tamil text-amber-300 bg-rose-950/40 hover:bg-rose-900/40 border-b border-rose-500/20 transition-all"
                             >
                                 <span className="flex items-center gap-2">
                                     <Flame size={14} className="text-amber-400" />
@@ -345,13 +413,6 @@ const Navbar = () => {
                                 <span className="text-[10px] bg-rose-600 text-white px-2 py-0.5 rounded-full font-black">90% OFF</span>
                             </Link>
 
-                            <HashLink
-                                smooth to="/certificates"
-                                onClick={() => setIsMenuOpen(false)}
-                                className="flex items-center justify-between px-5 py-3 text-xs font-bold font-tamil text-slate-200 hover:bg-white/5 transition-all"
-                            >
-                                குறிப்புகள் (Safety & Licenses)
-                            </HashLink>
 
                             <HashLink
                                 smooth to="/about"
@@ -370,6 +431,14 @@ const Navbar = () => {
                             </HashLink>
                         </div>
 
+                        {/* Store Address Banner in Mobile Menu */}
+                        <div className="px-4 py-2.5 bg-black/50 border-b border-white/10 text-left">
+                            <p className="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-0.5">கடை முகவரி (Shop Address):</p>
+                            <p className="text-[11px] text-slate-300 leading-snug flex items-start gap-1.5">
+                                <MapPin size={13} className="text-amber-400 shrink-0 mt-0.5" />
+                                <span>Shop No : 3/6136, Om Sakthi Nagar, Perapatti, Sivakasi – 626189</span>
+                            </p>
+                        </div>
                         {/* CTA footer */}
                         <div className="px-4 pt-2 pb-1 bg-black/40 text-center">
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-600/80 text-white text-[10px] font-black uppercase tracking-wide">

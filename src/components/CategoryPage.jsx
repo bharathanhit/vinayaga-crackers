@@ -1,8 +1,8 @@
 import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, ChevronRight, Sparkles, Flame, Percent, ShieldCheck, Tag, ShoppingCart, PhoneCall, Minus, Plus, X } from 'lucide-react';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { ArrowLeft, ArrowRight, ChevronRight, Sparkles, Flame, Percent, ShieldCheck, Tag, ShoppingCart, PhoneCall, Minus, Plus, X, MapPin } from 'lucide-react';
+import { collection, onSnapshot, query, where, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { products as staticProducts, categories as staticCategories } from '../data/products';
 import heroFireworksImg from '../assets/crackers/hero-fireworks.jpg';
@@ -11,6 +11,7 @@ const ProductCard = ({ product, index, qty, onUpdateQty, onQuickOrder }) => {
     const imgSrc = product.imageUrl || product.image;
     const priceNum = parseInt(String(product.price || '0').replace(/\D/g, '')) || 0;
     const mrpNum = parseInt(String(product.originalPrice || '0').replace(/\D/g, '')) || 0;
+    const isOut = !!product.isOutOfStock || product.status === 'Out of Stock';
 
     return (
         <motion.div
@@ -19,7 +20,11 @@ const ProductCard = ({ product, index, qty, onUpdateQty, onQuickOrder }) => {
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.5, delay: index * 0.05 }}
             className={`group relative bg-[#111827] border rounded-[2rem] overflow-hidden shadow-xl transition-all duration-300 flex flex-col justify-between ${
-                qty > 0 ? 'border-amber-400 shadow-[0_0_30px_rgba(251,191,36,0.25)] ring-2 ring-amber-400/40' : 'border-amber-500/20 hover:border-amber-400/50'
+                isOut
+                    ? 'border-slate-800 opacity-80'
+                    : qty > 0
+                        ? 'border-amber-400 shadow-[0_0_30px_rgba(251,191,36,0.25)] ring-2 ring-amber-400/40'
+                        : 'border-amber-500/20 hover:border-amber-400/50'
             }`}
         >
             {/* Top Image Box */}
@@ -27,7 +32,7 @@ const ProductCard = ({ product, index, qty, onUpdateQty, onQuickOrder }) => {
                 <img
                     src={imgSrc}
                     alt={product.title}
-                    className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500"
+                    className={`w-full h-full object-cover transition-transform duration-500 ${isOut ? 'opacity-40 grayscale-[30%]' : 'opacity-90 group-hover:scale-105'}`}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-black/40" />
 
@@ -38,12 +43,21 @@ const ProductCard = ({ product, index, qty, onUpdateQty, onQuickOrder }) => {
                             S.No: #{product.sno}
                         </span>
                     )}
-                    {product.discount && (
+                    {product.discount && !isOut && (
                         <span className="px-2.5 py-0.5 bg-rose-600 rounded-full text-[9px] font-black text-white uppercase tracking-wider flex items-center gap-1 shadow-md w-fit">
                             <Percent size={10} /> {product.discount}
                         </span>
                     )}
                 </div>
+
+                {/* Out of Stock Overlay Badge */}
+                {isOut && (
+                    <div className="absolute inset-0 flex items-center justify-center z-20 p-4 pointer-events-none">
+                        <span className="px-4 py-2 bg-rose-700/95 border border-rose-400 text-white font-black text-xs font-tamil rounded-2xl uppercase tracking-wider shadow-2xl flex items-center gap-1.5 backdrop-blur-md">
+                            கையிருப்பு இல்லை • Out of Stock
+                        </span>
+                    </div>
+                )}
 
                 {/* Price Display */}
                 <div className="absolute bottom-3 right-3 z-20">
@@ -74,7 +88,20 @@ const ProductCard = ({ product, index, qty, onUpdateQty, onQuickOrder }) => {
 
                 {/* Quantity Controls & Add to Cart */}
                 <div className="mt-5 pt-4 border-t border-white/10">
-                    {qty > 0 ? (
+                    {isOut ? (
+                        <div className="flex items-center gap-2">
+                            <div className="flex-1 py-2.5 px-3 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-400 font-black font-tamil text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-not-allowed select-none">
+                                <span>கையிருப்பு இல்லை (Out of Stock)</span>
+                            </div>
+                            <button
+                                onClick={() => onQuickOrder(product)}
+                                className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors"
+                                title="Stock Enquiry via WhatsApp"
+                            >
+                                <PhoneCall size={15} />
+                            </button>
+                        </div>
+                    ) : qty > 0 ? (
                         <div className="flex items-center justify-between gap-2 bg-[#090D18] p-1.5 rounded-2xl border border-amber-400/60 shadow-inner">
                             <button
                                 onClick={() => onUpdateQty(product.id, qty - 1)}
@@ -173,7 +200,14 @@ const CategoryPage = () => {
             if (!snap.empty) {
                 const firestoreProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 firestoreProducts.forEach(fp => {
-                    const idx = merged.findIndex(p => p.title === fp.title);
+                    const idx = merged.findIndex(p => {
+                        const idMatch = p.id && fp.id && p.id === fp.id;
+                        const docIdMatch = p.id && fp.id && (p.id === fp.id || p.id === fp.docId);
+                        const normalize = (s) => (s || '').toLowerCase().trim().replace(/\s+/g, ' ');
+                        const titleMatch = normalize(p.title) === normalize(fp.title);
+                        const snoMatch = p.sno && fp.sno && Number(p.sno) === Number(fp.sno);
+                        return idMatch || docIdMatch || titleMatch || snoMatch;
+                    });
                     if (idx !== -1) {
                         merged[idx] = { ...merged[idx], ...fp };
                     } else {
@@ -181,11 +215,13 @@ const CategoryPage = () => {
                     }
                 });
             }
-            merged.sort((a, b) => (a.order || 0) - (b.order || 0));
+            // Filter out deleted products
+            merged = merged.filter(p => !p.isDeleted);
+            merged.sort((a, b) => (Number(a.sno || a.order || 0)) - (Number(b.sno || b.order || 0)));
             setCategoryProducts(merged);
             setLoading(false);
         }, () => {
-            setCategoryProducts(staticProducts.filter(p => p.categorySlug === slug));
+            setCategoryProducts(staticProducts.filter(p => p.categorySlug === slug && !p.isDeleted));
             setLoading(false);
         });
         return unsub;
@@ -252,8 +288,18 @@ const CategoryPage = () => {
         };
     }, [quantities, categoryProducts]);
 
+    // Sync cart count with Navbar
+    useEffect(() => {
+        try {
+            if (cartSummary.totalItems > 0) {
+                localStorage.setItem('vinayaga_cart_count', String(cartSummary.totalItems));
+                window.dispatchEvent(new Event('cartUpdated'));
+            }
+        } catch (e) {}
+    }, [cartSummary.totalItems]);
+
     // Submit WhatsApp Enquiry / Order
-    const handleSendWhatsAppOrder = (e) => {
+    const handleSendWhatsAppOrder = async (e) => {
         if (e) e.preventDefault();
         if (cartSummary.totalItems === 0) {
             alert("தயவுசெய்து குறைந்தது ஒரு பட்டாசையாவது தேர்வு செய்யவும். (Please add at least one cracker).");
@@ -264,6 +310,40 @@ const CategoryPage = () => {
             return;
         }
 
+        // Save order as an inquiry in Firestore
+        try {
+            await addDoc(collection(db, 'inquiries'), {
+                name: customer.name.trim(),
+                phone: customer.phone.trim(),
+                city: customer.city.trim() || 'Tamil Nadu',
+                destination: customer.city.trim() || 'Tamil Nadu',
+                address: customer.address.trim() || '',
+                product: `${category?.titleTa || category?.title || 'Crackers'} Order (${cartSummary.totalItems} Items - ₹${cartSummary.totalDiscounted.toLocaleString('en-IN')})`,
+                industry: 'Category Page Order',
+                contactMethod: 'WhatsApp',
+                source: `${category?.title || 'Category'} Price List`,
+                items: cartSummary.selectedItems.map(item => ({
+                    sno: item.sno || '',
+                    nameTa: item.nameTa || item.title || '',
+                    nameEn: item.nameEn || item.title || '',
+                    qty: item.qty,
+                    per: item.per || 'Pkt',
+                    mrp: item.originalPrice || item.priceNum || 0,
+                    discountPrice: item.priceNum || 0,
+                    subtotal: item.subtotal || 0
+                })),
+                totalItems: cartSummary.totalItems,
+                totalUnits: cartSummary.totalUnits,
+                totalMrp: cartSummary.totalMrp,
+                totalDiscounted: cartSummary.totalDiscounted,
+                totalSavings: cartSummary.totalSavings,
+                status: 'new',
+                createdAt: serverTimestamp()
+            });
+        } catch (err) {
+            console.error('Error saving order inquiry:', err);
+        }
+
         let orderItemsText = "";
         cartSummary.selectedItems.forEach((item, idx) => {
             orderItemsText += `${idx + 1}. *${item.nameTa || item.title}* (${item.nameEn || item.title}) [S.No: ${item.sno || 'N/A'}]\n` +
@@ -272,6 +352,7 @@ const CategoryPage = () => {
 
         const waText =
 `🎆 *VINAYAGA SUPREME CRACKERS SIVAKASI* 🎆
+🏬 *கடை முகவரி:* Shop No : 3/6136, Om Sakthi Nagar, Perapatti, Sivakasi - 626189
 *பட்டாசு கொள்முதல் & இருப்பு விபரம் கோரிக்கை (Enquiry)*
 ----------------------------------------
 👤 *வாடிக்கையாளர்:* ${customer.name.trim()}
@@ -507,6 +588,10 @@ ${orderItemsText}
                                         நேரடி பட்டாசு கொள்முதல் படிவம்
                                     </h3>
                                     <p className="text-xs text-slate-400">Direct Sivakasi WhatsApp Order Enquiry</p>
+                                    <div className="mt-1.5 inline-flex items-center gap-1.5 text-[11px] text-amber-200 bg-white/10 border border-white/10 px-2.5 py-0.5 rounded-lg">
+                                        <MapPin size={11} className="text-amber-400 shrink-0" />
+                                        <span>Shop No : 3/6136, Om Sakthi Nagar, Perapatti, Sivakasi - 626189</span>
+                                    </div>
                                 </div>
                                 <button
                                     onClick={() => setShowCheckoutModal(false)}

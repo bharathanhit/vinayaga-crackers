@@ -113,7 +113,14 @@ const Contact = () => {
                         </div>
 
                         <div className="relative z-10 space-y-3 bg-black/60 backdrop-blur-md p-5 rounded-2xl border border-amber-500/20">
-                            <p className="text-xs text-amber-300 font-bold flex items-center gap-2">
+                            <div className="flex items-start gap-2.5 text-xs text-slate-200">
+                                <MapPin size={16} className="text-amber-400 shrink-0 mt-0.5" />
+                                <div>
+                                    <p className="font-bold text-amber-300">Shop Address (கடை முகவரி):</p>
+                                    <p className="text-slate-300 leading-snug">Shop No : 3/6136, Om Sakthi Nagar, Perapatti, Sivakasi - 626189</p>
+                                </div>
+                            </div>
+                            <p className="text-xs text-amber-300 font-bold flex items-center gap-2 pt-2 border-t border-white/10">
                                 <Flame size={14} className="text-rose-500" /> Flat 90% Off Factory Rates
                             </p>
                             <p className="text-xs text-slate-300 flex items-center gap-2">
@@ -143,9 +150,13 @@ const Contact = () => {
                             <h3 className="text-2xl sm:text-4xl font-black text-white mb-2 font-cinzel">
                                 Quick Order & Quote
                             </h3>
-                            <p className="text-slate-400 font-medium mb-8 text-sm">
+                            <p className="text-slate-400 font-medium mb-3 text-sm">
                                 Submit your details for instant WhatsApp booking or callback from our Sivakasi office.
                             </p>
+                            <div className="mb-6 inline-flex items-center gap-2 text-xs text-amber-300/90 bg-amber-500/10 border border-amber-400/20 px-3 py-1.5 rounded-lg">
+                                <MapPin size={13} className="text-amber-400 shrink-0" />
+                                <span>Shop No : 3/6136, Om Sakthi Nagar, Perapatti, Sivakasi - 626189</span>
+                            </div>
 
                             <div className="space-y-4">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

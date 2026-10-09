@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, ShieldCheck, Award, Target, Eye, Sparkles, HeartHandshake, ArrowLeft, Flame, PhoneCall } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, Award, Target, Eye, Sparkles, HeartHandshake, ArrowLeft, Flame, PhoneCall, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import flowerPotsImg from '../assets/crackers/flower-pots.jpg';
 import sparklersImg from '../assets/crackers/sparklers.jpg';
@@ -184,9 +184,13 @@ const AboutPage = () => {
                     <h2 className="text-3xl sm:text-4xl font-black text-white uppercase font-cinzel mb-4">
                         Pre-Book Your Diwali Crackers With Vinayaga Sivakasi
                     </h2>
-                    <p className="text-slate-300 text-base mb-8 max-w-xl mx-auto">
+                    <p className="text-slate-300 text-base mb-6 max-w-xl mx-auto">
                         Get the best rates, early bird pre-booking discounts, and guaranteed timely delivery before stocks run out.
                     </p>
+                    <div className="mb-8 inline-flex items-center gap-2 text-xs text-amber-300 bg-black/40 border border-amber-400/30 px-4 py-2 rounded-xl mx-auto">
+                        <MapPin size={15} className="text-amber-400 shrink-0" />
+                        <span>Visit Store: Shop No : 3/6136, Om Sakthi Nagar, Perapatti, Sivakasi - 626189</span>
+                    </div>
                     <div className="flex flex-wrap justify-center gap-4">
                         <a
                             href="https://wa.me/918940921075?text=Hi%20Vinayaga%20Crackers%20Sivakasi,%20I%20would%20like%20to%20get%20more%20details%20about%20ordering%20crackers."
